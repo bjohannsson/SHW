@@ -18,7 +18,7 @@ Generating a slotted schedule to trigger various tasks, using a counter and a lo
 ![alt text](images/slots.PNG?raw=true "Slotted schedule")
 
 ### Example 3:
-Two analog thresholds are implemented with DACs and analog comparators. The DAC outputs are fed through external capacitors to reduce voltage ripple. When both comparator outputs are HIGH, the signal *th_detect* goes HIGH, triggering an ISR (which is disconnected in the figure). This is used to detect channel activity, thereof especially a start of a packet preamble being transmitted by another device.
+Two analog thresholds are implemented with DACs and analog comparators. The DAC outputs are fed through external capacitors to reduce voltage ripple. The PSoC uses two 8-bit DACs to emulate a 12-bit DAC, which increases the ripple. When both comparator outputs are HIGH, the signal *th_detect* goes HIGH, triggering an ISR (which is disconnected in the figure). This is used to detect channel activity, thereof especially a start of a packet preamble being transmitted by another device.
 ![alt text](images/th.PNG?raw=true "Thresholds")
 
 ### Example 4:
