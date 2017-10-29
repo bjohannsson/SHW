@@ -15,4 +15,4 @@ Counter with a startup delay, triggering an ISR to load a packet payload byte to
 
 Example 2:
 Generating a slotted schedule to trigger various tasks, using a counter and a look-up table.
-![alt text](images/slots.png?raw=true "Slotted schedule")
+![alt text](images/slots.PNG?raw=true "Slotted schedule")
