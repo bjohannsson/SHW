@@ -16,6 +16,10 @@ When transmitting a packet, the following task pipeline is triggered:
 The data to be transmitted (payload) is fed through a hardware [CRC](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) block that calculates the checksum. The payload is further encoded with a [Hamming(7,4,3)](https://en.wikipedia.org/wiki/Hamming_code) error correcting code. The resulting Hamming words are chopped into ARPWM symbols, L-number of bits per symbol, the number L being controlled by the system's dimming level. Upon transmitting each *compensation frame* of length 20 symbols, the device injects data-less *compensation symbols* into the transmission stream in order to maintain a non-flickering long-term average light intensity. When the whole payload has been fed through the chain, the CRC checksum is appended to the payload bits, getting wrapped in Hamming and converted to symbols in the same way as the payload.
 
 ### Payload to Hamming
+A [MUX](https://en.wikipedia.org/wiki/Multiplexer) and a [shift register](https://en.wikipedia.org/wiki/Shift_register) are implemented on the PSoC to enable shifting of individual bits from a writeable control register. A data bit is shifted out from the control register on the rising edge (hi) of a shift clock. The MUX output is switched at the subsequent falling edge (lo) of the same shift clock.
+
+![alt text](images/tx/shift_clock_ex.PNG?raw=true "Selecting payload bit")
+
 The packet payload is fed to a control register *CREG_PAY* via a DMA. A counter *SEL_PAY_OUT* and a MUX select the current payload bit to be fed to a Hamming look-up table.
 
 ![alt text](images/tx/pay_sel.PNG?raw=true "Selecting payload bit")
