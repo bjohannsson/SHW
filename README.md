@@ -7,7 +7,7 @@ The repository is in an active state, where improvements are being made on the d
 
 ## TX Subsystem
 When transmitting a packet, the following task pipeline is triggerer:
-![alt text](images/tx/tx_tasks4.PNG?raw=true "Transmission task pipeline")
+![alt text](images/tx/tx_tasks4.png?raw=true "Transmission task pipeline")
 
 The data to be transmitted (payload) is fed through a hardware CRC block that calculates the checksum. The payload is further encoded with a Hamming(7,4,3) error correcting code. The resulting Hamming words are chopped into ARPWM symbols, L-number of bits per symbol, the number L being controlled by the system's dimming level. Upon transmitting each *compensation frame* of length 20 symbols, the device injects data-less *compensation symbols* into the transmission stream in order to maintain a non-flickering long-term average light intensity. When the whole payload has been fed through the chain, the CRC checksum is appended to the payload bits, getting wrapped in Hamming and converted to symbols in the same way as the payload.
 
