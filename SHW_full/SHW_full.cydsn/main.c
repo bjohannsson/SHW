@@ -21,7 +21,7 @@ int main(void)
     CyGlobalIntEnable; /* Enable global interrupts. */
 
 	INIT_SERIAL();
-	INIT_ROUTING();
+	INIT_DLM();
 	INIT_DIMMING_CONTROL();
 	INIT_PACKET_MANAGER();
 	INIT_TX_SUBSYSTEM();
