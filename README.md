@@ -65,6 +65,20 @@ The payload bit selection is switched on signal *pay_shift_lo*.
 
 ![alt text](images/tx/pay_shift_lo.PNG?raw=true "*pay_shift_lo*")
 
+## Hamming to Symbol
+A MUX is used to select the current bit of a Hamming word, to be shifted into a symbol consisting of L-number of bits.
+
+![alt text](images/tx/ham_sel.PNG?raw=true "*Selecting Hamming word bit*")
+
+The Hamming word bits are gathered in groups of L. 
+
+![alt text](images/tx/ser_shift_L.PNG?raw=true "*Shifting the Hamming word bit*")
+
+The number L (bits per symbol) is written to the register *CREG_L*, controlling the number of shifts from the Hamming word.
+
+![alt text](images/tx/cnt_L.PNG?raw=true "*Counting bits per symbol*")
+
+
 ## More Schematic Examples
 The PSoC allows for programming dedicated hardware funcionality using logic gates and various components. A few examples are given here.
 
