@@ -41,6 +41,14 @@ G:
     0 0 0 1 0 1 1
     
 
+As an example, the data bitstream *1001* is encoded by summing up rows 0 and 3 (or 1 and 4 if you will) of the matrix G, resulting in a codeword:
+
+    G(0): 1 0 0 0 1 1 1
+    +
+    G(3): 0 0 0 1 0 1 1
+    =
+          1 0 0 1 1 0 0
+
 The corresponding parity matrix is:
 
 H:
@@ -52,7 +60,7 @@ H:
     1 0 1 1 0 0 1
     
 
-The parity matrix is used for decoding the Hamming words on the receiver side. The [syndrome decoding](https://en.wikipedia.org/wiki/Decoding_methods#Syndrome_decoding) method is used on the receiver.
+The parity matrix is used for decoding the Hamming words on the receiver side, where the [syndrome decoding](https://en.wikipedia.org/wiki/Decoding_methods#Syndrome_decoding) method is employed.
 
 To signal that a Hamming word is formed, we count the shifted payload bits with the following circuit:
 
