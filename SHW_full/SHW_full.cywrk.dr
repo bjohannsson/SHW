@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CyXmlSerializer>
+<!--This file is machine generated and read. It is not intended to be edited by hand.-->
+<!--Due to this, there is no schema for this file.-->
+<CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21 type_name="CyDesigner.Common.ProjMgmt.Model.CyPrjMgmtWrkspcCustomData" version="4">
+<CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997 type_name="CyDesigner.Common.Base.CyCustomData" version="2">
+<userData>
+<dataGuid v="5f2be1a5-0687-4501-bb8c-cf21cb8211bf">
+<CyGuid_5f2be1a5-0687-4501-bb8c-cf21cb8211bf type_name="CyDesigner.Common.ProjMgmt.GUI.CyBookmarkData" version="1">
+<indicators />
+</CyGuid_5f2be1a5-0687-4501-bb8c-cf21cb8211bf>
+</dataGuid>
+<dataGuid v="1b906a0f-a7b6-4e4d-a428-82f98b53cb35">
+<CyGuid_1b906a0f-a7b6-4e4d-a428-82f98b53cb35 type_name="CyDesigner.Common.ProjMgmt.GUI.CyExplorerWindow+CyExplorerWindowState" version="3" SelectedTab="Source">
+<TreeKeys>
+<v>Source</v>
+<v>Components</v>
+<v>Output</v>
+</TreeKeys>
+<TreeStates>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="SHW_full\SHW_full\Header Files">
+<ExpandedNodeIds>
+<v>SHW_full</v>
+<v>SHW_full\SHW_full</v>
+<v>SHW_full\SHW_full\TopDesign</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Pins</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Analog</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Clocks</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Interrupts</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\DMA</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\System</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Directives</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Flash Security</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\EEPROM</v>
+<v>SHW_full\SHW_full\Header Files</v>
+<v>SHW_full\SHW_full\Header Files\cyapicallbacks.h</v>
+<v>SHW_full\SHW_full\Header Files\dimmingcontrol.h</v>
+<v>SHW_full\SHW_full\Header Files\dlm.h</v>
+<v>SHW_full\SHW_full\Header Files\inputcontrol.h</v>
+<v>SHW_full\SHW_full\Header Files\main.h</v>
+<v>SHW_full\SHW_full\Header Files\packetman.h</v>
+<v>SHW_full\SHW_full\Header Files\rxsubsystem.h</v>
+<v>SHW_full\SHW_full\Header Files\serial.h</v>
+<v>SHW_full\SHW_full\Header Files\txsubsystem.h</v>
+<v>SHW_full\SHW_full\Source Files</v>
+<v>SHW_full\SHW_full\Source Files\dimmingControl.c</v>
+<v>SHW_full\SHW_full\Source Files\dlm.c</v>
+<v>SHW_full\SHW_full\Source Files\inputControl.c</v>
+<v>SHW_full\SHW_full\Source Files\main.c</v>
+<v>SHW_full\SHW_full\Source Files\packetman.c</v>
+<v>SHW_full\SHW_full\Source Files\rxsubsystem.c</v>
+<v>SHW_full\SHW_full\Source Files\serial.c</v>
+<v>SHW_full\SHW_full\Source Files\txsubsystem.c</v>
+<v>SHW_full\SHW_full\Generated_Source</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>SHW_full</v>
+<v>SHW_full\SHW_full</v>
+<v>SHW_full\SHW_full\TopDesign</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Pins</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Analog</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Clocks</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Interrupts</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\DMA</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\System</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Directives</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\Flash Security</v>
+<v>SHW_full\SHW_full\SHW_full.cydwr\EEPROM</v>
+<v>SHW_full\SHW_full\Header Files</v>
+<v>SHW_full\SHW_full\Header Files\cyapicallbacks.h</v>
+<v>SHW_full\SHW_full\Header Files\dimmingcontrol.h</v>
+<v>SHW_full\SHW_full\Header Files\dlm.h</v>
+<v>SHW_full\SHW_full\Header Files\inputcontrol.h</v>
+<v>SHW_full\SHW_full\Header Files\main.h</v>
+<v>SHW_full\SHW_full\Header Files\packetman.h</v>
+<v>SHW_full\SHW_full\Header Files\rxsubsystem.h</v>
+<v>SHW_full\SHW_full\Header Files\serial.h</v>
+<v>SHW_full\SHW_full\Header Files\txsubsystem.h</v>
+<v>SHW_full\SHW_full\Source Files</v>
+<v>SHW_full\SHW_full\Source Files\dimmingControl.c</v>
+<v>SHW_full\SHW_full\Source Files\dlm.c</v>
+<v>SHW_full\SHW_full\Source Files\inputControl.c</v>
+<v>SHW_full\SHW_full\Source Files\main.c</v>
+<v>SHW_full\SHW_full\Source Files\packetman.c</v>
+<v>SHW_full\SHW_full\Source Files\rxsubsystem.c</v>
+<v>SHW_full\SHW_full\Source Files\serial.c</v>
+<v>SHW_full\SHW_full\Source Files\txsubsystem.c</v>
+<v>SHW_full\SHW_full\Generated_Source</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cy_boot</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cycodeshareexport.ld</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cycodeshareimport.ld</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cycodeshareimport.scat</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cydevice.h</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cydevice_trm.h</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cydevicegnu.inc</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cydevicegnu_trm.inc</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cydeviceiar.inc</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cydeviceiar_trm.inc</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cydevicerv.inc</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cydevicerv_trm.inc</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cydisabledsheets.h</v>
+<v>SHW_full\SHW_full\Generated_Source\PSoC5\cyfitter.h</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="SHW_full\SHW_full">
+<ExpandedNodeIds>
+<v>SHW_full</v>
+<v>SHW_full\SHW_full</v>
+<v>SHW_full\SHW_full\PerCounter</v>
+<v>SHW_full\SHW_full\PerCounter\PerCounter.cysch</v>
+<v>SHW_full\SHW_full\PerCounter\PerCounter.cysym</v>
+<v>SHW_full\SHW_full\PerCounter2bit</v>
+<v>SHW_full\SHW_full\PerCounter2bit\PerCounter2bit.cysch</v>
+<v>SHW_full\SHW_full\PerCounter2bit\PerCounter2bit.cysym</v>
+<v>SHW_full\SHW_full\PerCounter3bit</v>
+<v>SHW_full\SHW_full\PerCounter3bit\PerCounter3bit.cysch</v>
+<v>SHW_full\SHW_full\PerCounter3bit\PerCounter3bit.cysym</v>
+<v>SHW_full\SHW_full\TopDesign</v>
+<v>SHW_full\SHW_full\TopDesign\TopDesign.cysch</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>SHW_full</v>
+<v>SHW_full\SHW_full</v>
+<v>SHW_full\SHW_full\PerCounter</v>
+<v>SHW_full\SHW_full\PerCounter\PerCounter.cysch</v>
+<v>SHW_full\SHW_full\PerCounter\PerCounter.cysym</v>
+<v>SHW_full\SHW_full\PerCounter2bit</v>
+<v>SHW_full\SHW_full\PerCounter2bit\PerCounter2bit.cysch</v>
+<v>SHW_full\SHW_full\PerCounter2bit\PerCounter2bit.cysym</v>
+<v>SHW_full\SHW_full\PerCounter3bit</v>
+<v>SHW_full\SHW_full\PerCounter3bit\PerCounter3bit.cysch</v>
+<v>SHW_full\SHW_full\PerCounter3bit\PerCounter3bit.cysym</v>
+<v>SHW_full\SHW_full\TopDesign</v>
+<v>SHW_full\SHW_full\TopDesign\TopDesign.cysch</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>SHW_full</v>
+<v>SHW_full\SHW_full</v>
+<v>SHW_full\SHW_full\CortexM3</v>
+<v>SHW_full\SHW_full\CortexM3\ARM_GCC_541</v>
+<v>SHW_full\SHW_full\CortexM3\ARM_GCC_541\Debug</v>
+<v>SHW_full\SHW_full\CortexM3\ARM_GCC_541\Debug\SHW_full.elf</v>
+<v>SHW_full\SHW_full\CortexM3\ARM_GCC_541\Debug\SHW_full.hex</v>
+<v>SHW_full\SHW_full\CortexM3\ARM_GCC_541\Debug\SHW_full.map</v>
+<v>SHW_full\SHW_full\SHW_full.gpdsc</v>
+<v>SHW_full\SHW_full\SHW_full.rpt</v>
+<v>SHW_full\SHW_full\SHW_full_timing.html</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>SHW_full</v>
+<v>SHW_full\SHW_full</v>
+<v>SHW_full\SHW_full\CortexM3</v>
+<v>SHW_full\SHW_full\CortexM3\ARM_GCC_541</v>
+<v>SHW_full\SHW_full\CortexM3\ARM_GCC_541\Debug</v>
+<v>SHW_full\SHW_full\CortexM3\ARM_GCC_541\Debug\SHW_full.elf</v>
+<v>SHW_full\SHW_full\CortexM3\ARM_GCC_541\Debug\SHW_full.hex</v>
+<v>SHW_full\SHW_full\CortexM3\ARM_GCC_541\Debug\SHW_full.map</v>
+<v>SHW_full\SHW_full\SHW_full.gpdsc</v>
+<v>SHW_full\SHW_full\SHW_full.rpt</v>
+<v>SHW_full\SHW_full\SHW_full_timing.html</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+</TreeStates>
+<TreeKeysV2>
+<v>Datasheet</v>
+</TreeKeysV2>
+<TreeStatesV2>
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="">
+<ExpandedNodeIds>
+<v>SHW_full</v>
+<v>SHW_full\SHW_full</v>
+<v>SHW_full\SHW_full\PSoC 5LP Architecture TRM</v>
+<v>SHW_full\SHW_full\CY8C58LP Family Datasheet</v>
+<v>SHW_full\SHW_full\System Reference Guides</v>
+</ExpandedNodeIds>
+<VisibleNodeIds>
+<v>SHW_full</v>
+<v>SHW_full\SHW_full</v>
+<v>SHW_full\SHW_full\PSoC 5LP Architecture TRM</v>
+<v>SHW_full\SHW_full\CY8C58LP Family Datasheet</v>
+<v>SHW_full\SHW_full\System Reference Guides</v>
+</VisibleNodeIds>
+</CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
+</TreeStatesV2>
+</CyGuid_1b906a0f-a7b6-4e4d-a428-82f98b53cb35>
+</dataGuid>
+</userData>
+</CyGuid_fdba8dfd-b15b-4469-9bbb-9e40c3e70997>
+<Unloaded />
+<OpenDocs>
+<name v=".\SHW_full.cydsn\TopDesign\TopDesign.cysch" />
+<name v=".\SHW_full.cydsn\main.c" />
+<name v=".\SHW_full.cydsn\main.h" />
+<name v=".\SHW_full.cydsn\packetman.c" />
+<name v=".\SHW_full.cydsn\packetman.h" />
+<name v=".\SHW_full.cydsn\PerCounter3bit\PerCounter3bit.cysch" />
+</OpenDocs>
+<OpenDocsLayout><![CDATA[<?xml version="1.0"?><!--
+
+  Actipro Docking/MDI for WinForms
+  Copyright (c) 2001-2016 Actipro Software LLC.  All rights reserved.
+  http://www.actiprosoftware.com
+
+--><DocumentLayout Version="1.0"><LayoutData><TabbedMdiRootContainer Orientation="Horizontal"><TabbedMdiContainer Size="1389, 667" SelectedTabbedMdiWindow="c61d97c8-e54a-4408-83a3-168512799df4"><ToolWindow Key="Start Page:bd4649ab-da6b-4d04-a663-c722b8bf99db:Start Page" Guid="6a736ec8-7fce-480e-969c-74123bff5567" /><DocumentWindow Key="C:\Users\dr\OneDrive\Documents\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch" Guid="b3ea2ebc-06c7-490a-8ba3-ec64f683ae2c" /><DocumentWindow Key="C:\Users\dr\OneDrive\Documents\SHW_full\SHW_full.cydsn\main.c" Guid="08dac1b9-cf2f-474a-bbb3-fcf03d48172f" /><DocumentWindow Key="C:\Users\dr\OneDrive\Documents\SHW_full\SHW_full.cydsn\main.h" Guid="c61d97c8-e54a-4408-83a3-168512799df4" /><DocumentWindow Key="C:\Users\dr\OneDrive\Documents\SHW_full\SHW_full.cydsn\packetman.c" Guid="b3e6b5bc-d4ca-4dcf-be68-6fcb21bb0452" /><DocumentWindow Key="C:\Users\dr\OneDrive\Documents\SHW_full\SHW_full.cydsn\packetman.h" Guid="bce73b2f-6e36-42bf-8920-4fa5876c842d" /><DocumentWindow Key="C:\Users\dr\OneDrive\Documents\SHW_full\SHW_full.cydsn\PerCounter3bit\PerCounter3bit.cysch" Guid="9652aaec-fea4-4772-9027-c574ddfc722a" /></TabbedMdiContainer></TabbedMdiRootContainer><FloatingContainers /></LayoutData></DocumentLayout>]]></OpenDocsLayout>
+<config v="" />
+<AutoUpdate v="true" />
+</CyGuid_843a90a4-0c4b-4e44-991d-05e7fb117a21>
+</CyXmlSerializer>
