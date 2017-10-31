@@ -24,7 +24,8 @@ The packet payload is fed to a control register *CREG_PAY* via a DMA. A counter 
 
 ![alt text](images/tx/pay_sel.PNG?raw=true "Selecting payload bit")
 
-A shift register implemented by daisy-chainging [D flip-flops](https://en.wikipedia.org/wiki/Flip-flop_%28electronics%29#D_flip-flop) feeds the payload bits into a Hamming look-up table. The output Hamming codewords are hardcoded into the table. The table outputs are connected to a status register *SREG_HAM_OUT* to allow for a DMA transfer. The Hamming words are 7-bit, hence the bit *status_0* of *SREG_HAM_OUT* is connected to a logic low signal (0). 
+A shift register implemented by daisy-chainging [D flip-flops](https://en.wikipedia.org/wiki/Flip-flop_%28electronics%29#D_flip-flop) feeds the payload bits into a Hamming look-up table. The output Hamming codewords are hardcoded into the table. The table outputs are connected to a status register *SREG_HAM_OUT* to allow for a DMA transfer. The Hamming words are 7-bit, hence the bit *status_0* of *SREG_HAM_OUT* is connected to a logic low signal (0).
+
 ![alt text](images/tx/pay_shift.PNG?raw=true "Shifting payload bits")
 
 The Hamming codewords are realized using the generator matrix:
