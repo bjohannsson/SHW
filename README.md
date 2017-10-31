@@ -16,11 +16,16 @@ When transmitting a packet, the following task pipeline is triggered:
 The data to be transmitted (payload) is fed through a hardware [CRC](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) block that calculates the checksum. The payload is further encoded with a [Hamming(7,4,3)](https://en.wikipedia.org/wiki/Hamming_code) error correcting code. The resulting Hamming words are chopped into ARPWM symbols, L-number of bits per symbol, the number L being controlled by the system's dimming level. Upon transmitting each *compensation frame* of length 20 symbols, the device injects data-less *compensation symbols* into the transmission stream in order to maintain a non-flickering long-term average light intensity. When the whole payload has been fed through the chain, the CRC checksum is appended to the payload bits, getting wrapped in Hamming and converted to symbols in the same way as the payload.
 
 ### Payload to Hamming
+A [MUX](https://en.wikipedia.org/wiki/Multiplexer) and a [shift register](https://en.wikipedia.org/wiki/Shift_register) are implemented on the PSoC to enable shifting of individual bits from a writeable control register. A data bit is shifted out from the control register on the rising edge (hi) of a shift clock. The MUX output is switched at the subsequent falling edge (lo) of the same shift clock.
+
+![alt text](images/tx/shift_clock_ex.PNG?raw=true "Selecting payload bit")
+
 The packet payload is fed to a control register *CREG_PAY* via a DMA. A counter *SEL_PAY_OUT* and a MUX select the current payload bit to be fed to a Hamming look-up table.
 
 ![alt text](images/tx/pay_sel.PNG?raw=true "Selecting payload bit")
 
-A shift register implemented by daisy-chainging [D flip-flops](https://en.wikipedia.org/wiki/Flip-flop_%28electronics%29#D_flip-flop) feeds the payload bits into a Hamming look-up table. The output Hamming codewords are hardcoded into the table. The table outputs are connected to a status register *SREG_HAM_OUT* to allow for a DMA transfer. The Hamming words are 7-bit, hence the bit *status_0* of *SREG_HAM_OUT* is connected to a logic low signal (0). 
+A shift register implemented by daisy-chainging [D flip-flops](https://en.wikipedia.org/wiki/Flip-flop_%28electronics%29#D_flip-flop) feeds the payload bits into a Hamming look-up table. The output Hamming codewords are hardcoded into the table. The table outputs are connected to a status register *SREG_HAM_OUT* to allow for a DMA transfer. The Hamming words are 7-bit, hence the bit *status_0* of *SREG_HAM_OUT* is connected to a logic low signal (0).
+
 ![alt text](images/tx/pay_shift.PNG?raw=true "Shifting payload bits")
 
 The Hamming codewords are realized using the generator matrix:
@@ -36,6 +41,14 @@ G:
     0 0 0 1 0 1 1
     
 
+As an example, the data bitstream *1001* is encoded by summing up rows 0 and 3 (or 1 and 4 if you will) of the matrix G, resulting in a codeword:
+
+    G(0): 1 0 0 0 1 1 1
+    +
+    G(3): 0 0 0 1 0 1 1
+    =
+          1 0 0 1 1 0 0
+
 The corresponding parity matrix is:
 
 H:
@@ -47,7 +60,7 @@ H:
     1 0 1 1 0 0 1
     
 
-The parity matrix is used for decoding the Hamming words on the receiver side. The [syndrome decoding](https://en.wikipedia.org/wiki/Decoding_methods#Syndrome_decoding) method is used on the receiver.
+The parity matrix is used for decoding the Hamming words on the receiver side, where the [syndrome decoding](https://en.wikipedia.org/wiki/Decoding_methods#Syndrome_decoding) method is employed.
 
 To signal that a Hamming word is formed, we count the shifted payload bits with the following circuit:
 
