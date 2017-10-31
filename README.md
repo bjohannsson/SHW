@@ -5,7 +5,7 @@ Visible light communication controller on a PSoC.
 
 The device sends messages by modulating its LED, the messages to be picked up by another device and decoded. The modulation used is a novel scheme named ARPWM. A received ARPWM signal is de-modulated as a common PAM signal.
 
-The repository is in an active state, where improvements are being made on the device, mainly on the receiver side.
+The repository is in an active state, where improvements are being made on the device, mainly on the receiver side. Details of theoretical concepts are not discussed here, but are readily *googlable* for the interested reader.
 
 ## TX Subsystem
 When transmitting a packet, the following task pipeline is triggerer:
