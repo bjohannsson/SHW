@@ -3,22 +3,24 @@ Visible light communication controller on a PSoC.
 
 * Updates throughout the week of 30.10.2017-5.11.2017
 
+Are you looking for a guide on how a PSoC can be used to implement a low-cost [VLC](https://en.wikipedia.org/wiki/Visible_light_communication) controller? If yes, you are in luck. Throughout this document we will attempt to share how the programmable arrays of the PSoC are used to perform a chain of shift operations on data, providing a basis for a communication system. We use VLC in this project, but the idea is applicable to other forms of communication as well.
+
 The device sends messages by modulating its LED, the messages to be picked up by another device and decoded. The modulation used is a novel scheme named ARPWM. A received ARPWM signal is de-modulated as a the well known [PAM](https://en.wikipedia.org/wiki/Pulse-amplitude_modulation) signal.
 
-The repository is in an active state, where improvements are being made on the device, mainly on the receiver side. Details of theoretical concepts are not discussed here, but are readily *googlable* for the interested reader.
+The repository is in an active state, where improvements are being made on the device, mainly on the receiver side. Details of theoretical concepts are not discussed here, but are readily [*googlable*](https://www.google.com/) for the interested reader.
 
 ## TX Subsystem
-When transmitting a packet, the following task pipeline is triggerer:
+When transmitting a packet, the following task pipeline is triggered:
 ![alt text](images/tx/tx_tasks4.png?raw=true "Transmission task pipeline")
 
-The data to be transmitted (payload) is fed through a hardware CRC block that calculates the checksum. The payload is further encoded with a Hamming(7,4,3) error correcting code. The resulting Hamming words are chopped into ARPWM symbols, L-number of bits per symbol, the number L being controlled by the system's dimming level. Upon transmitting each *compensation frame* of length 20 symbols, the device injects data-less *compensation symbols* into the transmission stream in order to maintain a non-flickering long-term average light intensity. When the whole payload has been fed through the chain, the CRC checksum is appended to the payload bits, getting wrapped in Hamming and converted to symbols in the same way as the payload.
+The data to be transmitted (payload) is fed through a hardware [CRC](https://en.wikipedia.org/wiki/Cyclic_redundancy_check) block that calculates the checksum. The payload is further encoded with a [Hamming(7,4,3)](https://en.wikipedia.org/wiki/Hamming_code) error correcting code. The resulting Hamming words are chopped into ARPWM symbols, L-number of bits per symbol, the number L being controlled by the system's dimming level. Upon transmitting each *compensation frame* of length 20 symbols, the device injects data-less *compensation symbols* into the transmission stream in order to maintain a non-flickering long-term average light intensity. When the whole payload has been fed through the chain, the CRC checksum is appended to the payload bits, getting wrapped in Hamming and converted to symbols in the same way as the payload.
 
 ### Payload to Hamming
 The packet payload is fed to a control register *CREG_PAY* via a DMA. A counter *SEL_PAY_OUT* and a MUX select the current payload bit to be fed to a Hamming look-up table.
 
 ![alt text](images/tx/pay_sel.PNG?raw=true "Selecting payload bit")
 
-A shift register implemented by daisy-chainging D-flipflops feeds the payload bits into a Hamming look-up table. The output Hamming codewords are hardcoded into the table. The table outputs are connected to a status register *SREG_HAM_OUT* to allow for a DMA transfer. The Hamming words are 7-bit, hence the bit *status_0* of *SREG_HAM_OUT* is connected to a logic low signal (0). 
+A shift register implemented by daisy-chainging [D flip-flops](https://en.wikipedia.org/wiki/Flip-flop_%28electronics%29#D_flip-flop) feeds the payload bits into a Hamming look-up table. The output Hamming codewords are hardcoded into the table. The table outputs are connected to a status register *SREG_HAM_OUT* to allow for a DMA transfer. The Hamming words are 7-bit, hence the bit *status_0* of *SREG_HAM_OUT* is connected to a logic low signal (0). 
 ![alt text](images/tx/pay_shift.PNG?raw=true "Shifting payload bits")
 
 The Hamming codewords are realized using the generator matrix:
@@ -51,7 +53,7 @@ To signal that a Hamming word is formed, we count the shifted payload bits with 
 
 ![alt text](images/tx/ham_cnt_in.PNG?raw=true "Counting payload bits to Hamming")
 
-After every 4 shifts, an SR-flipflop is set, indicating a ready Hamming word. The SR-flipflop is reset when the codeword is transferred via a DMA channel, discussed later on.
+After every 4 shifts, an [SR flip-flop](http://www.learnabout-electronics.org/Digital/dig52.php) is set, indicating a ready Hamming word. The SR-flipflop is reset when the codeword is transferred via a DMA channel, discussed later on.
 
 The control logic for this part is shown in the following schematics.
 
