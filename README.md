@@ -3,7 +3,7 @@ Visible light communication controller on a PSoC.
 
 * Updates throughout the week of 30.10.2017-5.11.2017
 
-The device sends messages by modulating its LED, the messages to be picked up by another device and decoded. The modulation used is a novel scheme named ARPWM. A received ARPWM signal is de-modulated as a common PAM signal.
+The device sends messages by modulating its LED, the messages to be picked up by another device and decoded. The modulation used is a novel scheme named ARPWM. A received ARPWM signal is de-modulated as a the well known [PAM](https://en.wikipedia.org/wiki/Pulse-amplitude_modulation) signal.
 
 The repository is in an active state, where improvements are being made on the device, mainly on the receiver side. Details of theoretical concepts are not discussed here, but are readily *googlable* for the interested reader.
 
@@ -45,7 +45,7 @@ H:
     1 0 1 1 0 0 1
     
 
-The parity matrix is used for decoding the Hamming words on the receiver side. The syndrome decoding method is used on the receiver.
+The parity matrix is used for decoding the Hamming words on the receiver side. The [syndrome decoding](https://en.wikipedia.org/wiki/Decoding_methods#Syndrome_decoding) method is used on the receiver.
 
 To signal that a Hamming word is formed, we count the shifted payload bits with the following circuit:
 
