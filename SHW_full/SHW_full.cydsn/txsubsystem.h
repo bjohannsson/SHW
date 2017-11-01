@@ -1,20 +1,30 @@
-#if !defined(TXSUBSYSTEM_H)
+#ifndef TXSUBSYSTEM_H
 #define TXSUBSYSTEM_H
 
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
- * All Rights Reserved
- * UNPUBLISHED, LICENSED SOFTWARE.
+ * SHW - Visible light Communication Controller
+ * Bjarki Johannsson 2017
+ * Open Source
  *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
  *
  * ========================================
 */
 
 #include "project.h"
+#include "main.h"
 #include <stdbool.h>
+	
+/* Defines for DMA_HAM2SER */
+#define DMA_HAM2SER_BYTES_PER_BURST 1
+#define DMA_HAM2SER_REQUEST_PER_BURST 1
+#define DMA_HAM2SER_SRC_BASE (CYDEV_PERIPH_BASE)
+#define DMA_HAM2SER_DST_BASE (CYDEV_PERIPH_BASE)
+
+/* Variable declarations for DMA_HAM2SER */
+uint8 DMA_HAM2SER_Chan;
+uint8 DMA_HAM2SER_TD[1];
+
 	
 /* Define modulation level M in number of bits per symbol L */
 #define M2	1
@@ -26,7 +36,7 @@
 
 /* Prototypes and interrupt handlers */
 void INIT_TX_SUBSYSTEM(void);
-CY_ISR(ISR_SYM_h);
+CY_ISR(ISR_SYMB_h);
 CY_ISR(ISR_INJ_CHECK_h);
 CY_ISR(ISR_INJ_h);
 CY_ISR(ISR_TX_DONE_h);
@@ -52,28 +62,11 @@ int16 trackSum;
 uint8 symbolNext;
 uint8 lMask;
 
-/* Hamming matrices 
-Syndrome decoding method is used.
-
-Generator matrix: (codewords are hard-coded into look-up table LUT_HAM 
-uint8_t G[4][7] = {
-	{1, 0, 0, 0, 1, 1, 1},
-	{0, 1, 0, 0, 1, 1, 0},
-	{0, 0, 1, 0, 1, 0, 1},
-	{0, 0, 0, 1, 0, 1, 1}
-};
-*/
-uint8_t H[3][7];
-	/*= {
-	{1, 1, 1, 0, 1, 0, 0},
-	{1, 1, 0, 1, 0, 1, 0},
-	{1, 0, 1, 1, 0, 0, 1}
-};*/
 
 uint8_t symTx[31];
 uint8_t symCnt;
 
-uint8_t colValH[7];
+
 
 #endif /* TXSUBSYSTEM_H */
 /* [] END OF FILE */

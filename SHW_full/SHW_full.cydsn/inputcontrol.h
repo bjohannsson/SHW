@@ -1,17 +1,16 @@
-#if !defined(INPUTCONTROL_H)
+#ifndef INPUTCONTROL_H
 #define INPUTCONTROL_H
 
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
- * All Rights Reserved
- * UNPUBLISHED, LICENSED SOFTWARE.
+ * SHW - Visible light Communication Controller
+ * Bjarki Johannsson 2017
+ * Open Source
  *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
  *
  * ========================================
 */
+	
 #include "project.h"
 #include "stdbool.h"
 #include "math.h"

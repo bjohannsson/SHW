@@ -1,3 +1,13 @@
+/* ========================================
+ *
+ * SHW - Visible light Communication Controller
+ * Bjarki Johannsson 2017
+ * Open Source
+ *
+ *
+ * ========================================
+*/
+
 #include "dlm.h"
 
 void INIT_DLM() {

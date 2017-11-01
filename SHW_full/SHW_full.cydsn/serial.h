@@ -1,14 +1,12 @@
-#if !defined(SERIAL_H)
+#ifndef SERIAL_H
 #define SERIAL_H
 
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
- * All Rights Reserved
- * UNPUBLISHED, LICENSED SOFTWARE.
+ * SHW - Visible light Communication Controller
+ * Bjarki Johannsson 2017
+ * Open Source
  *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
  *
  * ========================================
 */
@@ -70,6 +68,8 @@
 #define GET_DATA				0x79
 #define RX_ON					0x80
 #define RX_OFF					0x81
+	
+#define INIT_TX					0x82
 
     
 // Serial Msg Type
@@ -89,6 +89,7 @@
 #define SER_TX_DEMOD_TH			0x14
 #define SER_TX_DEMOD_ERR		0x15
 #define SER_TX_DEMOD_CORR		0x16
+#define	SER_TX_SYM_TX			0x99 //check
 
 #define serMaskData         0x00
 #define serMaskCtrl         0x80
@@ -106,30 +107,21 @@
 
 
 // Function prototypes
-void INIT_CONTROL();   
-void serial_send_8bit(uint8* data, uint16 length, uint8 msgID);
-void serial_send_16bit(volatile uint16* data, uint16 length, uint8 msgID);
+void INIT_SERIAL();
+void serialResolve(uint8* b);
+void serialRead();
+void serialSend8bit(uint8* data, uint16 length, uint8 msgID);
+void serialSend16bit(uint16* data, uint16 length, uint8 msgID);
 void serial_send_s16bit(volatile int16* data, uint16 length, uint8 msgID);
-void control_serial_command(uint8* b); //resolve command from serial controller
-void send_signal();
-void send_signal_vdac();
-void send_48();
-void send_15();
-void send_82();
-void send_pulse();
-void get_steps();
+
 
 CY_ISR(ISR_I2C_s);
 void send_i2c(uint8 data);
 
-bool freeMode;
-bool led_1_on;
-bool ledChange;
-bool GOT_SERIAL_DATA_FLAG;
-bool GOT_SERIAL_PULSE_FLAG;
-bool GOT_SEND_48;
-bool GOT_SEND_15;
-bool GOT_SEND_82;
+uint8 bufferUart[64];
+
+bool FLAG_SER_EVENT;
+bool FLAG_SER_TX_INIT;
 
 
 int i;
@@ -139,6 +131,8 @@ uint8 levels_15[4];
 uint8 levels_82[4];
 
 uint8 serialTest[2];
+uint8 test8;
+uint16 test16;
 
 uint8 buffer_uart[BUFFER_LEN];
 

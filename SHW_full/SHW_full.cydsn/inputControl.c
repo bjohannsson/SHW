@@ -1,14 +1,13 @@
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
- * All Rights Reserved
- * UNPUBLISHED, LICENSED SOFTWARE.
+ * SHW - Visible light Communication Controller
+ * Bjarki Johannsson 2017
+ * Open Source
  *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
  *
  * ========================================
 */
+
 #include "inputcontrol.h"
 
 void INIT_INPUT_CONTROL()
@@ -25,8 +24,8 @@ void INIT_INPUT_CONTROL()
 	
 	
 	// Start DACs and comparators
-	DVDAC_SLOW_Start();
-	DVDAC_FAST_Start();
+	DAC_SLOW_Start();
+	DAC_FAST_Start();
     
 	COMP_SLOW_Start();
 	COMP_SLOW_Enable();
@@ -87,8 +86,8 @@ void calculateTh()
 	thFastValue = thFastMean + 2*thFastStd + 50;
 	
 	// Write to DVDAC
-	DVDAC_SLOW_SetValue(thSlowValue);
-	DVDAC_FAST_SetValue(thFastValue);
+	DAC_SLOW_SetValue(thSlowValue);
+	DAC_FAST_SetValue(thFastValue);
 	
 	// Increment buffer index
 	if (++thsi == N_TH_SLOW) thsi = 0;

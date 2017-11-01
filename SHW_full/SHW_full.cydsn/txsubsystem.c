@@ -1,11 +1,9 @@
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
- * All Rights Reserved
- * UNPUBLISHED, LICENSED SOFTWARE.
+ * SHW - Visible light Communication Controller
+ * Bjarki Johannsson 2017
+ * Open Source
  *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
  *
  * ========================================
 */
@@ -43,8 +41,8 @@ void INIT_TX_SUBSYSTEM(void)
 	
 	
 	/* Init ISRs */
-	ISR_SYM_StartEx(ISR_SYM_h);
-	ISR_SYM_Enable();
+	ISR_SYMB_StartEx(ISR_SYMB_h);
+	ISR_SYMB_Enable();
 	
 	ISR_INJ_StartEx(ISR_INJ_h);
 	ISR_INJ_Enable();
@@ -55,50 +53,22 @@ void INIT_TX_SUBSYSTEM(void)
 	ISR_TX_DONE_StartEx(ISR_TX_DONE_h);
 	ISR_TX_DONE_Enable();
 	
-	
-	H[0][0] = 1;
-	H[0][1] = 1;
-	H[0][2] = 1;
-	H[0][3] = 0;
-	H[0][4] = 1;
-	H[0][5] = 0;
-	H[0][6] = 0;
-	
-	H[0][0] = 1;
-	H[0][1] = 1;
-	H[0][2] = 0;
-	H[0][3] = 1;
-	H[0][4] = 0;
-	H[0][5] = 1;
-	H[0][6] = 0;
-	
-	H[0][0] = 1;
-	H[0][1] = 0;
-	H[0][2] = 1;
-	H[0][3] = 1;
-	H[0][4] = 0;
-	H[0][5] = 0;
-	H[0][6] = 1;
-
-	colValH[0] = 7;
-	colValH[1] = 6;
-	colValH[2] = 5;
-	colValH[3] = 3;
-	colValH[4] = 4;
-	colValH[5] = 2;
-	colValH[6] = 1;
-	
-
-	
 	/* Init DMAs */
+	DMA_HAM2SER_Chan = DMA_HAM2SER_DmaInitialize(DMA_HAM2SER_BYTES_PER_BURST, DMA_HAM2SER_REQUEST_PER_BURST, 
+	    HI16(DMA_HAM2SER_SRC_BASE), HI16(DMA_HAM2SER_DST_BASE));
+	DMA_HAM2SER_TD[0] = CyDmaTdAllocate();
+	CyDmaTdSetConfiguration(DMA_HAM2SER_TD[0], 1, DMA_HAM2SER_TD[0], 0);
+	CyDmaTdSetAddress(DMA_HAM2SER_TD[0], LO16((uint32)SREG_HAM_OUT_Status_PTR), LO16((uint32)CREG_SER_Control_PTR));
+	CyDmaChSetInitialTd(DMA_HAM2SER_Chan, DMA_HAM2SER_TD[0]);
+	CyDmaChEnable(DMA_HAM2SER_Chan, 1);
 	
 }
 
 
 /* Resolve next symbol */
-CY_ISR(ISR_SYM_h)
+CY_ISR(ISR_SYMB_h)
 {
-	uint8 sym = SREG_SYM_Read() & lMask;
+	uint8 sym = SREG_SYMB_Read() & lMask;
 	switch(modLevel) {
 		case M2:
 			symbolNext = m2[sym];
@@ -121,7 +91,7 @@ CY_ISR(ISR_SYM_h)
 	}
 	symTx[symCnt++] = sym;
 	
-	ISR_SYM_ClearPending();
+	ISR_SYMB_ClearPending();
 }
 
 

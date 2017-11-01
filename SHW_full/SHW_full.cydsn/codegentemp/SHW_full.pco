@@ -1,5 +1,5 @@
 # SHW_full
-# 2017-10-30 14:00:39Z
+# 2017-11-01 04:13:02Z
 
 # IO_0@[IOP=(1)][IoId=(0)] is reserved: SWDDebugEnabled
 dont_use_io iocell 1 0
@@ -8,3 +8,123 @@ dont_use_io iocell 1 1
 # IO_3@[IOP=(1)][IoId=(3)] is reserved: SWDDebugEnabled
 dont_use_io iocell 1 3
 set_location "ClockBlock" clockblockcell -1 -1 0
+set_io "Rx_1(0)" iocell 15 0
+set_io "Tx_1(0)" iocell 12 3
+set_io "Pin_1(0)" iocell 0 2
+set_io "Pin_2(0)" iocell 15 1
+set_io "Pin_3(0)" iocell 1 5
+set_io "Pin_4(0)" iocell 0 0
+set_io "Pin_5(0)" iocell 0 3
+set_io "\ADC_SAR:Bypass(0)\" iocell 0 4
+set_location "pay_en" 3 4 0 3
+set_location "pay_shift_hi" 2 5 1 3
+set_location "pay_shift_lo" 2 4 0 3
+set_location "Net_174" 3 5 1 3
+set_location "dma_ham2ser_trig" 3 4 1 0
+set_location "ser_en" 3 4 0 1
+set_location "ser_shift_hi" 2 5 1 2
+set_location "ser_shift_lo" 2 4 0 2
+set_location "symb_ready" 2 2 0 2
+set_location "Net_386" 2 2 0 0
+set_location "Net_447" 2 2 0 3
+set_location "Net_474" 2 5 0 1
+set_location "Net_537" 2 3 1 2
+set_location "\UART:BUART:counter_load_not\" 1 1 0 1
+set_location "\UART:BUART:tx_status_0\" 0 1 1 2
+set_location "\UART:BUART:tx_status_2\" 0 1 0 0
+set_location "\UART:BUART:rx_counter_load\" 3 1 0 0
+set_location "\UART:BUART:rx_postpoll\" 3 2 1 1
+set_location "\UART:BUART:rx_status_4\" 3 3 0 1
+set_location "\UART:BUART:rx_status_5\" 3 3 1 2
+set_location "rx_slot0" 1 1 0 2
+set_location "Net_939" 0 1 0 1
+set_location "\CREG_PAY:Sync:ctrl_reg\" 2 3 6
+set_location "\SREG_HAM_OUT:sts:sts_reg\" 3 5 3
+set_location "DMA_HAM2SER" drqcell -1 -1 1
+set_location "\CREG_SER:Sync:ctrl_reg\" 2 0 6
+set_location "\SREG_SYMB:sts:sts_reg\" 3 2 3
+set_location "DMA_PAY" drqcell -1 -1 2
+set_location "\CREG_L:Sync:ctrl_reg\" 2 2 6
+set_location "ISR_SYMB" interrupt -1 -1 2
+set_location "ISR_INJ_CHECK" interrupt -1 -1 1
+set_location "\UART:BUART:sTX:TxShifter:u0\" 0 1 2
+set_location "\UART:BUART:sTX:sCLOCK:TxBitClkGen\" 2 1 2
+set_location "\UART:BUART:sTX:TxSts\" 0 1 4
+set_location "\UART:BUART:sRX:RxShifter:u0\" 3 3 2
+set_location "\UART:BUART:sRX:RxBitCounter\" 3 1 7
+set_location "\UART:BUART:sRX:RxSts\" 3 3 4
+set_location "\CREG_INJ_DONE:Sync:ctrl_reg\" 3 4 6
+set_location "\PWM_LED:PWMUDB:genblk8:stsreg\" 2 4 4
+set_location "\PWM_LED:PWMUDB:sP8:pwmdp:u0\" 3 1 2
+set_location "\CREG_RX_SLOTS1:Sync:ctrl_reg\" 1 1 6
+set_location "\SREG_HEAD:sts:sts_reg\" 2 0 3
+set_location "\COMP_SLOW:ctComp\" comparatorcell -1 -1 0
+set_location "\COMP_FAST:ctComp\" comparatorcell -1 -1 2
+set_location "\DAC_SLOW:DMA\" drqcell -1 -1 4
+set_location "\DAC_SLOW:VDAC8:viDAC8\" vidaccell -1 -1 3
+set_location "\DAC_FAST:DMA\" drqcell -1 -1 3
+set_location "\DAC_FAST:VDAC8:viDAC8\" vidaccell -1 -1 1
+set_location "\ADC_SAR:IRQ\" interrupt -1 -1 3
+set_location "\ADC_SAR:ADC_SAR\" sarcell -1 -1 0
+set_location "DMA_AVG" drqcell -1 -1 0
+set_location "ISR_HEADER_READ" interrupt -1 -1 0
+set_location "Net_34_3" 3 4 1 2
+set_location "Net_34_2" 3 4 0 0
+set_location "Net_34_1" 3 4 1 3
+set_location "Net_34_0" 3 4 1 1
+set_location "Net_77_2" 2 2 1 1
+set_location "Net_77_1" 2 2 1 3
+set_location "Net_77_0" 2 2 1 0
+set_location "pay_en_lo" 2 4 0 1
+set_location "Net_146" 3 5 1 2
+set_location "Net_142" 2 3 0 2
+set_location "Net_209_1" 3 5 1 0
+set_location "Net_209_0" 3 5 1 1
+set_location "ham_full" 3 5 0 2
+set_location "Net_280_2" 3 3 1 0
+set_location "Net_280_1" 3 3 1 1
+set_location "Net_280_0" 2 4 1 3
+set_location "cydff_5" 2 0 0 0
+set_location "cydff_6" 3 2 0 3
+set_location "cydff_7" 3 2 0 0
+set_location "cydff_8" 3 2 0 1
+set_location "cydff_9" 3 2 0 2
+set_location "ser_en_lo" 2 4 0 0
+set_location "Net_420_2" 2 4 1 0
+set_location "Net_420_1" 2 4 1 1
+set_location "Net_420_0" 2 4 1 2
+set_location "cy_srff_4" 3 5 0 0
+set_location "Net_485_4" 2 5 0 0
+set_location "Net_485_3" 2 5 0 2
+set_location "Net_485_2" 2 5 0 3
+set_location "Net_485_1" 2 5 1 0
+set_location "Net_485_0" 2 5 1 1
+set_location "\UART:BUART:txn\" 1 1 1 0
+set_location "\UART:BUART:tx_state_1\" 1 1 0 3
+set_location "\UART:BUART:tx_state_0\" 0 1 1 0
+set_location "\UART:BUART:tx_state_2\" 1 1 0 0
+set_location "\UART:BUART:tx_bitclk\" 0 1 1 1
+set_location "\UART:BUART:tx_ctrl_mark_last\" 1 1 1 3
+set_location "\UART:BUART:rx_state_0\" 3 2 1 2
+set_location "\UART:BUART:rx_load_fifo\" 3 1 1 1
+set_location "\UART:BUART:rx_state_3\" 3 1 1 2
+set_location "\UART:BUART:rx_state_2\" 3 0 1 0
+set_location "\UART:BUART:rx_bitclk_enable\" 3 1 0 3
+set_location "\UART:BUART:rx_state_stop1_reg\" 3 1 1 3
+set_location "\UART:BUART:pollcount_1\" 3 1 0 1
+set_location "\UART:BUART:pollcount_0\" 3 1 0 2
+set_location "\UART:BUART:rx_status_3\" 3 2 1 0
+set_location "\UART:BUART:rx_last\" 3 0 1 2
+set_location "\PWM_LED:PWMUDB:prevCompare1\" 2 3 1 3
+set_location "\PWM_LED:PWMUDB:status_0\" 2 3 1 0
+set_location "Net_617" 3 5 0 3
+set_location "symb_inj_done" 3 5 0 1
+set_location "h3" 2 0 1 1
+set_location "h2" 2 0 1 3
+set_location "h1" 2 0 1 0
+set_location "h0" 2 1 0 1
+set_location "Net_758" 2 1 0 2
+set_location "Net_759" 2 1 1 1
+set_location "Net_760" 2 1 0 3
+set_location "Net_761" 3 0 0 1
+set_location "Net_923_2" 0 1 0 2

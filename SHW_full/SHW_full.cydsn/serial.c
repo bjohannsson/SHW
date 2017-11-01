@@ -1,11 +1,9 @@
 /* ========================================
  *
- * Copyright YOUR COMPANY, THE YEAR
- * All Rights Reserved
- * UNPUBLISHED, LICENSED SOFTWARE.
+ * SHW - Visible light Communication Controller
+ * Bjarki Johannsson 2017
+ * Open Source
  *
- * CONFIDENTIAL AND PROPRIETARY INFORMATION
- * WHICH IS THE PROPERTY OF your company.
  *
  * ========================================
 */
@@ -19,8 +17,8 @@ void INIT_SERIAL()
 	UART_Start();
 	
 	
-    serial_test[0] = 0x39;
-    serial_test[1] = 0x37;
+    serialTest[0] = 0x39;
+    serialTest[1] = 0x37;
 	test8 = 21;
 	test16 = 999;
 }
@@ -30,7 +28,7 @@ void serialResolve(uint8* b)
     switch(*b) {
 
         case SERIAL_TEST:
-            serialSend8bit(&serial_test[0], 2, SER_TX_TEST);
+            serialSend8bit(&serialTest[0], 2, SER_TX_TEST);
             serialSend8bit(&test8, 1, SER_TX_TEST8);
             serialSend16bit(&test16, 1, SER_TX_TEST16);
             break;
@@ -99,10 +97,10 @@ void serialSend8bit(uint8* data, uint16 length, uint8 msgID)
     uint8 bytes[3];
 
     for (i=0; i<length; i++) {
-        if (length > 1) bytes[0] = SER_MASK_CTRL | SER_MASK_8BIT | SER_MASK_ARRAY | ((data[i] & 0xF0) >> 4);
-        else bytes[0] = SER_MASK_CTRL | SER_MASK_8BIT | SER_MASK_SINGLE | ((data[i] & 0xF0) >> 4);
+        if (length > 1) bytes[0] = serMaskCtrl | serMask8bit | serMaskArray | ((data[i] & 0xF0) >> 4);
+        else bytes[0] = serMaskCtrl | serMask8bit | serMaskSingle | ((data[i] & 0xF0) >> 4);
         
-        bytes[1] = SER_MASK_DATA | SER_MASK_8BIT | ((data[i] & 0x0F) << 2);
+        bytes[1] = serMaskData | serMask8bit | ((data[i] & 0x0F) << 2);
         bytes[2] = msgID;
         
         if (uart_type == UART_FTDI) {
@@ -122,11 +120,11 @@ void serialSend16bit(uint16* data, uint16 length, uint8 msgID)
     uint8 bytes[4];
 
     for (i=0; i<length; i++) {
-        if (length > 1) bytes[0] = SER_MASK_CTRL | SER_MASK_16BIT | SER_MASK_ARRAY | ((data[i] & 0xF000) >> 12);
-        else bytes[0] = SER_MASK_CTRL | SER_MASK_16BIT | SER_MASK_SINGLE | ((data[i] & 0x0F00) >> 12);
+        if (length > 1) bytes[0] = serMaskCtrl | serMask16bit | serMaskArray | ((data[i] & 0xF000) >> 12);
+        else bytes[0] = serMaskCtrl | serMask16bit | serMaskSingle | ((data[i] & 0x0F00) >> 12);
         
-        bytes[1] = SER_MASK_DATA | SER_MASK_16BIT | ((data[i] & 0x0FC0) >> 6);
-        bytes[2] = SER_MASK_DATA | SER_MASK_16BIT | ((data[i] & 0x003F));
+        bytes[1] = serMaskData | serMask16bit | ((data[i] & 0x0FC0) >> 6);
+        bytes[2] = serMaskData | serMask16bit | ((data[i] & 0x003F));
         bytes[3] = msgID;
         
         if (uart_type == UART_FTDI) {
@@ -140,7 +138,7 @@ void serialSend16bit(uint16* data, uint16 length, uint8 msgID)
 
 }
 
-void serial_send_s16bit(volatile int16* data, uint16 length, uint8 msgID) 
+void serial_send_s16bit(volatile int16* data, uint16 length, uint8 msgID)
 {
     uint16 i;
     uint8 bytes[4];

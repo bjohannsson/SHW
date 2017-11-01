@@ -1,0 +1,3449 @@
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"txsubsystem.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.ISR_SYMB_h,"ax",%progbits
+  20              		.align	2
+  21              		.global	ISR_SYMB_h
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	ISR_SYMB_h, %function
+  25              	ISR_SYMB_h:
+  26              	.LFB64:
+  27              		.file 1 "txsubsystem.c"
+   1:txsubsystem.c **** /* ========================================
+   2:txsubsystem.c ****  *
+   3:txsubsystem.c ****  * SHW - Visible light Communication Controller
+   4:txsubsystem.c ****  * Bjarki Johannsson 2017
+   5:txsubsystem.c ****  * Open Source
+   6:txsubsystem.c ****  *
+   7:txsubsystem.c ****  *
+   8:txsubsystem.c ****  * ========================================
+   9:txsubsystem.c **** */
+  10:txsubsystem.c **** 
+  11:txsubsystem.c **** #include "txsubsystem.h"
+  12:txsubsystem.c **** #include "main.h"
+  13:txsubsystem.c **** 
+  14:txsubsystem.c **** void INIT_TX_SUBSYSTEM(void)
+  15:txsubsystem.c **** {
+  16:txsubsystem.c **** 
+  17:txsubsystem.c **** 	/* Initialize compensation tracking values */
+  18:txsubsystem.c **** 	m2Track[0] = -1;
+  19:txsubsystem.c **** 	m2Track[1] = 1;
+  20:txsubsystem.c **** 	int i;
+  21:txsubsystem.c **** 	for (i=0; i<2; i++) {
+  22:txsubsystem.c **** 		
+  23:txsubsystem.c **** 		m4Track[i] = -3 + 2*i;
+  24:txsubsystem.c **** 		m4Track[i+2] = 1 + 2*i;
+  25:txsubsystem.c **** 	}
+  26:txsubsystem.c **** 	for (i=0; i<4; i++) {
+  27:txsubsystem.c **** 		
+  28:txsubsystem.c **** 		m8Track[i] = -7 + 2*i;
+  29:txsubsystem.c **** 		m8Track[i+4] = 1 + 2*i;
+  30:txsubsystem.c **** 	}
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 2
+
+
+  31:txsubsystem.c **** 	for (i=0; i<8; i++) {
+  32:txsubsystem.c **** 		
+  33:txsubsystem.c **** 		m16Track[i] = -15 + 2*i;
+  34:txsubsystem.c **** 		m16Track[i+8] = 1 + 2*i;
+  35:txsubsystem.c **** 	}
+  36:txsubsystem.c **** 	for (i=0; i<16; i++) {
+  37:txsubsystem.c **** 		
+  38:txsubsystem.c **** 		m32Track[i] = -31 + 2*i;
+  39:txsubsystem.c **** 		m32Track[i+16] = 1 + 2*i;
+  40:txsubsystem.c **** 	}
+  41:txsubsystem.c **** 	
+  42:txsubsystem.c **** 	
+  43:txsubsystem.c **** 	/* Init ISRs */
+  44:txsubsystem.c **** 	ISR_SYMB_StartEx(ISR_SYMB_h);
+  45:txsubsystem.c **** 	ISR_SYMB_Enable();
+  46:txsubsystem.c **** 	
+  47:txsubsystem.c **** 	ISR_INJ_StartEx(ISR_INJ_h);
+  48:txsubsystem.c **** 	ISR_INJ_Enable();
+  49:txsubsystem.c **** 	
+  50:txsubsystem.c **** 	ISR_INJ_CHECK_StartEx(ISR_INJ_CHECK_h);
+  51:txsubsystem.c **** 	ISR_INJ_CHECK_Enable();
+  52:txsubsystem.c **** 	
+  53:txsubsystem.c **** 	ISR_TX_DONE_StartEx(ISR_TX_DONE_h);
+  54:txsubsystem.c **** 	ISR_TX_DONE_Enable();
+  55:txsubsystem.c **** 	
+  56:txsubsystem.c **** 	/* Init DMAs */
+  57:txsubsystem.c **** 	DMA_HAM2SER_Chan = DMA_HAM2SER_DmaInitialize(DMA_HAM2SER_BYTES_PER_BURST, DMA_HAM2SER_REQUEST_PER_
+  58:txsubsystem.c **** 	    HI16(DMA_HAM2SER_SRC_BASE), HI16(DMA_HAM2SER_DST_BASE));
+  59:txsubsystem.c **** 	DMA_HAM2SER_TD[0] = CyDmaTdAllocate();
+  60:txsubsystem.c **** 	CyDmaTdSetConfiguration(DMA_HAM2SER_TD[0], 1, DMA_HAM2SER_TD[0], 0);
+  61:txsubsystem.c **** 	CyDmaTdSetAddress(DMA_HAM2SER_TD[0], LO16((uint32)SREG_HAM_OUT_Status_PTR), LO16((uint32)CREG_SER_
+  62:txsubsystem.c **** 	CyDmaChSetInitialTd(DMA_HAM2SER_Chan, DMA_HAM2SER_TD[0]);
+  63:txsubsystem.c **** 	CyDmaChEnable(DMA_HAM2SER_Chan, 1);
+  64:txsubsystem.c **** 	
+  65:txsubsystem.c **** }
+  66:txsubsystem.c **** 
+  67:txsubsystem.c **** 
+  68:txsubsystem.c **** /* Resolve next symbol */
+  69:txsubsystem.c **** CY_ISR(ISR_SYMB_h)
+  70:txsubsystem.c **** {
+  28              		.loc 1 70 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  71:txsubsystem.c **** 	uint8 sym = SREG_SYMB_Read() & lMask;
+  36              		.loc 1 71 0
+  37 0002 FFF7FEFF 		bl	SREG_SYMB_Read
+  38              	.LVL0:
+  39 0006 204B     		ldr	r3, .L9
+  40 0008 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  41 000a 1840     		ands	r0, r0, r3
+  42              	.LVL1:
+  72:txsubsystem.c **** 	switch(modLevel) {
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 3
+
+
+  43              		.loc 1 72 0
+  44 000c 1F4B     		ldr	r3, .L9+4
+  45 000e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+  46 0010 013B     		subs	r3, r3, #1
+  47 0012 032B     		cmp	r3, #3
+  48 0014 2ED8     		bhi	.L2
+  49 0016 DFE803F0 		tbb	[pc, r3]
+  50              	.L4:
+  51 001a 02       		.byte	(.L3-.L4)/2
+  52 001b 0D       		.byte	(.L5-.L4)/2
+  53 001c 18       		.byte	(.L6-.L4)/2
+  54 001d 23       		.byte	(.L7-.L4)/2
+  55              		.p2align 1
+  56              	.L3:
+  73:txsubsystem.c **** 		case M2:
+  74:txsubsystem.c **** 			symbolNext = m2[sym];
+  57              		.loc 1 74 0
+  58 001e 1C4B     		ldr	r3, .L9+8
+  59 0020 1A5C     		ldrb	r2, [r3, r0]	@ zero_extendqisi2
+  60 0022 1C4B     		ldr	r3, .L9+12
+  61 0024 1A70     		strb	r2, [r3]
+  75:txsubsystem.c **** 			trackSum += m2Track[sym];
+  62              		.loc 1 75 0
+  63 0026 1C4B     		ldr	r3, .L9+16
+  64 0028 1956     		ldrsb	r1, [r3, r0]
+  65 002a 1C4A     		ldr	r2, .L9+20
+  66 002c 1388     		ldrh	r3, [r2]
+  67 002e 0B44     		add	r3, r3, r1
+  68 0030 1380     		strh	r3, [r2]	@ movhi
+  76:txsubsystem.c **** 			break;
+  69              		.loc 1 76 0
+  70 0032 1FE0     		b	.L2
+  71              	.L5:
+  77:txsubsystem.c **** 		case M4:
+  78:txsubsystem.c **** 			symbolNext = m4[sym];
+  72              		.loc 1 78 0
+  73 0034 1A4B     		ldr	r3, .L9+24
+  74 0036 1A5C     		ldrb	r2, [r3, r0]	@ zero_extendqisi2
+  75 0038 164B     		ldr	r3, .L9+12
+  76 003a 1A70     		strb	r2, [r3]
+  79:txsubsystem.c **** 			trackSum += m4Track[sym];
+  77              		.loc 1 79 0
+  78 003c 194B     		ldr	r3, .L9+28
+  79 003e 1956     		ldrsb	r1, [r3, r0]
+  80 0040 164A     		ldr	r2, .L9+20
+  81 0042 1388     		ldrh	r3, [r2]
+  82 0044 0B44     		add	r3, r3, r1
+  83 0046 1380     		strh	r3, [r2]	@ movhi
+  80:txsubsystem.c **** 			break;
+  84              		.loc 1 80 0
+  85 0048 14E0     		b	.L2
+  86              	.L6:
+  81:txsubsystem.c **** 		case M8:
+  82:txsubsystem.c **** 			symbolNext = m8[sym];
+  87              		.loc 1 82 0
+  88 004a 174B     		ldr	r3, .L9+32
+  89 004c 1A5C     		ldrb	r2, [r3, r0]	@ zero_extendqisi2
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 4
+
+
+  90 004e 114B     		ldr	r3, .L9+12
+  91 0050 1A70     		strb	r2, [r3]
+  83:txsubsystem.c **** 			trackSum += m8Track[sym];
+  92              		.loc 1 83 0
+  93 0052 164B     		ldr	r3, .L9+36
+  94 0054 1956     		ldrsb	r1, [r3, r0]
+  95 0056 114A     		ldr	r2, .L9+20
+  96 0058 1388     		ldrh	r3, [r2]
+  97 005a 0B44     		add	r3, r3, r1
+  98 005c 1380     		strh	r3, [r2]	@ movhi
+  84:txsubsystem.c **** 			break;
+  99              		.loc 1 84 0
+ 100 005e 09E0     		b	.L2
+ 101              	.L7:
+  85:txsubsystem.c **** 		case M16:
+  86:txsubsystem.c **** 			symbolNext = m16[sym];
+ 102              		.loc 1 86 0
+ 103 0060 134B     		ldr	r3, .L9+40
+ 104 0062 1A5C     		ldrb	r2, [r3, r0]	@ zero_extendqisi2
+ 105 0064 0B4B     		ldr	r3, .L9+12
+ 106 0066 1A70     		strb	r2, [r3]
+  87:txsubsystem.c **** 			trackSum += m16Track[sym];
+ 107              		.loc 1 87 0
+ 108 0068 124B     		ldr	r3, .L9+44
+ 109 006a 1956     		ldrsb	r1, [r3, r0]
+ 110 006c 0B4A     		ldr	r2, .L9+20
+ 111 006e 1388     		ldrh	r3, [r2]
+ 112 0070 0B44     		add	r3, r3, r1
+ 113 0072 1380     		strh	r3, [r2]	@ movhi
+ 114              	.L2:
+  88:txsubsystem.c **** 			break;
+  89:txsubsystem.c **** 		default:
+  90:txsubsystem.c **** 			break;
+  91:txsubsystem.c **** 	}
+  92:txsubsystem.c **** 	symTx[symCnt++] = sym;
+ 115              		.loc 1 92 0
+ 116 0074 104A     		ldr	r2, .L9+48
+ 117 0076 1378     		ldrb	r3, [r2]	@ zero_extendqisi2
+ 118 0078 591C     		adds	r1, r3, #1
+ 119 007a 1170     		strb	r1, [r2]
+ 120 007c 0F4A     		ldr	r2, .L9+52
+ 121 007e D054     		strb	r0, [r2, r3]
+  93:txsubsystem.c **** 	
+  94:txsubsystem.c **** 	ISR_SYMB_ClearPending();
+ 122              		.loc 1 94 0
+ 123 0080 FFF7FEFF 		bl	ISR_SYMB_ClearPending
+ 124              	.LVL2:
+ 125 0084 08BD     		pop	{r3, pc}
+ 126              	.L10:
+ 127 0086 00BF     		.align	2
+ 128              	.L9:
+ 129 0088 00000000 		.word	lMask
+ 130 008c 00000000 		.word	modLevel
+ 131 0090 00000000 		.word	m2
+ 132 0094 00000000 		.word	symbolNext
+ 133 0098 00000000 		.word	m2Track
+ 134 009c 00000000 		.word	trackSum
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 5
+
+
+ 135 00a0 00000000 		.word	m4
+ 136 00a4 00000000 		.word	m4Track
+ 137 00a8 00000000 		.word	m8
+ 138 00ac 00000000 		.word	m8Track
+ 139 00b0 00000000 		.word	m16
+ 140 00b4 00000000 		.word	m16Track
+ 141 00b8 00000000 		.word	symCnt
+ 142 00bc 00000000 		.word	symTx
+ 143              		.cfi_endproc
+ 144              	.LFE64:
+ 145              		.size	ISR_SYMB_h, .-ISR_SYMB_h
+ 146              		.section	.text.ISR_INJ_CHECK_h,"ax",%progbits
+ 147              		.align	2
+ 148              		.global	ISR_INJ_CHECK_h
+ 149              		.thumb
+ 150              		.thumb_func
+ 151              		.type	ISR_INJ_CHECK_h, %function
+ 152              	ISR_INJ_CHECK_h:
+ 153              	.LFB65:
+  95:txsubsystem.c **** }
+  96:txsubsystem.c **** 
+  97:txsubsystem.c **** 
+  98:txsubsystem.c **** /* Check if injection is required */
+  99:txsubsystem.c **** CY_ISR(ISR_INJ_CHECK_h)
+ 100:txsubsystem.c **** {
+ 154              		.loc 1 100 0
+ 155              		.cfi_startproc
+ 156              		@ args = 0, pretend = 0, frame = 0
+ 157              		@ frame_needed = 0, uses_anonymous_args = 0
+ 158 0000 08B5     		push	{r3, lr}
+ 159              		.cfi_def_cfa_offset 8
+ 160              		.cfi_offset 3, -8
+ 161              		.cfi_offset 14, -4
+ 101:txsubsystem.c **** 	if (trackSum == 0) {
+ 162              		.loc 1 101 0
+ 163 0002 064B     		ldr	r3, .L14
+ 164 0004 B3F90030 		ldrsh	r3, [r3]
+ 165 0008 2BB9     		cbnz	r3, .L12
+ 166              	.LBB2:
+ 102:txsubsystem.c **** 		
+ 103:txsubsystem.c **** 		CREG_INJ_RES_Write(1);
+ 167              		.loc 1 103 0
+ 168 000a 0120     		movs	r0, #1
+ 169 000c FFF7FEFF 		bl	CREG_INJ_RES_Write
+ 170              	.LVL3:
+ 104:txsubsystem.c **** 		CREG_INJ_RES_Write(0);
+ 171              		.loc 1 104 0
+ 172 0010 0020     		movs	r0, #0
+ 173 0012 FFF7FEFF 		bl	CREG_INJ_RES_Write
+ 174              	.LVL4:
+ 175              	.L12:
+ 176              	.LBE2:
+ 105:txsubsystem.c **** 	}
+ 106:txsubsystem.c **** 
+ 107:txsubsystem.c **** 	
+ 108:txsubsystem.c **** 	ISR_INJ_CHECK_ClearPending();
+ 177              		.loc 1 108 0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 6
+
+
+ 178 0016 FFF7FEFF 		bl	ISR_INJ_CHECK_ClearPending
+ 179              	.LVL5:
+ 180 001a 08BD     		pop	{r3, pc}
+ 181              	.L15:
+ 182              		.align	2
+ 183              	.L14:
+ 184 001c 00000000 		.word	trackSum
+ 185              		.cfi_endproc
+ 186              	.LFE65:
+ 187              		.size	ISR_INJ_CHECK_h, .-ISR_INJ_CHECK_h
+ 188              		.section	.text.ISR_INJ_h,"ax",%progbits
+ 189              		.align	2
+ 190              		.global	ISR_INJ_h
+ 191              		.thumb
+ 192              		.thumb_func
+ 193              		.type	ISR_INJ_h, %function
+ 194              	ISR_INJ_h:
+ 195              	.LFB66:
+ 109:txsubsystem.c **** }
+ 110:txsubsystem.c **** 
+ 111:txsubsystem.c **** 
+ 112:txsubsystem.c **** /* Resolve next injected symbol */
+ 113:txsubsystem.c **** CY_ISR(ISR_INJ_h)
+ 114:txsubsystem.c **** {
+ 196              		.loc 1 114 0
+ 197              		.cfi_startproc
+ 198              		@ args = 0, pretend = 0, frame = 0
+ 199              		@ frame_needed = 0, uses_anonymous_args = 0
+ 200 0000 08B5     		push	{r3, lr}
+ 201              		.cfi_def_cfa_offset 8
+ 202              		.cfi_offset 3, -8
+ 203              		.cfi_offset 14, -4
+ 115:txsubsystem.c **** 	switch(modLevel) {
+ 204              		.loc 1 115 0
+ 205 0002 544B     		ldr	r3, .L34
+ 206 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 207 0006 022B     		cmp	r3, #2
+ 208 0008 19D0     		beq	.L18
+ 209 000a 032B     		cmp	r3, #3
+ 210 000c 41D0     		beq	.L19
+ 211 000e 012B     		cmp	r3, #1
+ 212 0010 40F09280 		bne	.L17
+ 116:txsubsystem.c **** 		case M2:
+ 117:txsubsystem.c **** 			if (trackSum < 0) {
+ 213              		.loc 1 117 0
+ 214 0014 504B     		ldr	r3, .L34+4
+ 215 0016 B3F90030 		ldrsh	r3, [r3]
+ 216 001a 002B     		cmp	r3, #0
+ 217 001c 07DA     		bge	.L21
+ 118:txsubsystem.c **** 				
+ 119:txsubsystem.c **** 				symbolNext = m2[1];
+ 218              		.loc 1 119 0
+ 219 001e 4F4A     		ldr	r2, .L34+8
+ 220 0020 5178     		ldrb	r1, [r2, #1]	@ zero_extendqisi2
+ 221 0022 4F4A     		ldr	r2, .L34+12
+ 222 0024 1170     		strb	r1, [r2]
+ 120:txsubsystem.c **** 				trackSum ++;
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 7
+
+
+ 223              		.loc 1 120 0
+ 224 0026 0133     		adds	r3, r3, #1
+ 225 0028 4B4A     		ldr	r2, .L34+4
+ 226 002a 1380     		strh	r3, [r2]	@ movhi
+ 227 002c 84E0     		b	.L17
+ 228              	.L21:
+ 121:txsubsystem.c **** 			}
+ 122:txsubsystem.c **** 			else {
+ 123:txsubsystem.c **** 				
+ 124:txsubsystem.c **** 				symbolNext = m2[0];
+ 229              		.loc 1 124 0
+ 230 002e 4B4A     		ldr	r2, .L34+8
+ 231 0030 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 232 0032 4B4A     		ldr	r2, .L34+12
+ 233 0034 1170     		strb	r1, [r2]
+ 125:txsubsystem.c **** 				trackSum --;
+ 234              		.loc 1 125 0
+ 235 0036 013B     		subs	r3, r3, #1
+ 236 0038 474A     		ldr	r2, .L34+4
+ 237 003a 1380     		strh	r3, [r2]	@ movhi
+ 238 003c 7CE0     		b	.L17
+ 239              	.L18:
+ 126:txsubsystem.c **** 			}
+ 127:txsubsystem.c **** 			break;
+ 128:txsubsystem.c **** 		case M4:
+ 129:txsubsystem.c **** 			if (trackSum < 0) {
+ 240              		.loc 1 129 0
+ 241 003e 464B     		ldr	r3, .L34+4
+ 242 0040 B3F90030 		ldrsh	r3, [r3]
+ 243 0044 002B     		cmp	r3, #0
+ 244 0046 12DA     		bge	.L22
+ 130:txsubsystem.c **** 				
+ 131:txsubsystem.c **** 				if (trackSum < -1) {
+ 245              		.loc 1 131 0
+ 246 0048 B3F1FF3F 		cmp	r3, #-1
+ 247 004c 07DA     		bge	.L23
+ 132:txsubsystem.c **** 					
+ 133:txsubsystem.c **** 					symbolNext = m4[3];
+ 248              		.loc 1 133 0
+ 249 004e 454A     		ldr	r2, .L34+16
+ 250 0050 D178     		ldrb	r1, [r2, #3]	@ zero_extendqisi2
+ 251 0052 434A     		ldr	r2, .L34+12
+ 252 0054 1170     		strb	r1, [r2]
+ 134:txsubsystem.c **** 					trackSum += 3;
+ 253              		.loc 1 134 0
+ 254 0056 0333     		adds	r3, r3, #3
+ 255 0058 3F4A     		ldr	r2, .L34+4
+ 256 005a 1380     		strh	r3, [r2]	@ movhi
+ 257 005c 6CE0     		b	.L17
+ 258              	.L23:
+ 135:txsubsystem.c **** 				}
+ 136:txsubsystem.c **** 				else {
+ 137:txsubsystem.c **** 					
+ 138:txsubsystem.c **** 					symbolNext = m4[2];
+ 259              		.loc 1 138 0
+ 260 005e 414A     		ldr	r2, .L34+16
+ 261 0060 9178     		ldrb	r1, [r2, #2]	@ zero_extendqisi2
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 8
+
+
+ 262 0062 3F4A     		ldr	r2, .L34+12
+ 263 0064 1170     		strb	r1, [r2]
+ 139:txsubsystem.c **** 					trackSum += 1;
+ 264              		.loc 1 139 0
+ 265 0066 0133     		adds	r3, r3, #1
+ 266 0068 3B4A     		ldr	r2, .L34+4
+ 267 006a 1380     		strh	r3, [r2]	@ movhi
+ 268 006c 64E0     		b	.L17
+ 269              	.L22:
+ 140:txsubsystem.c **** 				}
+ 141:txsubsystem.c **** 			}
+ 142:txsubsystem.c **** 			else {
+ 143:txsubsystem.c **** 				
+ 144:txsubsystem.c **** 				if (trackSum > 1) {
+ 270              		.loc 1 144 0
+ 271 006e 012B     		cmp	r3, #1
+ 272 0070 07DD     		ble	.L24
+ 145:txsubsystem.c **** 					
+ 146:txsubsystem.c **** 					symbolNext = m4[0];
+ 273              		.loc 1 146 0
+ 274 0072 3C4A     		ldr	r2, .L34+16
+ 275 0074 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 276 0076 3A4A     		ldr	r2, .L34+12
+ 277 0078 1170     		strb	r1, [r2]
+ 147:txsubsystem.c **** 					trackSum -= 3;
+ 278              		.loc 1 147 0
+ 279 007a 033B     		subs	r3, r3, #3
+ 280 007c 364A     		ldr	r2, .L34+4
+ 281 007e 1380     		strh	r3, [r2]	@ movhi
+ 282 0080 5AE0     		b	.L17
+ 283              	.L24:
+ 148:txsubsystem.c **** 				}
+ 149:txsubsystem.c **** 				else {
+ 150:txsubsystem.c **** 					
+ 151:txsubsystem.c **** 					symbolNext = m4[1];
+ 284              		.loc 1 151 0
+ 285 0082 384A     		ldr	r2, .L34+16
+ 286 0084 5178     		ldrb	r1, [r2, #1]	@ zero_extendqisi2
+ 287 0086 364A     		ldr	r2, .L34+12
+ 288 0088 1170     		strb	r1, [r2]
+ 152:txsubsystem.c **** 					trackSum -= 1;
+ 289              		.loc 1 152 0
+ 290 008a 013B     		subs	r3, r3, #1
+ 291 008c 324A     		ldr	r2, .L34+4
+ 292 008e 1380     		strh	r3, [r2]	@ movhi
+ 293 0090 52E0     		b	.L17
+ 294              	.L19:
+ 153:txsubsystem.c **** 				}
+ 154:txsubsystem.c **** 			}
+ 155:txsubsystem.c **** 			break;
+ 156:txsubsystem.c **** 		case M8:
+ 157:txsubsystem.c **** 			if (trackSum < 0) {
+ 295              		.loc 1 157 0
+ 296 0092 314B     		ldr	r3, .L34+4
+ 297 0094 B3F90030 		ldrsh	r3, [r3]
+ 298 0098 002B     		cmp	r3, #0
+ 299 009a 28DA     		bge	.L25
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 9
+
+
+ 158:txsubsystem.c **** 				
+ 159:txsubsystem.c **** 				if (trackSum < -5) {
+ 300              		.loc 1 159 0
+ 301 009c 13F1050F 		cmn	r3, #5
+ 302 00a0 07DA     		bge	.L26
+ 160:txsubsystem.c **** 					
+ 161:txsubsystem.c **** 					symbolNext = m8[7];
+ 303              		.loc 1 161 0
+ 304 00a2 314A     		ldr	r2, .L34+20
+ 305 00a4 D179     		ldrb	r1, [r2, #7]	@ zero_extendqisi2
+ 306 00a6 2E4A     		ldr	r2, .L34+12
+ 307 00a8 1170     		strb	r1, [r2]
+ 162:txsubsystem.c **** 					trackSum += 7;
+ 308              		.loc 1 162 0
+ 309 00aa 0733     		adds	r3, r3, #7
+ 310 00ac 2A4A     		ldr	r2, .L34+4
+ 311 00ae 1380     		strh	r3, [r2]	@ movhi
+ 312 00b0 42E0     		b	.L17
+ 313              	.L26:
+ 163:txsubsystem.c **** 				}
+ 164:txsubsystem.c **** 				else if (trackSum < -3) {
+ 314              		.loc 1 164 0
+ 315 00b2 13F1030F 		cmn	r3, #3
+ 316 00b6 07DA     		bge	.L27
+ 165:txsubsystem.c **** 					
+ 166:txsubsystem.c **** 					symbolNext = m8[6];
+ 317              		.loc 1 166 0
+ 318 00b8 2B4A     		ldr	r2, .L34+20
+ 319 00ba 9179     		ldrb	r1, [r2, #6]	@ zero_extendqisi2
+ 320 00bc 284A     		ldr	r2, .L34+12
+ 321 00be 1170     		strb	r1, [r2]
+ 167:txsubsystem.c **** 					trackSum += 5;
+ 322              		.loc 1 167 0
+ 323 00c0 0533     		adds	r3, r3, #5
+ 324 00c2 254A     		ldr	r2, .L34+4
+ 325 00c4 1380     		strh	r3, [r2]	@ movhi
+ 326 00c6 37E0     		b	.L17
+ 327              	.L27:
+ 168:txsubsystem.c **** 				}
+ 169:txsubsystem.c **** 				else if (trackSum < -1) {
+ 328              		.loc 1 169 0
+ 329 00c8 B3F1FF3F 		cmp	r3, #-1
+ 330 00cc 07DA     		bge	.L28
+ 170:txsubsystem.c **** 					
+ 171:txsubsystem.c **** 					symbolNext = m8[5];
+ 331              		.loc 1 171 0
+ 332 00ce 264A     		ldr	r2, .L34+20
+ 333 00d0 5179     		ldrb	r1, [r2, #5]	@ zero_extendqisi2
+ 334 00d2 234A     		ldr	r2, .L34+12
+ 335 00d4 1170     		strb	r1, [r2]
+ 172:txsubsystem.c **** 					trackSum += 3;
+ 336              		.loc 1 172 0
+ 337 00d6 0333     		adds	r3, r3, #3
+ 338 00d8 1F4A     		ldr	r2, .L34+4
+ 339 00da 1380     		strh	r3, [r2]	@ movhi
+ 340 00dc 2CE0     		b	.L17
+ 341              	.L28:
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 10
+
+
+ 173:txsubsystem.c **** 				}
+ 174:txsubsystem.c **** 				else {
+ 175:txsubsystem.c **** 					
+ 176:txsubsystem.c **** 					symbolNext = m8[4];
+ 342              		.loc 1 176 0
+ 343 00de 224A     		ldr	r2, .L34+20
+ 344 00e0 1179     		ldrb	r1, [r2, #4]	@ zero_extendqisi2
+ 345 00e2 1F4A     		ldr	r2, .L34+12
+ 346 00e4 1170     		strb	r1, [r2]
+ 177:txsubsystem.c **** 					trackSum += 1;
+ 347              		.loc 1 177 0
+ 348 00e6 0133     		adds	r3, r3, #1
+ 349 00e8 1B4A     		ldr	r2, .L34+4
+ 350 00ea 1380     		strh	r3, [r2]	@ movhi
+ 351 00ec 24E0     		b	.L17
+ 352              	.L25:
+ 178:txsubsystem.c **** 				}
+ 179:txsubsystem.c **** 			}
+ 180:txsubsystem.c **** 			else {
+ 181:txsubsystem.c **** 				
+ 182:txsubsystem.c **** 				if (trackSum > 5) {
+ 353              		.loc 1 182 0
+ 354 00ee 052B     		cmp	r3, #5
+ 355 00f0 07DD     		ble	.L29
+ 183:txsubsystem.c **** 					
+ 184:txsubsystem.c **** 					symbolNext = m8[0];
+ 356              		.loc 1 184 0
+ 357 00f2 1D4A     		ldr	r2, .L34+20
+ 358 00f4 1178     		ldrb	r1, [r2]	@ zero_extendqisi2
+ 359 00f6 1A4A     		ldr	r2, .L34+12
+ 360 00f8 1170     		strb	r1, [r2]
+ 185:txsubsystem.c **** 					trackSum -= 7;
+ 361              		.loc 1 185 0
+ 362 00fa 073B     		subs	r3, r3, #7
+ 363 00fc 164A     		ldr	r2, .L34+4
+ 364 00fe 1380     		strh	r3, [r2]	@ movhi
+ 365 0100 1AE0     		b	.L17
+ 366              	.L29:
+ 186:txsubsystem.c **** 				}
+ 187:txsubsystem.c **** 				else if (trackSum > 3) {
+ 367              		.loc 1 187 0
+ 368 0102 032B     		cmp	r3, #3
+ 369 0104 07DD     		ble	.L30
+ 188:txsubsystem.c **** 					
+ 189:txsubsystem.c **** 					symbolNext = m8[1];
+ 370              		.loc 1 189 0
+ 371 0106 184A     		ldr	r2, .L34+20
+ 372 0108 5178     		ldrb	r1, [r2, #1]	@ zero_extendqisi2
+ 373 010a 154A     		ldr	r2, .L34+12
+ 374 010c 1170     		strb	r1, [r2]
+ 190:txsubsystem.c **** 					trackSum -= 5;
+ 375              		.loc 1 190 0
+ 376 010e 053B     		subs	r3, r3, #5
+ 377 0110 114A     		ldr	r2, .L34+4
+ 378 0112 1380     		strh	r3, [r2]	@ movhi
+ 379 0114 10E0     		b	.L17
+ 380              	.L30:
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 11
+
+
+ 191:txsubsystem.c **** 				}
+ 192:txsubsystem.c **** 				else if (trackSum > 1) {
+ 381              		.loc 1 192 0
+ 382 0116 012B     		cmp	r3, #1
+ 383 0118 07DD     		ble	.L31
+ 193:txsubsystem.c **** 					
+ 194:txsubsystem.c **** 					symbolNext = m8[2];
+ 384              		.loc 1 194 0
+ 385 011a 134A     		ldr	r2, .L34+20
+ 386 011c 9178     		ldrb	r1, [r2, #2]	@ zero_extendqisi2
+ 387 011e 104A     		ldr	r2, .L34+12
+ 388 0120 1170     		strb	r1, [r2]
+ 195:txsubsystem.c **** 					trackSum -= 3;
+ 389              		.loc 1 195 0
+ 390 0122 033B     		subs	r3, r3, #3
+ 391 0124 0C4A     		ldr	r2, .L34+4
+ 392 0126 1380     		strh	r3, [r2]	@ movhi
+ 393 0128 06E0     		b	.L17
+ 394              	.L31:
+ 196:txsubsystem.c **** 				}
+ 197:txsubsystem.c **** 				else {
+ 198:txsubsystem.c **** 					
+ 199:txsubsystem.c **** 					symbolNext = m8[3];
+ 395              		.loc 1 199 0
+ 396 012a 0F4A     		ldr	r2, .L34+20
+ 397 012c D178     		ldrb	r1, [r2, #3]	@ zero_extendqisi2
+ 398 012e 0C4A     		ldr	r2, .L34+12
+ 399 0130 1170     		strb	r1, [r2]
+ 200:txsubsystem.c **** 					trackSum -= 1;
+ 400              		.loc 1 200 0
+ 401 0132 013B     		subs	r3, r3, #1
+ 402 0134 084A     		ldr	r2, .L34+4
+ 403 0136 1380     		strh	r3, [r2]	@ movhi
+ 404              	.L17:
+ 201:txsubsystem.c **** 				}
+ 202:txsubsystem.c **** 			}
+ 203:txsubsystem.c **** 			break;	
+ 204:txsubsystem.c **** 		default:
+ 205:txsubsystem.c **** 			break;
+ 206:txsubsystem.c **** 	}
+ 207:txsubsystem.c **** 	
+ 208:txsubsystem.c **** 	if (trackSum == 0) {
+ 405              		.loc 1 208 0
+ 406 0138 074B     		ldr	r3, .L34+4
+ 407 013a B3F90030 		ldrsh	r3, [r3]
+ 408 013e 2BB9     		cbnz	r3, .L32
+ 409              	.LBB3:
+ 209:txsubsystem.c **** 		
+ 210:txsubsystem.c **** 		CREG_INJ_RES_Write(1);
+ 410              		.loc 1 210 0
+ 411 0140 0120     		movs	r0, #1
+ 412 0142 FFF7FEFF 		bl	CREG_INJ_RES_Write
+ 413              	.LVL6:
+ 211:txsubsystem.c **** 		CREG_INJ_RES_Write(0);
+ 414              		.loc 1 211 0
+ 415 0146 0020     		movs	r0, #0
+ 416 0148 FFF7FEFF 		bl	CREG_INJ_RES_Write
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 12
+
+
+ 417              	.LVL7:
+ 418              	.L32:
+ 419              	.LBE3:
+ 212:txsubsystem.c **** 	}
+ 213:txsubsystem.c **** 		
+ 214:txsubsystem.c **** 	ISR_INJ_ClearPending();
+ 420              		.loc 1 214 0
+ 421 014c FFF7FEFF 		bl	ISR_INJ_ClearPending
+ 422              	.LVL8:
+ 423 0150 08BD     		pop	{r3, pc}
+ 424              	.L35:
+ 425 0152 00BF     		.align	2
+ 426              	.L34:
+ 427 0154 00000000 		.word	modLevel
+ 428 0158 00000000 		.word	trackSum
+ 429 015c 00000000 		.word	m2
+ 430 0160 00000000 		.word	symbolNext
+ 431 0164 00000000 		.word	m4
+ 432 0168 00000000 		.word	m8
+ 433              		.cfi_endproc
+ 434              	.LFE66:
+ 435              		.size	ISR_INJ_h, .-ISR_INJ_h
+ 436              		.section	.text.ISR_TX_DONE_h,"ax",%progbits
+ 437              		.align	2
+ 438              		.global	ISR_TX_DONE_h
+ 439              		.thumb
+ 440              		.thumb_func
+ 441              		.type	ISR_TX_DONE_h, %function
+ 442              	ISR_TX_DONE_h:
+ 443              	.LFB67:
+ 215:txsubsystem.c **** }
+ 216:txsubsystem.c **** 
+ 217:txsubsystem.c **** 
+ 218:txsubsystem.c **** /* ISR to shutdown transmission, after packet is transmitted */
+ 219:txsubsystem.c **** CY_ISR(ISR_TX_DONE_h)
+ 220:txsubsystem.c **** {
+ 444              		.loc 1 220 0
+ 445              		.cfi_startproc
+ 446              		@ args = 0, pretend = 0, frame = 0
+ 447              		@ frame_needed = 0, uses_anonymous_args = 0
+ 448 0000 08B5     		push	{r3, lr}
+ 449              		.cfi_def_cfa_offset 8
+ 450              		.cfi_offset 3, -8
+ 451              		.cfi_offset 14, -4
+ 221:txsubsystem.c **** 	FLAG_TX_EVENT = true;
+ 452              		.loc 1 221 0
+ 453 0002 0123     		movs	r3, #1
+ 454 0004 034A     		ldr	r2, .L38
+ 455 0006 1370     		strb	r3, [r2]
+ 222:txsubsystem.c **** 	FLAG_TX_DONE = true;
+ 456              		.loc 1 222 0
+ 457 0008 034A     		ldr	r2, .L38+4
+ 458 000a 1370     		strb	r3, [r2]
+ 223:txsubsystem.c **** 	
+ 224:txsubsystem.c **** 	ISR_TX_DONE_ClearPending();
+ 459              		.loc 1 224 0
+ 460 000c FFF7FEFF 		bl	ISR_TX_DONE_ClearPending
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 13
+
+
+ 461              	.LVL9:
+ 462 0010 08BD     		pop	{r3, pc}
+ 463              	.L39:
+ 464 0012 00BF     		.align	2
+ 465              	.L38:
+ 466 0014 00000000 		.word	FLAG_TX_EVENT
+ 467 0018 00000000 		.word	FLAG_TX_DONE
+ 468              		.cfi_endproc
+ 469              	.LFE67:
+ 470              		.size	ISR_TX_DONE_h, .-ISR_TX_DONE_h
+ 471              		.section	.text.INIT_TX_SUBSYSTEM,"ax",%progbits
+ 472              		.align	2
+ 473              		.global	INIT_TX_SUBSYSTEM
+ 474              		.thumb
+ 475              		.thumb_func
+ 476              		.type	INIT_TX_SUBSYSTEM, %function
+ 477              	INIT_TX_SUBSYSTEM:
+ 478              	.LFB63:
+  15:txsubsystem.c **** 
+ 479              		.loc 1 15 0
+ 480              		.cfi_startproc
+ 481              		@ args = 0, pretend = 0, frame = 0
+ 482              		@ frame_needed = 0, uses_anonymous_args = 0
+ 483 0000 38B5     		push	{r3, r4, r5, lr}
+ 484              		.cfi_def_cfa_offset 16
+ 485              		.cfi_offset 3, -16
+ 486              		.cfi_offset 4, -12
+ 487              		.cfi_offset 5, -8
+ 488              		.cfi_offset 14, -4
+  18:txsubsystem.c **** 	m2Track[1] = 1;
+ 489              		.loc 1 18 0
+ 490 0002 394B     		ldr	r3, .L50
+ 491 0004 FF22     		movs	r2, #255
+ 492 0006 1A70     		strb	r2, [r3]
+  19:txsubsystem.c **** 	int i;
+ 493              		.loc 1 19 0
+ 494 0008 0122     		movs	r2, #1
+ 495 000a 5A70     		strb	r2, [r3, #1]
+ 496              	.LVL10:
+  21:txsubsystem.c **** 		
+ 497              		.loc 1 21 0
+ 498 000c 0023     		movs	r3, #0
+ 499 000e 08E0     		b	.L41
+ 500              	.LVL11:
+ 501              	.L42:
+  23:txsubsystem.c **** 		m4Track[i+2] = 1 + 2*i;
+ 502              		.loc 1 23 0 discriminator 3
+ 503 0010 5A00     		lsls	r2, r3, #1
+ 504 0012 D2B2     		uxtb	r2, r2
+ 505 0014 3549     		ldr	r1, .L50+4
+ 506 0016 D01E     		subs	r0, r2, #3
+ 507 0018 C854     		strb	r0, [r1, r3]
+  24:txsubsystem.c **** 	}
+ 508              		.loc 1 24 0 discriminator 3
+ 509 001a 981C     		adds	r0, r3, #2
+ 510 001c 0132     		adds	r2, r2, #1
+ 511 001e 0A54     		strb	r2, [r1, r0]
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 14
+
+
+  21:txsubsystem.c **** 		
+ 512              		.loc 1 21 0 discriminator 3
+ 513 0020 0133     		adds	r3, r3, #1
+ 514              	.LVL12:
+ 515              	.L41:
+  21:txsubsystem.c **** 		
+ 516              		.loc 1 21 0 is_stmt 0 discriminator 1
+ 517 0022 012B     		cmp	r3, #1
+ 518 0024 F4DD     		ble	.L42
+ 519 0026 0022     		movs	r2, #0
+ 520 0028 08E0     		b	.L43
+ 521              	.LVL13:
+ 522              	.L44:
+  28:txsubsystem.c **** 		m8Track[i+4] = 1 + 2*i;
+ 523              		.loc 1 28 0 is_stmt 1 discriminator 3
+ 524 002a 5300     		lsls	r3, r2, #1
+ 525 002c DBB2     		uxtb	r3, r3
+ 526 002e 3049     		ldr	r1, .L50+8
+ 527 0030 D81F     		subs	r0, r3, #7
+ 528 0032 8854     		strb	r0, [r1, r2]
+  29:txsubsystem.c **** 	}
+ 529              		.loc 1 29 0 discriminator 3
+ 530 0034 101D     		adds	r0, r2, #4
+ 531 0036 0133     		adds	r3, r3, #1
+ 532 0038 0B54     		strb	r3, [r1, r0]
+  26:txsubsystem.c **** 		
+ 533              		.loc 1 26 0 discriminator 3
+ 534 003a 0132     		adds	r2, r2, #1
+ 535              	.LVL14:
+ 536              	.L43:
+  26:txsubsystem.c **** 		
+ 537              		.loc 1 26 0 is_stmt 0 discriminator 1
+ 538 003c 032A     		cmp	r2, #3
+ 539 003e F4DD     		ble	.L44
+ 540 0040 0022     		movs	r2, #0
+ 541              	.LVL15:
+ 542 0042 0AE0     		b	.L45
+ 543              	.LVL16:
+ 544              	.L46:
+  33:txsubsystem.c **** 		m16Track[i+8] = 1 + 2*i;
+ 545              		.loc 1 33 0 is_stmt 1 discriminator 3
+ 546 0044 5300     		lsls	r3, r2, #1
+ 547 0046 DBB2     		uxtb	r3, r3
+ 548 0048 2A49     		ldr	r1, .L50+12
+ 549 004a A3F10F00 		sub	r0, r3, #15
+ 550 004e 8854     		strb	r0, [r1, r2]
+  34:txsubsystem.c **** 	}
+ 551              		.loc 1 34 0 discriminator 3
+ 552 0050 02F10800 		add	r0, r2, #8
+ 553 0054 0133     		adds	r3, r3, #1
+ 554 0056 0B54     		strb	r3, [r1, r0]
+  31:txsubsystem.c **** 		
+ 555              		.loc 1 31 0 discriminator 3
+ 556 0058 0132     		adds	r2, r2, #1
+ 557              	.LVL17:
+ 558              	.L45:
+  31:txsubsystem.c **** 		
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 15
+
+
+ 559              		.loc 1 31 0 is_stmt 0 discriminator 1
+ 560 005a 072A     		cmp	r2, #7
+ 561 005c F2DD     		ble	.L46
+ 562 005e 0022     		movs	r2, #0
+ 563              	.LVL18:
+ 564 0060 0AE0     		b	.L47
+ 565              	.LVL19:
+ 566              	.L48:
+  38:txsubsystem.c **** 		m32Track[i+16] = 1 + 2*i;
+ 567              		.loc 1 38 0 is_stmt 1 discriminator 3
+ 568 0062 5300     		lsls	r3, r2, #1
+ 569 0064 DBB2     		uxtb	r3, r3
+ 570 0066 2449     		ldr	r1, .L50+16
+ 571 0068 A3F11F00 		sub	r0, r3, #31
+ 572 006c 8854     		strb	r0, [r1, r2]
+  39:txsubsystem.c **** 	}
+ 573              		.loc 1 39 0 discriminator 3
+ 574 006e 02F11000 		add	r0, r2, #16
+ 575 0072 0133     		adds	r3, r3, #1
+ 576 0074 0B54     		strb	r3, [r1, r0]
+  36:txsubsystem.c **** 		
+ 577              		.loc 1 36 0 discriminator 3
+ 578 0076 0132     		adds	r2, r2, #1
+ 579              	.LVL20:
+ 580              	.L47:
+  36:txsubsystem.c **** 		
+ 581              		.loc 1 36 0 is_stmt 0 discriminator 1
+ 582 0078 0F2A     		cmp	r2, #15
+ 583 007a F2DD     		ble	.L48
+  44:txsubsystem.c **** 	ISR_SYMB_Enable();
+ 584              		.loc 1 44 0 is_stmt 1
+ 585 007c 1F48     		ldr	r0, .L50+20
+ 586 007e FFF7FEFF 		bl	ISR_SYMB_StartEx
+ 587              	.LVL21:
+  45:txsubsystem.c **** 	
+ 588              		.loc 1 45 0
+ 589 0082 FFF7FEFF 		bl	ISR_SYMB_Enable
+ 590              	.LVL22:
+  47:txsubsystem.c **** 	ISR_INJ_Enable();
+ 591              		.loc 1 47 0
+ 592 0086 1E48     		ldr	r0, .L50+24
+ 593 0088 FFF7FEFF 		bl	ISR_INJ_StartEx
+ 594              	.LVL23:
+  48:txsubsystem.c **** 	
+ 595              		.loc 1 48 0
+ 596 008c FFF7FEFF 		bl	ISR_INJ_Enable
+ 597              	.LVL24:
+  50:txsubsystem.c **** 	ISR_INJ_CHECK_Enable();
+ 598              		.loc 1 50 0
+ 599 0090 1C48     		ldr	r0, .L50+28
+ 600 0092 FFF7FEFF 		bl	ISR_INJ_CHECK_StartEx
+ 601              	.LVL25:
+  51:txsubsystem.c **** 	
+ 602              		.loc 1 51 0
+ 603 0096 FFF7FEFF 		bl	ISR_INJ_CHECK_Enable
+ 604              	.LVL26:
+  53:txsubsystem.c **** 	ISR_TX_DONE_Enable();
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 16
+
+
+ 605              		.loc 1 53 0
+ 606 009a 1B48     		ldr	r0, .L50+32
+ 607 009c FFF7FEFF 		bl	ISR_TX_DONE_StartEx
+ 608              	.LVL27:
+  54:txsubsystem.c **** 	
+ 609              		.loc 1 54 0
+ 610 00a0 FFF7FEFF 		bl	ISR_TX_DONE_Enable
+ 611              	.LVL28:
+  57:txsubsystem.c **** 	    HI16(DMA_HAM2SER_SRC_BASE), HI16(DMA_HAM2SER_DST_BASE));
+ 612              		.loc 1 57 0
+ 613 00a4 4FF48043 		mov	r3, #16384
+ 614 00a8 1A46     		mov	r2, r3
+ 615 00aa 0121     		movs	r1, #1
+ 616 00ac 0846     		mov	r0, r1
+ 617 00ae FFF7FEFF 		bl	DMA_HAM2SER_DmaInitialize
+ 618              	.LVL29:
+ 619 00b2 164C     		ldr	r4, .L50+36
+ 620 00b4 2070     		strb	r0, [r4]
+  59:txsubsystem.c **** 	CyDmaTdSetConfiguration(DMA_HAM2SER_TD[0], 1, DMA_HAM2SER_TD[0], 0);
+ 621              		.loc 1 59 0
+ 622 00b6 FFF7FEFF 		bl	CyDmaTdAllocate
+ 623              	.LVL30:
+ 624 00ba 0246     		mov	r2, r0
+ 625 00bc 144D     		ldr	r5, .L50+40
+ 626 00be 2870     		strb	r0, [r5]
+  60:txsubsystem.c **** 	CyDmaTdSetAddress(DMA_HAM2SER_TD[0], LO16((uint32)SREG_HAM_OUT_Status_PTR), LO16((uint32)CREG_SER_
+ 627              		.loc 1 60 0
+ 628 00c0 0023     		movs	r3, #0
+ 629 00c2 0121     		movs	r1, #1
+ 630 00c4 FFF7FEFF 		bl	CyDmaTdSetConfiguration
+ 631              	.LVL31:
+  61:txsubsystem.c **** 	CyDmaChSetInitialTd(DMA_HAM2SER_Chan, DMA_HAM2SER_TD[0]);
+ 632              		.loc 1 61 0
+ 633 00c8 46F27452 		movw	r2, #25972
+ 634 00cc 46F26141 		movw	r1, #25697
+ 635 00d0 2878     		ldrb	r0, [r5]	@ zero_extendqisi2
+ 636 00d2 FFF7FEFF 		bl	CyDmaTdSetAddress
+ 637              	.LVL32:
+  62:txsubsystem.c **** 	CyDmaChEnable(DMA_HAM2SER_Chan, 1);
+ 638              		.loc 1 62 0
+ 639 00d6 2978     		ldrb	r1, [r5]	@ zero_extendqisi2
+ 640 00d8 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 641 00da FFF7FEFF 		bl	CyDmaChSetInitialTd
+ 642              	.LVL33:
+  63:txsubsystem.c **** 	
+ 643              		.loc 1 63 0
+ 644 00de 0121     		movs	r1, #1
+ 645 00e0 2078     		ldrb	r0, [r4]	@ zero_extendqisi2
+ 646 00e2 FFF7FEFF 		bl	CyDmaChEnable
+ 647              	.LVL34:
+ 648 00e6 38BD     		pop	{r3, r4, r5, pc}
+ 649              	.L51:
+ 650              		.align	2
+ 651              	.L50:
+ 652 00e8 00000000 		.word	m2Track
+ 653 00ec 00000000 		.word	m4Track
+ 654 00f0 00000000 		.word	m8Track
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 17
+
+
+ 655 00f4 00000000 		.word	m16Track
+ 656 00f8 00000000 		.word	m32Track
+ 657 00fc 00000000 		.word	ISR_SYMB_h
+ 658 0100 00000000 		.word	ISR_INJ_h
+ 659 0104 00000000 		.word	ISR_INJ_CHECK_h
+ 660 0108 00000000 		.word	ISR_TX_DONE_h
+ 661 010c 00000000 		.word	DMA_HAM2SER_Chan
+ 662 0110 00000000 		.word	DMA_HAM2SER_TD
+ 663              		.cfi_endproc
+ 664              	.LFE63:
+ 665              		.size	INIT_TX_SUBSYSTEM, .-INIT_TX_SUBSYSTEM
+ 666              		.comm	symCnt,1,1
+ 667              		.comm	symTx,31,4
+ 668              		.comm	lMask,1,1
+ 669              		.comm	symbolNext,1,1
+ 670              		.comm	trackSum,2,2
+ 671              		.comm	m32Track,32,4
+ 672              		.comm	m16Track,16,4
+ 673              		.comm	m8Track,8,4
+ 674              		.comm	m4Track,4,4
+ 675              		.comm	m2Track,2,4
+ 676              		.comm	m32,32,4
+ 677              		.comm	m16,16,4
+ 678              		.comm	m8,8,4
+ 679              		.comm	m4,4,4
+ 680              		.comm	m2,2,4
+ 681              		.comm	modLevel,1,1
+ 682              		.comm	FLAG_TX_DONE,1,1
+ 683              		.comm	FLAG_TX_EVENT,1,1
+ 684              		.comm	DMA_HAM2SER_TD,1,4
+ 685              		.comm	DMA_HAM2SER_Chan,1,1
+ 686              		.comm	sh_fifo,1,1
+ 687              		.comm	sh_load,1,1
+ 688              		.comm	sh_test,1,1
+ 689              		.global	colValH
+ 690              		.global	H
+ 691              		.comm	hamWordCheck,16,4
+ 692              		.comm	headCnt,1,1
+ 693              		.comm	rxDst,1,1
+ 694              		.comm	rxSrc,1,1
+ 695              		.comm	rxTrackSum,2,2
+ 696              		.comm	rxLength,2,2
+ 697              		.comm	rxModLevel,1,1
+ 698              		.comm	adcValue,2,2
+ 699              		.comm	packets4,65,4
+ 700              		.comm	DMA_PAY_TD,1,4
+ 701              		.comm	DMA_PAY_Chan,1,1
+ 702              		.comm	dimLevel,1,1
+ 703              		.comm	routingTable,30,4
+ 704              		.comm	deviceAddress,1,1
+ 705              		.comm	deviceID,8,4
+ 706              		.comm	i2cWord,27,4
+ 707              		.comm	i2cRun,1,1
+ 708              		.comm	i2cData,1,1
+ 709              		.comm	i2cInstr,1,1
+ 710              		.comm	i2cAddr,1,1
+ 711              		.comm	i2cBuf,27,4
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 18
+
+
+ 712              		.comm	c,1,1
+ 713              		.comm	i2cSda,1,1
+ 714              		.comm	i2cClk,1,1
+ 715              		.comm	i2cStart,1,1
+ 716              		.comm	sum,4,4
+ 717              		.comm	signalMean,2,2
+ 718              		.comm	send15Cont,1,1
+ 719              		.comm	stepSize,1,1
+ 720              		.comm	uart_type,1,1
+ 721              		.comm	pre,1,1
+ 722              		.comm	del,1,1
+ 723              		.comm	buffer_uart,64,4
+ 724              		.comm	test16,2,2
+ 725              		.comm	test8,1,1
+ 726              		.comm	serialTest,2,4
+ 727              		.comm	levels_82,4,4
+ 728              		.comm	levels_15,4,4
+ 729              		.comm	levels_48,16,4
+ 730              		.comm	i,4,4
+ 731              		.comm	FLAG_SER_TX_INIT,1,1
+ 732              		.comm	FLAG_SER_EVENT,1,1
+ 733              		.comm	bufferUart,64,4
+ 734              		.data
+ 735              		.align	2
+ 736              		.type	colValH, %object
+ 737              		.size	colValH, 7
+ 738              	colValH:
+ 739 0000 07       		.byte	7
+ 740 0001 06       		.byte	6
+ 741 0002 05       		.byte	5
+ 742 0003 03       		.byte	3
+ 743 0004 04       		.byte	4
+ 744 0005 02       		.byte	2
+ 745 0006 01       		.byte	1
+ 746 0007 00       		.space	1
+ 747              		.type	H, %object
+ 748              		.size	H, 21
+ 749              	H:
+ 750 0008 01       		.byte	1
+ 751 0009 01       		.byte	1
+ 752 000a 01       		.byte	1
+ 753 000b 00       		.byte	0
+ 754 000c 01       		.byte	1
+ 755 000d 00       		.byte	0
+ 756 000e 00       		.byte	0
+ 757 000f 01       		.byte	1
+ 758 0010 01       		.byte	1
+ 759 0011 00       		.byte	0
+ 760 0012 01       		.byte	1
+ 761 0013 00       		.byte	0
+ 762 0014 01       		.byte	1
+ 763 0015 00       		.byte	0
+ 764 0016 01       		.byte	1
+ 765 0017 00       		.byte	0
+ 766 0018 01       		.byte	1
+ 767 0019 01       		.byte	1
+ 768 001a 00       		.byte	0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 19
+
+
+ 769 001b 00       		.byte	0
+ 770 001c 01       		.byte	1
+ 771              		.text
+ 772              	.Letext0:
+ 773              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 774              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 775              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 776              		.file 5 "dlm.h"
+ 777              		.file 6 "packetman.h"
+ 778              		.file 7 "Generated_Source\\PSoC5/core_cm3.h"
+ 779              		.file 8 "serial.h"
+ 780              		.file 9 "dimmingcontrol.h"
+ 781              		.file 10 "main.h"
+ 782              		.file 11 "rxsubsystem.h"
+ 783              		.file 12 "txsubsystem.h"
+ 784              		.file 13 "Generated_Source\\PSoC5/SREG_SYMB.h"
+ 785              		.file 14 "Generated_Source\\PSoC5/ISR_SYMB.h"
+ 786              		.file 15 "Generated_Source\\PSoC5/ISR_INJ_CHECK.h"
+ 787              		.file 16 "Generated_Source\\PSoC5/DMA_HAM2SER_dma.h"
+ 788              		.file 17 "Generated_Source\\PSoC5/CYDMAC.H"
+ 789              		.section	.debug_info,"",%progbits
+ 790              	.Ldebug_info0:
+ 791 0000 FB0A0000 		.4byte	0xafb
+ 792 0004 0400     		.2byte	0x4
+ 793 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 794 000a 04       		.byte	0x4
+ 795 000b 01       		.uleb128 0x1
+ 796 000c 82010000 		.4byte	.LASF118
+ 797 0010 0C       		.byte	0xc
+ 798 0011 F8030000 		.4byte	.LASF119
+ 799 0015 B7050000 		.4byte	.LASF120
+ 800 0019 00000000 		.4byte	.Ldebug_ranges0+0
+ 801 001d 00000000 		.4byte	0
+ 802 0021 00000000 		.4byte	.Ldebug_line0
+ 803 0025 02       		.uleb128 0x2
+ 804 0026 01       		.byte	0x1
+ 805 0027 06       		.byte	0x6
+ 806 0028 4E050000 		.4byte	.LASF0
+ 807 002c 03       		.uleb128 0x3
+ 808 002d 76040000 		.4byte	.LASF4
+ 809 0031 02       		.byte	0x2
+ 810 0032 1D       		.byte	0x1d
+ 811 0033 37000000 		.4byte	0x37
+ 812 0037 02       		.uleb128 0x2
+ 813 0038 01       		.byte	0x1
+ 814 0039 08       		.byte	0x8
+ 815 003a FF040000 		.4byte	.LASF1
+ 816 003e 02       		.uleb128 0x2
+ 817 003f 02       		.byte	0x2
+ 818 0040 05       		.byte	0x5
+ 819 0041 DA030000 		.4byte	.LASF2
+ 820 0045 02       		.uleb128 0x2
+ 821 0046 02       		.byte	0x2
+ 822 0047 07       		.byte	0x7
+ 823 0048 6E050000 		.4byte	.LASF3
+ 824 004c 03       		.uleb128 0x3
+ 825 004d 8B000000 		.4byte	.LASF5
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 20
+
+
+ 826 0051 02       		.byte	0x2
+ 827 0052 3F       		.byte	0x3f
+ 828 0053 57000000 		.4byte	0x57
+ 829 0057 02       		.uleb128 0x2
+ 830 0058 04       		.byte	0x4
+ 831 0059 05       		.byte	0x5
+ 832 005a EF030000 		.4byte	.LASF6
+ 833 005e 02       		.uleb128 0x2
+ 834 005f 04       		.byte	0x4
+ 835 0060 07       		.byte	0x7
+ 836 0061 CE040000 		.4byte	.LASF7
+ 837 0065 02       		.uleb128 0x2
+ 838 0066 08       		.byte	0x8
+ 839 0067 05       		.byte	0x5
+ 840 0068 20030000 		.4byte	.LASF8
+ 841 006c 02       		.uleb128 0x2
+ 842 006d 08       		.byte	0x8
+ 843 006e 07       		.byte	0x7
+ 844 006f 31010000 		.4byte	.LASF9
+ 845 0073 04       		.uleb128 0x4
+ 846 0074 04       		.byte	0x4
+ 847 0075 05       		.byte	0x5
+ 848 0076 696E7400 		.ascii	"int\000"
+ 849 007a 02       		.uleb128 0x2
+ 850 007b 04       		.byte	0x4
+ 851 007c 07       		.byte	0x7
+ 852 007d 56000000 		.4byte	.LASF10
+ 853 0081 03       		.uleb128 0x3
+ 854 0082 FA020000 		.4byte	.LASF11
+ 855 0086 03       		.byte	0x3
+ 856 0087 18       		.byte	0x18
+ 857 0088 2C000000 		.4byte	0x2c
+ 858 008c 03       		.uleb128 0x3
+ 859 008d E0040000 		.4byte	.LASF12
+ 860 0091 03       		.byte	0x3
+ 861 0092 2C       		.byte	0x2c
+ 862 0093 4C000000 		.4byte	0x4c
+ 863 0097 05       		.uleb128 0x5
+ 864 0098 90050000 		.4byte	.LASF13
+ 865 009c 04       		.byte	0x4
+ 866 009d 9201     		.2byte	0x192
+ 867 009f 37000000 		.4byte	0x37
+ 868 00a3 05       		.uleb128 0x5
+ 869 00a4 D7020000 		.4byte	.LASF14
+ 870 00a8 04       		.byte	0x4
+ 871 00a9 9301     		.2byte	0x193
+ 872 00ab 45000000 		.4byte	0x45
+ 873 00af 05       		.uleb128 0x5
+ 874 00b0 4D030000 		.4byte	.LASF15
+ 875 00b4 04       		.byte	0x4
+ 876 00b5 9401     		.2byte	0x194
+ 877 00b7 5E000000 		.4byte	0x5e
+ 878 00bb 05       		.uleb128 0x5
+ 879 00bc DE020000 		.4byte	.LASF16
+ 880 00c0 04       		.byte	0x4
+ 881 00c1 9501     		.2byte	0x195
+ 882 00c3 25000000 		.4byte	0x25
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 21
+
+
+ 883 00c7 05       		.uleb128 0x5
+ 884 00c8 95000000 		.4byte	.LASF17
+ 885 00cc 04       		.byte	0x4
+ 886 00cd 9601     		.2byte	0x196
+ 887 00cf 3E000000 		.4byte	0x3e
+ 888 00d3 02       		.uleb128 0x2
+ 889 00d4 04       		.byte	0x4
+ 890 00d5 04       		.byte	0x4
+ 891 00d6 F5000000 		.4byte	.LASF18
+ 892 00da 02       		.uleb128 0x2
+ 893 00db 08       		.byte	0x8
+ 894 00dc 04       		.byte	0x4
+ 895 00dd 96050000 		.4byte	.LASF19
+ 896 00e1 02       		.uleb128 0x2
+ 897 00e2 01       		.byte	0x1
+ 898 00e3 08       		.byte	0x8
+ 899 00e4 B4020000 		.4byte	.LASF20
+ 900 00e8 05       		.uleb128 0x5
+ 901 00e9 9B000000 		.4byte	.LASF21
+ 902 00ed 04       		.byte	0x4
+ 903 00ee 3C02     		.2byte	0x23c
+ 904 00f0 F4000000 		.4byte	0xf4
+ 905 00f4 06       		.uleb128 0x6
+ 906 00f5 97000000 		.4byte	0x97
+ 907 00f9 02       		.uleb128 0x2
+ 908 00fa 08       		.byte	0x8
+ 909 00fb 04       		.byte	0x4
+ 910 00fc 63030000 		.4byte	.LASF22
+ 911 0100 02       		.uleb128 0x2
+ 912 0101 04       		.byte	0x4
+ 913 0102 07       		.byte	0x7
+ 914 0103 B3040000 		.4byte	.LASF23
+ 915 0107 07       		.uleb128 0x7
+ 916 0108 03       		.byte	0x3
+ 917 0109 05       		.byte	0x5
+ 918 010a 2A       		.byte	0x2a
+ 919 010b 34010000 		.4byte	0x134
+ 920 010f 08       		.uleb128 0x8
+ 921 0110 40040000 		.4byte	.LASF24
+ 922 0114 05       		.byte	0x5
+ 923 0115 2B       		.byte	0x2b
+ 924 0116 97000000 		.4byte	0x97
+ 925 011a 00       		.byte	0
+ 926 011b 08       		.uleb128 0x8
+ 927 011c 9D050000 		.4byte	.LASF25
+ 928 0120 05       		.byte	0x5
+ 929 0121 2C       		.byte	0x2c
+ 930 0122 97000000 		.4byte	0x97
+ 931 0126 01       		.byte	0x1
+ 932 0127 08       		.uleb128 0x8
+ 933 0128 90040000 		.4byte	.LASF26
+ 934 012c 05       		.byte	0x5
+ 935 012d 2D       		.byte	0x2d
+ 936 012e 97000000 		.4byte	0x97
+ 937 0132 02       		.byte	0x2
+ 938 0133 00       		.byte	0
+ 939 0134 03       		.uleb128 0x3
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 22
+
+
+ 940 0135 88020000 		.4byte	.LASF27
+ 941 0139 05       		.byte	0x5
+ 942 013a 2E       		.byte	0x2e
+ 943 013b 07010000 		.4byte	0x107
+ 944 013f 07       		.uleb128 0x7
+ 945 0140 0A       		.byte	0xa
+ 946 0141 05       		.byte	0x5
+ 947 0142 30       		.byte	0x30
+ 948 0143 60010000 		.4byte	0x160
+ 949 0147 08       		.uleb128 0x8
+ 950 0148 94030000 		.4byte	.LASF28
+ 951 014c 05       		.byte	0x5
+ 952 014d 31       		.byte	0x31
+ 953 014e 60010000 		.4byte	0x160
+ 954 0152 00       		.byte	0
+ 955 0153 08       		.uleb128 0x8
+ 956 0154 9D050000 		.4byte	.LASF25
+ 957 0158 05       		.byte	0x5
+ 958 0159 32       		.byte	0x32
+ 959 015a 97000000 		.4byte	0x97
+ 960 015e 09       		.byte	0x9
+ 961 015f 00       		.byte	0
+ 962 0160 09       		.uleb128 0x9
+ 963 0161 34010000 		.4byte	0x134
+ 964 0165 70010000 		.4byte	0x170
+ 965 0169 0A       		.uleb128 0xa
+ 966 016a 00010000 		.4byte	0x100
+ 967 016e 02       		.byte	0x2
+ 968 016f 00       		.byte	0
+ 969 0170 03       		.uleb128 0x3
+ 970 0171 2D020000 		.4byte	.LASF29
+ 971 0175 05       		.byte	0x5
+ 972 0176 33       		.byte	0x33
+ 973 0177 3F010000 		.4byte	0x13f
+ 974 017b 09       		.uleb128 0x9
+ 975 017c 97000000 		.4byte	0x97
+ 976 0180 8B010000 		.4byte	0x18b
+ 977 0184 0A       		.uleb128 0xa
+ 978 0185 00010000 		.4byte	0x100
+ 979 0189 03       		.byte	0x3
+ 980 018a 00       		.byte	0
+ 981 018b 02       		.uleb128 0x2
+ 982 018c 01       		.byte	0x1
+ 983 018d 02       		.byte	0x2
+ 984 018e 27020000 		.4byte	.LASF30
+ 985 0192 07       		.uleb128 0x7
+ 986 0193 0D       		.byte	0xd
+ 987 0194 06       		.byte	0x6
+ 988 0195 32       		.byte	0x32
+ 989 0196 CB010000 		.4byte	0x1cb
+ 990 019a 08       		.uleb128 0x8
+ 991 019b 6B000000 		.4byte	.LASF31
+ 992 019f 06       		.byte	0x6
+ 993 01a0 33       		.byte	0x33
+ 994 01a1 7B010000 		.4byte	0x17b
+ 995 01a5 00       		.byte	0
+ 996 01a6 08       		.uleb128 0x8
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 23
+
+
+ 997 01a7 54030000 		.4byte	.LASF32
+ 998 01ab 06       		.byte	0x6
+ 999 01ac 34       		.byte	0x34
+ 1000 01ad 7B010000 		.4byte	0x17b
+ 1001 01b1 04       		.byte	0x4
+ 1002 01b2 08       		.uleb128 0x8
+ 1003 01b3 18020000 		.4byte	.LASF33
+ 1004 01b7 06       		.byte	0x6
+ 1005 01b8 35       		.byte	0x35
+ 1006 01b9 7B010000 		.4byte	0x17b
+ 1007 01bd 08       		.byte	0x8
+ 1008 01be 08       		.uleb128 0x8
+ 1009 01bf B6000000 		.4byte	.LASF34
+ 1010 01c3 06       		.byte	0x6
+ 1011 01c4 36       		.byte	0x36
+ 1012 01c5 8B010000 		.4byte	0x18b
+ 1013 01c9 0C       		.byte	0xc
+ 1014 01ca 00       		.byte	0
+ 1015 01cb 03       		.uleb128 0x3
+ 1016 01cc E8040000 		.4byte	.LASF35
+ 1017 01d0 06       		.byte	0x6
+ 1018 01d1 37       		.byte	0x37
+ 1019 01d2 92010000 		.4byte	0x192
+ 1020 01d6 0B       		.uleb128 0xb
+ 1021 01d7 67010000 		.4byte	.LASF36
+ 1022 01db 01       		.byte	0x1
+ 1023 01dc 45       		.byte	0x45
+ 1024 01dd 00000000 		.4byte	.LFB64
+ 1025 01e1 C0000000 		.4byte	.LFE64-.LFB64
+ 1026 01e5 01       		.uleb128 0x1
+ 1027 01e6 9C       		.byte	0x9c
+ 1028 01e7 0D020000 		.4byte	0x20d
+ 1029 01eb 0C       		.uleb128 0xc
+ 1030 01ec 73796D00 		.ascii	"sym\000"
+ 1031 01f0 01       		.byte	0x1
+ 1032 01f1 47       		.byte	0x47
+ 1033 01f2 97000000 		.4byte	0x97
+ 1034 01f6 00000000 		.4byte	.LLST0
+ 1035 01fa 0D       		.uleb128 0xd
+ 1036 01fb 06000000 		.4byte	.LVL0
+ 1037 01ff 220A0000 		.4byte	0xa22
+ 1038 0203 0D       		.uleb128 0xd
+ 1039 0204 84000000 		.4byte	.LVL2
+ 1040 0208 2D0A0000 		.4byte	0xa2d
+ 1041 020c 00       		.byte	0
+ 1042 020d 0B       		.uleb128 0xb
+ 1043 020e 72010000 		.4byte	.LASF37
+ 1044 0212 01       		.byte	0x1
+ 1045 0213 63       		.byte	0x63
+ 1046 0214 00000000 		.4byte	.LFB65
+ 1047 0218 20000000 		.4byte	.LFE65-.LFB65
+ 1048 021c 01       		.uleb128 0x1
+ 1049 021d 9C       		.byte	0x9c
+ 1050 021e 6D020000 		.4byte	0x26d
+ 1051 0222 0E       		.uleb128 0xe
+ 1052 0223 0A000000 		.4byte	.LBB2
+ 1053 0227 0C000000 		.4byte	.LBE2-.LBB2
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 24
+
+
+ 1054 022b 63020000 		.4byte	0x263
+ 1055 022f 0F       		.uleb128 0xf
+ 1056 0230 18000000 		.4byte	.LASF39
+ 1057 0234 01       		.byte	0x1
+ 1058 0235 67       		.byte	0x67
+ 1059 0236 73000000 		.4byte	0x73
+ 1060 023a 40020000 		.4byte	0x240
+ 1061 023e 10       		.uleb128 0x10
+ 1062 023f 00       		.byte	0
+ 1063 0240 11       		.uleb128 0x11
+ 1064 0241 10000000 		.4byte	.LVL3
+ 1065 0245 380A0000 		.4byte	0xa38
+ 1066 0249 53020000 		.4byte	0x253
+ 1067 024d 12       		.uleb128 0x12
+ 1068 024e 01       		.uleb128 0x1
+ 1069 024f 50       		.byte	0x50
+ 1070 0250 01       		.uleb128 0x1
+ 1071 0251 31       		.byte	0x31
+ 1072 0252 00       		.byte	0
+ 1073 0253 13       		.uleb128 0x13
+ 1074 0254 16000000 		.4byte	.LVL4
+ 1075 0258 380A0000 		.4byte	0xa38
+ 1076 025c 12       		.uleb128 0x12
+ 1077 025d 01       		.uleb128 0x1
+ 1078 025e 50       		.byte	0x50
+ 1079 025f 01       		.uleb128 0x1
+ 1080 0260 30       		.byte	0x30
+ 1081 0261 00       		.byte	0
+ 1082 0262 00       		.byte	0
+ 1083 0263 0D       		.uleb128 0xd
+ 1084 0264 1A000000 		.4byte	.LVL5
+ 1085 0268 430A0000 		.4byte	0xa43
+ 1086 026c 00       		.byte	0
+ 1087 026d 0B       		.uleb128 0xb
+ 1088 026e 81030000 		.4byte	.LASF38
+ 1089 0272 01       		.byte	0x1
+ 1090 0273 71       		.byte	0x71
+ 1091 0274 00000000 		.4byte	.LFB66
+ 1092 0278 6C010000 		.4byte	.LFE66-.LFB66
+ 1093 027c 01       		.uleb128 0x1
+ 1094 027d 9C       		.byte	0x9c
+ 1095 027e DE020000 		.4byte	0x2de
+ 1096 0282 0F       		.uleb128 0xf
+ 1097 0283 FC050000 		.4byte	.LASF40
+ 1098 0287 01       		.byte	0x1
+ 1099 0288 D6       		.byte	0xd6
+ 1100 0289 73000000 		.4byte	0x73
+ 1101 028d 93020000 		.4byte	0x293
+ 1102 0291 10       		.uleb128 0x10
+ 1103 0292 00       		.byte	0
+ 1104 0293 0E       		.uleb128 0xe
+ 1105 0294 40010000 		.4byte	.LBB3
+ 1106 0298 0C000000 		.4byte	.LBE3-.LBB3
+ 1107 029c D4020000 		.4byte	0x2d4
+ 1108 02a0 0F       		.uleb128 0xf
+ 1109 02a1 18000000 		.4byte	.LASF39
+ 1110 02a5 01       		.byte	0x1
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 25
+
+
+ 1111 02a6 67       		.byte	0x67
+ 1112 02a7 73000000 		.4byte	0x73
+ 1113 02ab B1020000 		.4byte	0x2b1
+ 1114 02af 10       		.uleb128 0x10
+ 1115 02b0 00       		.byte	0
+ 1116 02b1 11       		.uleb128 0x11
+ 1117 02b2 46010000 		.4byte	.LVL6
+ 1118 02b6 380A0000 		.4byte	0xa38
+ 1119 02ba C4020000 		.4byte	0x2c4
+ 1120 02be 12       		.uleb128 0x12
+ 1121 02bf 01       		.uleb128 0x1
+ 1122 02c0 50       		.byte	0x50
+ 1123 02c1 01       		.uleb128 0x1
+ 1124 02c2 31       		.byte	0x31
+ 1125 02c3 00       		.byte	0
+ 1126 02c4 13       		.uleb128 0x13
+ 1127 02c5 4C010000 		.4byte	.LVL7
+ 1128 02c9 380A0000 		.4byte	0xa38
+ 1129 02cd 12       		.uleb128 0x12
+ 1130 02ce 01       		.uleb128 0x1
+ 1131 02cf 50       		.byte	0x50
+ 1132 02d0 01       		.uleb128 0x1
+ 1133 02d1 30       		.byte	0x30
+ 1134 02d2 00       		.byte	0
+ 1135 02d3 00       		.byte	0
+ 1136 02d4 0D       		.uleb128 0xd
+ 1137 02d5 50010000 		.4byte	.LVL8
+ 1138 02d9 4E0A0000 		.4byte	0xa4e
+ 1139 02dd 00       		.byte	0
+ 1140 02de 0B       		.uleb128 0xb
+ 1141 02df 32020000 		.4byte	.LASF41
+ 1142 02e3 01       		.byte	0x1
+ 1143 02e4 DB       		.byte	0xdb
+ 1144 02e5 00000000 		.4byte	.LFB67
+ 1145 02e9 1C000000 		.4byte	.LFE67-.LFB67
+ 1146 02ed 01       		.uleb128 0x1
+ 1147 02ee 9C       		.byte	0x9c
+ 1148 02ef 0E030000 		.4byte	0x30e
+ 1149 02f3 0F       		.uleb128 0xf
+ 1150 02f4 4E040000 		.4byte	.LASF42
+ 1151 02f8 01       		.byte	0x1
+ 1152 02f9 E0       		.byte	0xe0
+ 1153 02fa 73000000 		.4byte	0x73
+ 1154 02fe 04030000 		.4byte	0x304
+ 1155 0302 10       		.uleb128 0x10
+ 1156 0303 00       		.byte	0
+ 1157 0304 0D       		.uleb128 0xd
+ 1158 0305 10000000 		.4byte	.LVL9
+ 1159 0309 590A0000 		.4byte	0xa59
+ 1160 030d 00       		.byte	0
+ 1161 030e 0B       		.uleb128 0xb
+ 1162 030f BC040000 		.4byte	.LASF43
+ 1163 0313 01       		.byte	0x1
+ 1164 0314 0E       		.byte	0xe
+ 1165 0315 00000000 		.4byte	.LFB63
+ 1166 0319 14010000 		.4byte	.LFE63-.LFB63
+ 1167 031d 01       		.uleb128 0x1
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 26
+
+
+ 1168 031e 9C       		.byte	0x9c
+ 1169 031f 70040000 		.4byte	0x470
+ 1170 0323 0C       		.uleb128 0xc
+ 1171 0324 6900     		.ascii	"i\000"
+ 1172 0326 01       		.byte	0x1
+ 1173 0327 14       		.byte	0x14
+ 1174 0328 73000000 		.4byte	0x73
+ 1175 032c 13000000 		.4byte	.LLST1
+ 1176 0330 0F       		.uleb128 0xf
+ 1177 0331 80040000 		.4byte	.LASF44
+ 1178 0335 01       		.byte	0x1
+ 1179 0336 2F       		.byte	0x2f
+ 1180 0337 73000000 		.4byte	0x73
+ 1181 033b 41030000 		.4byte	0x341
+ 1182 033f 10       		.uleb128 0x10
+ 1183 0340 00       		.byte	0
+ 1184 0341 0F       		.uleb128 0xf
+ 1185 0342 1D050000 		.4byte	.LASF45
+ 1186 0346 01       		.byte	0x1
+ 1187 0347 30       		.byte	0x30
+ 1188 0348 73000000 		.4byte	0x73
+ 1189 034c 52030000 		.4byte	0x352
+ 1190 0350 10       		.uleb128 0x10
+ 1191 0351 00       		.byte	0
+ 1192 0352 0F       		.uleb128 0xf
+ 1193 0353 A3050000 		.4byte	.LASF46
+ 1194 0357 01       		.byte	0x1
+ 1195 0358 35       		.byte	0x35
+ 1196 0359 73000000 		.4byte	0x73
+ 1197 035d 63030000 		.4byte	0x363
+ 1198 0361 10       		.uleb128 0x10
+ 1199 0362 00       		.byte	0
+ 1200 0363 0F       		.uleb128 0xf
+ 1201 0364 40020000 		.4byte	.LASF47
+ 1202 0368 01       		.byte	0x1
+ 1203 0369 36       		.byte	0x36
+ 1204 036a 73000000 		.4byte	0x73
+ 1205 036e 74030000 		.4byte	0x374
+ 1206 0372 10       		.uleb128 0x10
+ 1207 0373 00       		.byte	0
+ 1208 0374 11       		.uleb128 0x11
+ 1209 0375 82000000 		.4byte	.LVL21
+ 1210 0379 640A0000 		.4byte	0xa64
+ 1211 037d 8B030000 		.4byte	0x38b
+ 1212 0381 12       		.uleb128 0x12
+ 1213 0382 01       		.uleb128 0x1
+ 1214 0383 50       		.byte	0x50
+ 1215 0384 05       		.uleb128 0x5
+ 1216 0385 03       		.byte	0x3
+ 1217 0386 00000000 		.4byte	ISR_SYMB_h
+ 1218 038a 00       		.byte	0
+ 1219 038b 0D       		.uleb128 0xd
+ 1220 038c 86000000 		.4byte	.LVL22
+ 1221 0390 6F0A0000 		.4byte	0xa6f
+ 1222 0394 11       		.uleb128 0x11
+ 1223 0395 8C000000 		.4byte	.LVL23
+ 1224 0399 7A0A0000 		.4byte	0xa7a
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 27
+
+
+ 1225 039d AB030000 		.4byte	0x3ab
+ 1226 03a1 12       		.uleb128 0x12
+ 1227 03a2 01       		.uleb128 0x1
+ 1228 03a3 50       		.byte	0x50
+ 1229 03a4 05       		.uleb128 0x5
+ 1230 03a5 03       		.byte	0x3
+ 1231 03a6 00000000 		.4byte	ISR_INJ_h
+ 1232 03aa 00       		.byte	0
+ 1233 03ab 0D       		.uleb128 0xd
+ 1234 03ac 90000000 		.4byte	.LVL24
+ 1235 03b0 850A0000 		.4byte	0xa85
+ 1236 03b4 11       		.uleb128 0x11
+ 1237 03b5 96000000 		.4byte	.LVL25
+ 1238 03b9 900A0000 		.4byte	0xa90
+ 1239 03bd CB030000 		.4byte	0x3cb
+ 1240 03c1 12       		.uleb128 0x12
+ 1241 03c2 01       		.uleb128 0x1
+ 1242 03c3 50       		.byte	0x50
+ 1243 03c4 05       		.uleb128 0x5
+ 1244 03c5 03       		.byte	0x3
+ 1245 03c6 00000000 		.4byte	ISR_INJ_CHECK_h
+ 1246 03ca 00       		.byte	0
+ 1247 03cb 0D       		.uleb128 0xd
+ 1248 03cc 9A000000 		.4byte	.LVL26
+ 1249 03d0 9B0A0000 		.4byte	0xa9b
+ 1250 03d4 11       		.uleb128 0x11
+ 1251 03d5 A0000000 		.4byte	.LVL27
+ 1252 03d9 A60A0000 		.4byte	0xaa6
+ 1253 03dd EB030000 		.4byte	0x3eb
+ 1254 03e1 12       		.uleb128 0x12
+ 1255 03e2 01       		.uleb128 0x1
+ 1256 03e3 50       		.byte	0x50
+ 1257 03e4 05       		.uleb128 0x5
+ 1258 03e5 03       		.byte	0x3
+ 1259 03e6 00000000 		.4byte	ISR_TX_DONE_h
+ 1260 03ea 00       		.byte	0
+ 1261 03eb 0D       		.uleb128 0xd
+ 1262 03ec A4000000 		.4byte	.LVL28
+ 1263 03f0 B10A0000 		.4byte	0xab1
+ 1264 03f4 11       		.uleb128 0x11
+ 1265 03f5 B2000000 		.4byte	.LVL29
+ 1266 03f9 BC0A0000 		.4byte	0xabc
+ 1267 03fd 1A040000 		.4byte	0x41a
+ 1268 0401 12       		.uleb128 0x12
+ 1269 0402 01       		.uleb128 0x1
+ 1270 0403 50       		.byte	0x50
+ 1271 0404 01       		.uleb128 0x1
+ 1272 0405 31       		.byte	0x31
+ 1273 0406 12       		.uleb128 0x12
+ 1274 0407 01       		.uleb128 0x1
+ 1275 0408 51       		.byte	0x51
+ 1276 0409 01       		.uleb128 0x1
+ 1277 040a 31       		.byte	0x31
+ 1278 040b 12       		.uleb128 0x12
+ 1279 040c 01       		.uleb128 0x1
+ 1280 040d 52       		.byte	0x52
+ 1281 040e 03       		.uleb128 0x3
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 28
+
+
+ 1282 040f 0A       		.byte	0xa
+ 1283 0410 0040     		.2byte	0x4000
+ 1284 0412 12       		.uleb128 0x12
+ 1285 0413 01       		.uleb128 0x1
+ 1286 0414 53       		.byte	0x53
+ 1287 0415 03       		.uleb128 0x3
+ 1288 0416 0A       		.byte	0xa
+ 1289 0417 0040     		.2byte	0x4000
+ 1290 0419 00       		.byte	0
+ 1291 041a 0D       		.uleb128 0xd
+ 1292 041b BA000000 		.4byte	.LVL30
+ 1293 041f C70A0000 		.4byte	0xac7
+ 1294 0423 11       		.uleb128 0x11
+ 1295 0424 C8000000 		.4byte	.LVL31
+ 1296 0428 D20A0000 		.4byte	0xad2
+ 1297 042c 3B040000 		.4byte	0x43b
+ 1298 0430 12       		.uleb128 0x12
+ 1299 0431 01       		.uleb128 0x1
+ 1300 0432 51       		.byte	0x51
+ 1301 0433 01       		.uleb128 0x1
+ 1302 0434 31       		.byte	0x31
+ 1303 0435 12       		.uleb128 0x12
+ 1304 0436 01       		.uleb128 0x1
+ 1305 0437 53       		.byte	0x53
+ 1306 0438 01       		.uleb128 0x1
+ 1307 0439 30       		.byte	0x30
+ 1308 043a 00       		.byte	0
+ 1309 043b 11       		.uleb128 0x11
+ 1310 043c D6000000 		.4byte	.LVL32
+ 1311 0440 DD0A0000 		.4byte	0xadd
+ 1312 0444 57040000 		.4byte	0x457
+ 1313 0448 12       		.uleb128 0x12
+ 1314 0449 01       		.uleb128 0x1
+ 1315 044a 51       		.byte	0x51
+ 1316 044b 03       		.uleb128 0x3
+ 1317 044c 0A       		.byte	0xa
+ 1318 044d 6164     		.2byte	0x6461
+ 1319 044f 12       		.uleb128 0x12
+ 1320 0450 01       		.uleb128 0x1
+ 1321 0451 52       		.byte	0x52
+ 1322 0452 03       		.uleb128 0x3
+ 1323 0453 0A       		.byte	0xa
+ 1324 0454 7465     		.2byte	0x6574
+ 1325 0456 00       		.byte	0
+ 1326 0457 0D       		.uleb128 0xd
+ 1327 0458 DE000000 		.4byte	.LVL33
+ 1328 045c E80A0000 		.4byte	0xae8
+ 1329 0460 13       		.uleb128 0x13
+ 1330 0461 E6000000 		.4byte	.LVL34
+ 1331 0465 F30A0000 		.4byte	0xaf3
+ 1332 0469 12       		.uleb128 0x12
+ 1333 046a 01       		.uleb128 0x1
+ 1334 046b 51       		.byte	0x51
+ 1335 046c 01       		.uleb128 0x1
+ 1336 046d 31       		.byte	0x31
+ 1337 046e 00       		.byte	0
+ 1338 046f 00       		.byte	0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 29
+
+
+ 1339 0470 14       		.uleb128 0x14
+ 1340 0471 06040000 		.4byte	.LASF48
+ 1341 0475 07       		.byte	0x7
+ 1342 0476 1207     		.2byte	0x712
+ 1343 0478 7C040000 		.4byte	0x47c
+ 1344 047c 06       		.uleb128 0x6
+ 1345 047d 8C000000 		.4byte	0x8c
+ 1346 0481 09       		.uleb128 0x9
+ 1347 0482 97000000 		.4byte	0x97
+ 1348 0486 91040000 		.4byte	0x491
+ 1349 048a 0A       		.uleb128 0xa
+ 1350 048b 00010000 		.4byte	0x100
+ 1351 048f 3F       		.byte	0x3f
+ 1352 0490 00       		.byte	0
+ 1353 0491 15       		.uleb128 0x15
+ 1354 0492 D2000000 		.4byte	.LASF49
+ 1355 0496 08       		.byte	0x8
+ 1356 0497 79       		.byte	0x79
+ 1357 0498 81040000 		.4byte	0x481
+ 1358 049c 05       		.uleb128 0x5
+ 1359 049d 03       		.byte	0x3
+ 1360 049e 00000000 		.4byte	bufferUart
+ 1361 04a2 15       		.uleb128 0x15
+ 1362 04a3 09000000 		.4byte	.LASF50
+ 1363 04a7 08       		.byte	0x8
+ 1364 04a8 7B       		.byte	0x7b
+ 1365 04a9 8B010000 		.4byte	0x18b
+ 1366 04ad 05       		.uleb128 0x5
+ 1367 04ae 03       		.byte	0x3
+ 1368 04af 00000000 		.4byte	FLAG_SER_EVENT
+ 1369 04b3 15       		.uleb128 0x15
+ 1370 04b4 E4000000 		.4byte	.LASF51
+ 1371 04b8 08       		.byte	0x8
+ 1372 04b9 7C       		.byte	0x7c
+ 1373 04ba 8B010000 		.4byte	0x18b
+ 1374 04be 05       		.uleb128 0x5
+ 1375 04bf 03       		.byte	0x3
+ 1376 04c0 00000000 		.4byte	FLAG_SER_TX_INIT
+ 1377 04c4 16       		.uleb128 0x16
+ 1378 04c5 6900     		.ascii	"i\000"
+ 1379 04c7 08       		.byte	0x8
+ 1380 04c8 7F       		.byte	0x7f
+ 1381 04c9 73000000 		.4byte	0x73
+ 1382 04cd 05       		.uleb128 0x5
+ 1383 04ce 03       		.byte	0x3
+ 1384 04cf 00000000 		.4byte	i
+ 1385 04d3 09       		.uleb128 0x9
+ 1386 04d4 97000000 		.4byte	0x97
+ 1387 04d8 E3040000 		.4byte	0x4e3
+ 1388 04dc 0A       		.uleb128 0xa
+ 1389 04dd 00010000 		.4byte	0x100
+ 1390 04e1 0F       		.byte	0xf
+ 1391 04e2 00       		.byte	0
+ 1392 04e3 15       		.uleb128 0x15
+ 1393 04e4 F0020000 		.4byte	.LASF52
+ 1394 04e8 08       		.byte	0x8
+ 1395 04e9 81       		.byte	0x81
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 30
+
+
+ 1396 04ea D3040000 		.4byte	0x4d3
+ 1397 04ee 05       		.uleb128 0x5
+ 1398 04ef 03       		.byte	0x3
+ 1399 04f0 00000000 		.4byte	levels_48
+ 1400 04f4 15       		.uleb128 0x15
+ 1401 04f5 48010000 		.4byte	.LASF53
+ 1402 04f9 08       		.byte	0x8
+ 1403 04fa 82       		.byte	0x82
+ 1404 04fb 7B010000 		.4byte	0x17b
+ 1405 04ff 05       		.uleb128 0x5
+ 1406 0500 03       		.byte	0x3
+ 1407 0501 00000000 		.4byte	levels_15
+ 1408 0505 15       		.uleb128 0x15
+ 1409 0506 2F040000 		.4byte	.LASF54
+ 1410 050a 08       		.byte	0x8
+ 1411 050b 83       		.byte	0x83
+ 1412 050c 7B010000 		.4byte	0x17b
+ 1413 0510 05       		.uleb128 0x5
+ 1414 0511 03       		.byte	0x3
+ 1415 0512 00000000 		.4byte	levels_82
+ 1416 0516 09       		.uleb128 0x9
+ 1417 0517 97000000 		.4byte	0x97
+ 1418 051b 26050000 		.4byte	0x526
+ 1419 051f 0A       		.uleb128 0xa
+ 1420 0520 00010000 		.4byte	0x100
+ 1421 0524 01       		.byte	0x1
+ 1422 0525 00       		.byte	0
+ 1423 0526 15       		.uleb128 0x15
+ 1424 0527 E4030000 		.4byte	.LASF55
+ 1425 052b 08       		.byte	0x8
+ 1426 052c 85       		.byte	0x85
+ 1427 052d 16050000 		.4byte	0x516
+ 1428 0531 05       		.uleb128 0x5
+ 1429 0532 03       		.byte	0x3
+ 1430 0533 00000000 		.4byte	serialTest
+ 1431 0537 15       		.uleb128 0x15
+ 1432 0538 F0050000 		.4byte	.LASF56
+ 1433 053c 08       		.byte	0x8
+ 1434 053d 86       		.byte	0x86
+ 1435 053e 97000000 		.4byte	0x97
+ 1436 0542 05       		.uleb128 0x5
+ 1437 0543 03       		.byte	0x3
+ 1438 0544 00000000 		.4byte	test8
+ 1439 0548 15       		.uleb128 0x15
+ 1440 0549 DD000000 		.4byte	.LASF57
+ 1441 054d 08       		.byte	0x8
+ 1442 054e 87       		.byte	0x87
+ 1443 054f A3000000 		.4byte	0xa3
+ 1444 0553 05       		.uleb128 0x5
+ 1445 0554 03       		.byte	0x3
+ 1446 0555 00000000 		.4byte	test16
+ 1447 0559 15       		.uleb128 0x15
+ 1448 055a 9A030000 		.4byte	.LASF58
+ 1449 055e 08       		.byte	0x8
+ 1450 055f 89       		.byte	0x89
+ 1451 0560 81040000 		.4byte	0x481
+ 1452 0564 05       		.uleb128 0x5
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 31
+
+
+ 1453 0565 03       		.byte	0x3
+ 1454 0566 00000000 		.4byte	buffer_uart
+ 1455 056a 16       		.uleb128 0x16
+ 1456 056b 64656C00 		.ascii	"del\000"
+ 1457 056f 08       		.byte	0x8
+ 1458 0570 8B       		.byte	0x8b
+ 1459 0571 97000000 		.4byte	0x97
+ 1460 0575 05       		.uleb128 0x5
+ 1461 0576 03       		.byte	0x3
+ 1462 0577 00000000 		.4byte	del
+ 1463 057b 16       		.uleb128 0x16
+ 1464 057c 70726500 		.ascii	"pre\000"
+ 1465 0580 08       		.byte	0x8
+ 1466 0581 8C       		.byte	0x8c
+ 1467 0582 97000000 		.4byte	0x97
+ 1468 0586 05       		.uleb128 0x5
+ 1469 0587 03       		.byte	0x3
+ 1470 0588 00000000 		.4byte	pre
+ 1471 058c 15       		.uleb128 0x15
+ 1472 058d 0D050000 		.4byte	.LASF59
+ 1473 0591 08       		.byte	0x8
+ 1474 0592 8E       		.byte	0x8e
+ 1475 0593 97000000 		.4byte	0x97
+ 1476 0597 05       		.uleb128 0x5
+ 1477 0598 03       		.byte	0x3
+ 1478 0599 00000000 		.4byte	uart_type
+ 1479 059d 15       		.uleb128 0x15
+ 1480 059e 8B030000 		.4byte	.LASF60
+ 1481 05a2 08       		.byte	0x8
+ 1482 05a3 90       		.byte	0x90
+ 1483 05a4 97000000 		.4byte	0x97
+ 1484 05a8 05       		.uleb128 0x5
+ 1485 05a9 03       		.byte	0x3
+ 1486 05aa 00000000 		.4byte	stepSize
+ 1487 05ae 15       		.uleb128 0x15
+ 1488 05af A9020000 		.4byte	.LASF61
+ 1489 05b3 08       		.byte	0x8
+ 1490 05b4 92       		.byte	0x92
+ 1491 05b5 8B010000 		.4byte	0x18b
+ 1492 05b9 05       		.uleb128 0x5
+ 1493 05ba 03       		.byte	0x3
+ 1494 05bb 00000000 		.4byte	send15Cont
+ 1495 05bf 15       		.uleb128 0x15
+ 1496 05c0 8D020000 		.4byte	.LASF62
+ 1497 05c4 08       		.byte	0x8
+ 1498 05c5 94       		.byte	0x94
+ 1499 05c6 A3000000 		.4byte	0xa3
+ 1500 05ca 05       		.uleb128 0x5
+ 1501 05cb 03       		.byte	0x3
+ 1502 05cc 00000000 		.4byte	signalMean
+ 1503 05d0 16       		.uleb128 0x16
+ 1504 05d1 73756D00 		.ascii	"sum\000"
+ 1505 05d5 08       		.byte	0x8
+ 1506 05d6 95       		.byte	0x95
+ 1507 05d7 AF000000 		.4byte	0xaf
+ 1508 05db 05       		.uleb128 0x5
+ 1509 05dc 03       		.byte	0x3
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 32
+
+
+ 1510 05dd 00000000 		.4byte	sum
+ 1511 05e1 15       		.uleb128 0x15
+ 1512 05e2 02030000 		.4byte	.LASF63
+ 1513 05e6 08       		.byte	0x8
+ 1514 05e7 97       		.byte	0x97
+ 1515 05e8 97000000 		.4byte	0x97
+ 1516 05ec 05       		.uleb128 0x5
+ 1517 05ed 03       		.byte	0x3
+ 1518 05ee 00000000 		.4byte	i2cStart
+ 1519 05f2 15       		.uleb128 0x15
+ 1520 05f3 39030000 		.4byte	.LASF64
+ 1521 05f7 08       		.byte	0x8
+ 1522 05f8 98       		.byte	0x98
+ 1523 05f9 97000000 		.4byte	0x97
+ 1524 05fd 05       		.uleb128 0x5
+ 1525 05fe 03       		.byte	0x3
+ 1526 05ff 00000000 		.4byte	i2cClk
+ 1527 0603 15       		.uleb128 0x15
+ 1528 0604 20020000 		.4byte	.LASF65
+ 1529 0608 08       		.byte	0x8
+ 1530 0609 99       		.byte	0x99
+ 1531 060a 97000000 		.4byte	0x97
+ 1532 060e 05       		.uleb128 0x5
+ 1533 060f 03       		.byte	0x3
+ 1534 0610 00000000 		.4byte	i2cSda
+ 1535 0614 16       		.uleb128 0x16
+ 1536 0615 6300     		.ascii	"c\000"
+ 1537 0617 08       		.byte	0x8
+ 1538 0618 9A       		.byte	0x9a
+ 1539 0619 97000000 		.4byte	0x97
+ 1540 061d 05       		.uleb128 0x5
+ 1541 061e 03       		.byte	0x3
+ 1542 061f 00000000 		.4byte	c
+ 1543 0623 09       		.uleb128 0x9
+ 1544 0624 97000000 		.4byte	0x97
+ 1545 0628 33060000 		.4byte	0x633
+ 1546 062c 0A       		.uleb128 0xa
+ 1547 062d 00010000 		.4byte	0x100
+ 1548 0631 1A       		.byte	0x1a
+ 1549 0632 00       		.byte	0
+ 1550 0633 15       		.uleb128 0x15
+ 1551 0634 39040000 		.4byte	.LASF66
+ 1552 0638 08       		.byte	0x8
+ 1553 0639 9B       		.byte	0x9b
+ 1554 063a 23060000 		.4byte	0x623
+ 1555 063e 05       		.uleb128 0x5
+ 1556 063f 03       		.byte	0x3
+ 1557 0640 00000000 		.4byte	i2cBuf
+ 1558 0644 15       		.uleb128 0x15
+ 1559 0645 A6030000 		.4byte	.LASF67
+ 1560 0649 08       		.byte	0x8
+ 1561 064a 9D       		.byte	0x9d
+ 1562 064b 97000000 		.4byte	0x97
+ 1563 064f 05       		.uleb128 0x5
+ 1564 0650 03       		.byte	0x3
+ 1565 0651 00000000 		.4byte	i2cAddr
+ 1566 0655 15       		.uleb128 0x15
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 33
+
+
+ 1567 0656 AA040000 		.4byte	.LASF68
+ 1568 065a 08       		.byte	0x8
+ 1569 065b 9E       		.byte	0x9e
+ 1570 065c 97000000 		.4byte	0x97
+ 1571 0660 05       		.uleb128 0x5
+ 1572 0661 03       		.byte	0x3
+ 1573 0662 00000000 		.4byte	i2cInstr
+ 1574 0666 15       		.uleb128 0x15
+ 1575 0667 0B010000 		.4byte	.LASF69
+ 1576 066b 08       		.byte	0x8
+ 1577 066c 9F       		.byte	0x9f
+ 1578 066d 97000000 		.4byte	0x97
+ 1579 0671 05       		.uleb128 0x5
+ 1580 0672 03       		.byte	0x3
+ 1581 0673 00000000 		.4byte	i2cData
+ 1582 0677 15       		.uleb128 0x15
+ 1583 0678 2B000000 		.4byte	.LASF70
+ 1584 067c 08       		.byte	0x8
+ 1585 067d A0       		.byte	0xa0
+ 1586 067e 97000000 		.4byte	0x97
+ 1587 0682 05       		.uleb128 0x5
+ 1588 0683 03       		.byte	0x3
+ 1589 0684 00000000 		.4byte	i2cRun
+ 1590 0688 15       		.uleb128 0x15
+ 1591 0689 5B030000 		.4byte	.LASF71
+ 1592 068d 08       		.byte	0x8
+ 1593 068e A2       		.byte	0xa2
+ 1594 068f 23060000 		.4byte	0x623
+ 1595 0693 05       		.uleb128 0x5
+ 1596 0694 03       		.byte	0x3
+ 1597 0695 00000000 		.4byte	i2cWord
+ 1598 0699 09       		.uleb128 0x9
+ 1599 069a AF000000 		.4byte	0xaf
+ 1600 069e A9060000 		.4byte	0x6a9
+ 1601 06a2 0A       		.uleb128 0xa
+ 1602 06a3 00010000 		.4byte	0x100
+ 1603 06a7 01       		.byte	0x1
+ 1604 06a8 00       		.byte	0
+ 1605 06a9 15       		.uleb128 0x15
+ 1606 06aa 87050000 		.4byte	.LASF72
+ 1607 06ae 05       		.byte	0x5
+ 1608 06af 37       		.byte	0x37
+ 1609 06b0 99060000 		.4byte	0x699
+ 1610 06b4 05       		.uleb128 0x5
+ 1611 06b5 03       		.byte	0x3
+ 1612 06b6 00000000 		.4byte	deviceID
+ 1613 06ba 15       		.uleb128 0x15
+ 1614 06bb A8000000 		.4byte	.LASF73
+ 1615 06bf 05       		.byte	0x5
+ 1616 06c0 38       		.byte	0x38
+ 1617 06c1 97000000 		.4byte	0x97
+ 1618 06c5 05       		.uleb128 0x5
+ 1619 06c6 03       		.byte	0x3
+ 1620 06c7 00000000 		.4byte	deviceAddress
+ 1621 06cb 09       		.uleb128 0x9
+ 1622 06cc 70010000 		.4byte	0x170
+ 1623 06d0 DB060000 		.4byte	0x6db
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 34
+
+
+ 1624 06d4 0A       		.uleb128 0xa
+ 1625 06d5 00010000 		.4byte	0x100
+ 1626 06d9 02       		.byte	0x2
+ 1627 06da 00       		.byte	0
+ 1628 06db 15       		.uleb128 0x15
+ 1629 06dc 40030000 		.4byte	.LASF74
+ 1630 06e0 05       		.byte	0x5
+ 1631 06e1 39       		.byte	0x39
+ 1632 06e2 CB060000 		.4byte	0x6cb
+ 1633 06e6 05       		.uleb128 0x5
+ 1634 06e7 03       		.byte	0x3
+ 1635 06e8 00000000 		.4byte	routingTable
+ 1636 06ec 15       		.uleb128 0x15
+ 1637 06ed 78030000 		.4byte	.LASF75
+ 1638 06f1 09       		.byte	0x9
+ 1639 06f2 16       		.byte	0x16
+ 1640 06f3 97000000 		.4byte	0x97
+ 1641 06f7 05       		.uleb128 0x5
+ 1642 06f8 03       		.byte	0x3
+ 1643 06f9 00000000 		.4byte	dimLevel
+ 1644 06fd 15       		.uleb128 0x15
+ 1645 06fe 41050000 		.4byte	.LASF76
+ 1646 0702 06       		.byte	0x6
+ 1647 0703 1C       		.byte	0x1c
+ 1648 0704 97000000 		.4byte	0x97
+ 1649 0708 05       		.uleb128 0x5
+ 1650 0709 03       		.byte	0x3
+ 1651 070a 00000000 		.4byte	DMA_PAY_Chan
+ 1652 070e 09       		.uleb128 0x9
+ 1653 070f 97000000 		.4byte	0x97
+ 1654 0713 1E070000 		.4byte	0x71e
+ 1655 0717 0A       		.uleb128 0xa
+ 1656 0718 00010000 		.4byte	0x100
+ 1657 071c 00       		.byte	0
+ 1658 071d 00       		.byte	0
+ 1659 071e 15       		.uleb128 0x15
+ 1660 071f 2E030000 		.4byte	.LASF77
+ 1661 0723 06       		.byte	0x6
+ 1662 0724 1D       		.byte	0x1d
+ 1663 0725 0E070000 		.4byte	0x70e
+ 1664 0729 05       		.uleb128 0x5
+ 1665 072a 03       		.byte	0x3
+ 1666 072b 00000000 		.4byte	DMA_PAY_TD
+ 1667 072f 09       		.uleb128 0x9
+ 1668 0730 CB010000 		.4byte	0x1cb
+ 1669 0734 3F070000 		.4byte	0x73f
+ 1670 0738 0A       		.uleb128 0xa
+ 1671 0739 00010000 		.4byte	0x100
+ 1672 073d 04       		.byte	0x4
+ 1673 073e 00       		.byte	0
+ 1674 073f 15       		.uleb128 0x15
+ 1675 0740 45040000 		.4byte	.LASF78
+ 1676 0744 06       		.byte	0x6
+ 1677 0745 3D       		.byte	0x3d
+ 1678 0746 2F070000 		.4byte	0x72f
+ 1679 074a 05       		.uleb128 0x5
+ 1680 074b 03       		.byte	0x3
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 35
+
+
+ 1681 074c 00000000 		.4byte	packets4
+ 1682 0750 09       		.uleb128 0x9
+ 1683 0751 97000000 		.4byte	0x97
+ 1684 0755 66070000 		.4byte	0x766
+ 1685 0759 0A       		.uleb128 0xa
+ 1686 075a 00010000 		.4byte	0x100
+ 1687 075e 02       		.byte	0x2
+ 1688 075f 0A       		.uleb128 0xa
+ 1689 0760 00010000 		.4byte	0x100
+ 1690 0764 06       		.byte	0x6
+ 1691 0765 00       		.byte	0
+ 1692 0766 16       		.uleb128 0x16
+ 1693 0767 4800     		.ascii	"H\000"
+ 1694 0769 0A       		.byte	0xa
+ 1695 076a 2C       		.byte	0x2c
+ 1696 076b 50070000 		.4byte	0x750
+ 1697 076f 05       		.uleb128 0x5
+ 1698 0770 03       		.byte	0x3
+ 1699 0771 00000000 		.4byte	H
+ 1700 0775 09       		.uleb128 0x9
+ 1701 0776 97000000 		.4byte	0x97
+ 1702 077a 85070000 		.4byte	0x785
+ 1703 077e 0A       		.uleb128 0xa
+ 1704 077f 00010000 		.4byte	0x100
+ 1705 0783 06       		.byte	0x6
+ 1706 0784 00       		.byte	0
+ 1707 0785 15       		.uleb128 0x15
+ 1708 0786 0B030000 		.4byte	.LASF79
+ 1709 078a 0A       		.byte	0xa
+ 1710 078b 32       		.byte	0x32
+ 1711 078c 75070000 		.4byte	0x775
+ 1712 0790 05       		.uleb128 0x5
+ 1713 0791 03       		.byte	0x3
+ 1714 0792 00000000 		.4byte	colValH
+ 1715 0796 15       		.uleb128 0x15
+ 1716 0797 00000000 		.4byte	.LASF80
+ 1717 079b 0B       		.byte	0xb
+ 1718 079c 1B       		.byte	0x1b
+ 1719 079d A3000000 		.4byte	0xa3
+ 1720 07a1 05       		.uleb128 0x5
+ 1721 07a2 03       		.byte	0x3
+ 1722 07a3 00000000 		.4byte	adcValue
+ 1723 07a7 15       		.uleb128 0x15
+ 1724 07a8 B9020000 		.4byte	.LASF81
+ 1725 07ac 0B       		.byte	0xb
+ 1726 07ad 1D       		.byte	0x1d
+ 1727 07ae 97000000 		.4byte	0x97
+ 1728 07b2 05       		.uleb128 0x5
+ 1729 07b3 03       		.byte	0x3
+ 1730 07b4 00000000 		.4byte	rxModLevel
+ 1731 07b8 15       		.uleb128 0x15
+ 1732 07b9 6F030000 		.4byte	.LASF82
+ 1733 07bd 0B       		.byte	0xb
+ 1734 07be 1E       		.byte	0x1e
+ 1735 07bf A3000000 		.4byte	0xa3
+ 1736 07c3 05       		.uleb128 0x5
+ 1737 07c4 03       		.byte	0x3
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 36
+
+
+ 1738 07c5 00000000 		.4byte	rxLength
+ 1739 07c9 15       		.uleb128 0x15
+ 1740 07ca CC020000 		.4byte	.LASF83
+ 1741 07ce 0B       		.byte	0xb
+ 1742 07cf 1F       		.byte	0x1f
+ 1743 07d0 C7000000 		.4byte	0xc7
+ 1744 07d4 05       		.uleb128 0x5
+ 1745 07d5 03       		.byte	0x3
+ 1746 07d6 00000000 		.4byte	rxTrackSum
+ 1747 07da 15       		.uleb128 0x15
+ 1748 07db 17050000 		.4byte	.LASF84
+ 1749 07df 0B       		.byte	0xb
+ 1750 07e0 20       		.byte	0x20
+ 1751 07e1 97000000 		.4byte	0x97
+ 1752 07e5 05       		.uleb128 0x5
+ 1753 07e6 03       		.byte	0x3
+ 1754 07e7 00000000 		.4byte	rxSrc
+ 1755 07eb 15       		.uleb128 0x15
+ 1756 07ec F6050000 		.4byte	.LASF85
+ 1757 07f0 0B       		.byte	0xb
+ 1758 07f1 20       		.byte	0x20
+ 1759 07f2 97000000 		.4byte	0x97
+ 1760 07f6 05       		.uleb128 0x5
+ 1761 07f7 03       		.byte	0x3
+ 1762 07f8 00000000 		.4byte	rxDst
+ 1763 07fc 15       		.uleb128 0x15
+ 1764 07fd C4020000 		.4byte	.LASF86
+ 1765 0801 0B       		.byte	0xb
+ 1766 0802 22       		.byte	0x22
+ 1767 0803 97000000 		.4byte	0x97
+ 1768 0807 05       		.uleb128 0x5
+ 1769 0808 03       		.byte	0x3
+ 1770 0809 00000000 		.4byte	headCnt
+ 1771 080d 15       		.uleb128 0x15
+ 1772 080e E3020000 		.4byte	.LASF87
+ 1773 0812 0B       		.byte	0xb
+ 1774 0813 24       		.byte	0x24
+ 1775 0814 D3040000 		.4byte	0x4d3
+ 1776 0818 05       		.uleb128 0x5
+ 1777 0819 03       		.byte	0x3
+ 1778 081a 00000000 		.4byte	hamWordCheck
+ 1779 081e 15       		.uleb128 0x15
+ 1780 081f 63000000 		.4byte	.LASF88
+ 1781 0823 0A       		.byte	0xa
+ 1782 0824 37       		.byte	0x37
+ 1783 0825 97000000 		.4byte	0x97
+ 1784 0829 05       		.uleb128 0x5
+ 1785 082a 03       		.byte	0x3
+ 1786 082b 00000000 		.4byte	sh_test
+ 1787 082f 15       		.uleb128 0x15
+ 1788 0830 13010000 		.4byte	.LASF89
+ 1789 0834 0A       		.byte	0xa
+ 1790 0835 38       		.byte	0x38
+ 1791 0836 97000000 		.4byte	0x97
+ 1792 083a 05       		.uleb128 0x5
+ 1793 083b 03       		.byte	0x3
+ 1794 083c 00000000 		.4byte	sh_load
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 37
+
+
+ 1795 0840 15       		.uleb128 0x15
+ 1796 0841 67040000 		.4byte	.LASF90
+ 1797 0845 0A       		.byte	0xa
+ 1798 0846 39       		.byte	0x39
+ 1799 0847 97000000 		.4byte	0x97
+ 1800 084b 05       		.uleb128 0x5
+ 1801 084c 03       		.byte	0x3
+ 1802 084d 00000000 		.4byte	sh_fifo
+ 1803 0851 15       		.uleb128 0x15
+ 1804 0852 77020000 		.4byte	.LASF91
+ 1805 0856 0C       		.byte	0xc
+ 1806 0857 19       		.byte	0x19
+ 1807 0858 97000000 		.4byte	0x97
+ 1808 085c 05       		.uleb128 0x5
+ 1809 085d 03       		.byte	0x3
+ 1810 085e 00000000 		.4byte	DMA_HAM2SER_Chan
+ 1811 0862 15       		.uleb128 0x15
+ 1812 0863 32050000 		.4byte	.LASF92
+ 1813 0867 0C       		.byte	0xc
+ 1814 0868 1A       		.byte	0x1a
+ 1815 0869 0E070000 		.4byte	0x70e
+ 1816 086d 05       		.uleb128 0x5
+ 1817 086e 03       		.byte	0x3
+ 1818 086f 00000000 		.4byte	DMA_HAM2SER_TD
+ 1819 0873 15       		.uleb128 0x15
+ 1820 0874 21040000 		.4byte	.LASF93
+ 1821 0878 0C       		.byte	0xc
+ 1822 0879 2C       		.byte	0x2c
+ 1823 087a 8B010000 		.4byte	0x18b
+ 1824 087e 05       		.uleb128 0x5
+ 1825 087f 03       		.byte	0x3
+ 1826 0880 00000000 		.4byte	FLAG_TX_EVENT
+ 1827 0884 15       		.uleb128 0x15
+ 1828 0885 13030000 		.4byte	.LASF94
+ 1829 0889 0C       		.byte	0xc
+ 1830 088a 2D       		.byte	0x2d
+ 1831 088b 8B010000 		.4byte	0x18b
+ 1832 088f 05       		.uleb128 0x5
+ 1833 0890 03       		.byte	0x3
+ 1834 0891 00000000 		.4byte	FLAG_TX_DONE
+ 1835 0895 15       		.uleb128 0x15
+ 1836 0896 90040000 		.4byte	.LASF26
+ 1837 089a 0C       		.byte	0xc
+ 1838 089b 30       		.byte	0x30
+ 1839 089c 97000000 		.4byte	0x97
+ 1840 08a0 05       		.uleb128 0x5
+ 1841 08a1 03       		.byte	0x3
+ 1842 08a2 00000000 		.4byte	modLevel
+ 1843 08a6 16       		.uleb128 0x16
+ 1844 08a7 6D3200   		.ascii	"m2\000"
+ 1845 08aa 0C       		.byte	0xc
+ 1846 08ab 31       		.byte	0x31
+ 1847 08ac 16050000 		.4byte	0x516
+ 1848 08b0 05       		.uleb128 0x5
+ 1849 08b1 03       		.byte	0x3
+ 1850 08b2 00000000 		.4byte	m2
+ 1851 08b6 16       		.uleb128 0x16
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 38
+
+
+ 1852 08b7 6D3400   		.ascii	"m4\000"
+ 1853 08ba 0C       		.byte	0xc
+ 1854 08bb 32       		.byte	0x32
+ 1855 08bc 7B010000 		.4byte	0x17b
+ 1856 08c0 05       		.uleb128 0x5
+ 1857 08c1 03       		.byte	0x3
+ 1858 08c2 00000000 		.4byte	m4
+ 1859 08c6 09       		.uleb128 0x9
+ 1860 08c7 97000000 		.4byte	0x97
+ 1861 08cb D6080000 		.4byte	0x8d6
+ 1862 08cf 0A       		.uleb128 0xa
+ 1863 08d0 00010000 		.4byte	0x100
+ 1864 08d4 07       		.byte	0x7
+ 1865 08d5 00       		.byte	0
+ 1866 08d6 16       		.uleb128 0x16
+ 1867 08d7 6D3800   		.ascii	"m8\000"
+ 1868 08da 0C       		.byte	0xc
+ 1869 08db 33       		.byte	0x33
+ 1870 08dc C6080000 		.4byte	0x8c6
+ 1871 08e0 05       		.uleb128 0x5
+ 1872 08e1 03       		.byte	0x3
+ 1873 08e2 00000000 		.4byte	m8
+ 1874 08e6 16       		.uleb128 0x16
+ 1875 08e7 6D313600 		.ascii	"m16\000"
+ 1876 08eb 0C       		.byte	0xc
+ 1877 08ec 34       		.byte	0x34
+ 1878 08ed D3040000 		.4byte	0x4d3
+ 1879 08f1 05       		.uleb128 0x5
+ 1880 08f2 03       		.byte	0x3
+ 1881 08f3 00000000 		.4byte	m16
+ 1882 08f7 09       		.uleb128 0x9
+ 1883 08f8 97000000 		.4byte	0x97
+ 1884 08fc 07090000 		.4byte	0x907
+ 1885 0900 0A       		.uleb128 0xa
+ 1886 0901 00010000 		.4byte	0x100
+ 1887 0905 1F       		.byte	0x1f
+ 1888 0906 00       		.byte	0
+ 1889 0907 16       		.uleb128 0x16
+ 1890 0908 6D333200 		.ascii	"m32\000"
+ 1891 090c 0C       		.byte	0xc
+ 1892 090d 35       		.byte	0x35
+ 1893 090e F7080000 		.4byte	0x8f7
+ 1894 0912 05       		.uleb128 0x5
+ 1895 0913 03       		.byte	0x3
+ 1896 0914 00000000 		.4byte	m32
+ 1897 0918 09       		.uleb128 0x9
+ 1898 0919 BB000000 		.4byte	0xbb
+ 1899 091d 28090000 		.4byte	0x928
+ 1900 0921 0A       		.uleb128 0xa
+ 1901 0922 00010000 		.4byte	0x100
+ 1902 0926 01       		.byte	0x1
+ 1903 0927 00       		.byte	0
+ 1904 0928 15       		.uleb128 0x15
+ 1905 0929 A0000000 		.4byte	.LASF95
+ 1906 092d 0C       		.byte	0xc
+ 1907 092e 36       		.byte	0x36
+ 1908 092f 18090000 		.4byte	0x918
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 39
+
+
+ 1909 0933 05       		.uleb128 0x5
+ 1910 0934 03       		.byte	0x3
+ 1911 0935 00000000 		.4byte	m2Track
+ 1912 0939 09       		.uleb128 0x9
+ 1913 093a BB000000 		.4byte	0xbb
+ 1914 093e 49090000 		.4byte	0x949
+ 1915 0942 0A       		.uleb128 0xa
+ 1916 0943 00010000 		.4byte	0x100
+ 1917 0947 03       		.byte	0x3
+ 1918 0948 00       		.byte	0
+ 1919 0949 15       		.uleb128 0x15
+ 1920 094a 10020000 		.4byte	.LASF96
+ 1921 094e 0C       		.byte	0xc
+ 1922 094f 37       		.byte	0x37
+ 1923 0950 39090000 		.4byte	0x939
+ 1924 0954 05       		.uleb128 0x5
+ 1925 0955 03       		.byte	0x3
+ 1926 0956 00000000 		.4byte	m4Track
+ 1927 095a 09       		.uleb128 0x9
+ 1928 095b BB000000 		.4byte	0xbb
+ 1929 095f 6A090000 		.4byte	0x96a
+ 1930 0963 0A       		.uleb128 0xa
+ 1931 0964 00010000 		.4byte	0x100
+ 1932 0968 07       		.byte	0x7
+ 1933 0969 00       		.byte	0
+ 1934 096a 15       		.uleb128 0x15
+ 1935 096b 99040000 		.4byte	.LASF97
+ 1936 096f 0C       		.byte	0xc
+ 1937 0970 38       		.byte	0x38
+ 1938 0971 5A090000 		.4byte	0x95a
+ 1939 0975 05       		.uleb128 0x5
+ 1940 0976 03       		.byte	0x3
+ 1941 0977 00000000 		.4byte	m8Track
+ 1942 097b 09       		.uleb128 0x9
+ 1943 097c BB000000 		.4byte	0xbb
+ 1944 0980 8B090000 		.4byte	0x98b
+ 1945 0984 0A       		.uleb128 0xa
+ 1946 0985 00010000 		.4byte	0x100
+ 1947 0989 0F       		.byte	0xf
+ 1948 098a 00       		.byte	0
+ 1949 098b 15       		.uleb128 0x15
+ 1950 098c 32000000 		.4byte	.LASF98
+ 1951 0990 0C       		.byte	0xc
+ 1952 0991 39       		.byte	0x39
+ 1953 0992 7B090000 		.4byte	0x97b
+ 1954 0996 05       		.uleb128 0x5
+ 1955 0997 03       		.byte	0x3
+ 1956 0998 00000000 		.4byte	m16Track
+ 1957 099c 09       		.uleb128 0x9
+ 1958 099d BB000000 		.4byte	0xbb
+ 1959 09a1 AC090000 		.4byte	0x9ac
+ 1960 09a5 0A       		.uleb128 0xa
+ 1961 09a6 00010000 		.4byte	0x100
+ 1962 09aa 1F       		.byte	0x1f
+ 1963 09ab 00       		.byte	0
+ 1964 09ac 15       		.uleb128 0x15
+ 1965 09ad 5E020000 		.4byte	.LASF99
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 40
+
+
+ 1966 09b1 0C       		.byte	0xc
+ 1967 09b2 3A       		.byte	0x3a
+ 1968 09b3 9C090000 		.4byte	0x99c
+ 1969 09b7 05       		.uleb128 0x5
+ 1970 09b8 03       		.byte	0x3
+ 1971 09b9 00000000 		.4byte	m32Track
+ 1972 09bd 15       		.uleb128 0x15
+ 1973 09be A1040000 		.4byte	.LASF100
+ 1974 09c2 0C       		.byte	0xc
+ 1975 09c3 3C       		.byte	0x3c
+ 1976 09c4 C7000000 		.4byte	0xc7
+ 1977 09c8 05       		.uleb128 0x5
+ 1978 09c9 03       		.byte	0x3
+ 1979 09ca 00000000 		.4byte	trackSum
+ 1980 09ce 15       		.uleb128 0x15
+ 1981 09cf 53020000 		.4byte	.LASF101
+ 1982 09d3 0C       		.byte	0xc
+ 1983 09d4 3E       		.byte	0x3e
+ 1984 09d5 97000000 		.4byte	0x97
+ 1985 09d9 05       		.uleb128 0x5
+ 1986 09da 03       		.byte	0x3
+ 1987 09db 00000000 		.4byte	symbolNext
+ 1988 09df 15       		.uleb128 0x15
+ 1989 09e0 2C050000 		.4byte	.LASF102
+ 1990 09e4 0C       		.byte	0xc
+ 1991 09e5 3F       		.byte	0x3f
+ 1992 09e6 97000000 		.4byte	0x97
+ 1993 09ea 05       		.uleb128 0x5
+ 1994 09eb 03       		.byte	0x3
+ 1995 09ec 00000000 		.4byte	lMask
+ 1996 09f0 09       		.uleb128 0x9
+ 1997 09f1 81000000 		.4byte	0x81
+ 1998 09f5 000A0000 		.4byte	0xa00
+ 1999 09f9 0A       		.uleb128 0xa
+ 2000 09fa 00010000 		.4byte	0x100
+ 2001 09fe 1E       		.byte	0x1e
+ 2002 09ff 00       		.byte	0
+ 2003 0a00 15       		.uleb128 0x15
+ 2004 0a01 81050000 		.4byte	.LASF103
+ 2005 0a05 0C       		.byte	0xc
+ 2006 0a06 42       		.byte	0x42
+ 2007 0a07 F0090000 		.4byte	0x9f0
+ 2008 0a0b 05       		.uleb128 0x5
+ 2009 0a0c 03       		.byte	0x3
+ 2010 0a0d 00000000 		.4byte	symTx
+ 2011 0a11 15       		.uleb128 0x15
+ 2012 0a12 6F040000 		.4byte	.LASF104
+ 2013 0a16 0C       		.byte	0xc
+ 2014 0a17 43       		.byte	0x43
+ 2015 0a18 81000000 		.4byte	0x81
+ 2016 0a1c 05       		.uleb128 0x5
+ 2017 0a1d 03       		.byte	0x3
+ 2018 0a1e 00000000 		.4byte	symCnt
+ 2019 0a22 17       		.uleb128 0x17
+ 2020 0a23 F0040000 		.4byte	.LASF105
+ 2021 0a27 F0040000 		.4byte	.LASF105
+ 2022 0a2b 0D       		.byte	0xd
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 41
+
+
+ 2023 0a2c 30       		.byte	0x30
+ 2024 0a2d 17       		.uleb128 0x17
+ 2025 0a2e BC000000 		.4byte	.LASF106
+ 2026 0a32 BC000000 		.4byte	.LASF106
+ 2027 0a36 0E       		.byte	0xe
+ 2028 0a37 28       		.byte	0x28
+ 2029 0a38 17       		.uleb128 0x17
+ 2030 0a39 18000000 		.4byte	.LASF39
+ 2031 0a3d 18000000 		.4byte	.LASF39
+ 2032 0a41 01       		.byte	0x1
+ 2033 0a42 67       		.byte	0x67
+ 2034 0a43 17       		.uleb128 0x17
+ 2035 0a44 3B000000 		.4byte	.LASF107
+ 2036 0a48 3B000000 		.4byte	.LASF107
+ 2037 0a4c 0F       		.byte	0xf
+ 2038 0a4d 28       		.byte	0x28
+ 2039 0a4e 17       		.uleb128 0x17
+ 2040 0a4f FC050000 		.4byte	.LASF40
+ 2041 0a53 FC050000 		.4byte	.LASF40
+ 2042 0a57 01       		.byte	0x1
+ 2043 0a58 D6       		.byte	0xd6
+ 2044 0a59 17       		.uleb128 0x17
+ 2045 0a5a 4E040000 		.4byte	.LASF42
+ 2046 0a5e 4E040000 		.4byte	.LASF42
+ 2047 0a62 01       		.byte	0x1
+ 2048 0a63 E0       		.byte	0xe0
+ 2049 0a64 17       		.uleb128 0x17
+ 2050 0a65 98020000 		.4byte	.LASF108
+ 2051 0a69 98020000 		.4byte	.LASF108
+ 2052 0a6d 0E       		.byte	0xe
+ 2053 0a6e 18       		.byte	0x18
+ 2054 0a6f 17       		.uleb128 0x17
+ 2055 0a70 FB000000 		.4byte	.LASF109
+ 2056 0a74 FB000000 		.4byte	.LASF109
+ 2057 0a78 0E       		.byte	0xe
+ 2058 0a79 23       		.byte	0x23
+ 2059 0a7a 17       		.uleb128 0x17
+ 2060 0a7b 80040000 		.4byte	.LASF44
+ 2061 0a7f 80040000 		.4byte	.LASF44
+ 2062 0a83 01       		.byte	0x1
+ 2063 0a84 2F       		.byte	0x2f
+ 2064 0a85 17       		.uleb128 0x17
+ 2065 0a86 1D050000 		.4byte	.LASF45
+ 2066 0a8a 1D050000 		.4byte	.LASF45
+ 2067 0a8e 01       		.byte	0x1
+ 2068 0a8f 30       		.byte	0x30
+ 2069 0a90 17       		.uleb128 0x17
+ 2070 0a91 1B010000 		.4byte	.LASF110
+ 2071 0a95 1B010000 		.4byte	.LASF110
+ 2072 0a99 0F       		.byte	0xf
+ 2073 0a9a 18       		.byte	0x18
+ 2074 0a9b 17       		.uleb128 0x17
+ 2075 0a9c 52010000 		.4byte	.LASF111
+ 2076 0aa0 52010000 		.4byte	.LASF111
+ 2077 0aa4 0F       		.byte	0xf
+ 2078 0aa5 23       		.byte	0x23
+ 2079 0aa6 17       		.uleb128 0x17
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 42
+
+
+ 2080 0aa7 A3050000 		.4byte	.LASF46
+ 2081 0aab A3050000 		.4byte	.LASF46
+ 2082 0aaf 01       		.byte	0x1
+ 2083 0ab0 35       		.byte	0x35
+ 2084 0ab1 17       		.uleb128 0x17
+ 2085 0ab2 40020000 		.4byte	.LASF47
+ 2086 0ab6 40020000 		.4byte	.LASF47
+ 2087 0aba 01       		.byte	0x1
+ 2088 0abb 36       		.byte	0x36
+ 2089 0abc 17       		.uleb128 0x17
+ 2090 0abd AE030000 		.4byte	.LASF112
+ 2091 0ac1 AE030000 		.4byte	.LASF112
+ 2092 0ac5 10       		.byte	0x10
+ 2093 0ac6 1E       		.byte	0x1e
+ 2094 0ac7 17       		.uleb128 0x17
+ 2095 0ac8 67020000 		.4byte	.LASF113
+ 2096 0acc 67020000 		.4byte	.LASF113
+ 2097 0ad0 11       		.byte	0x11
+ 2098 0ad1 38       		.byte	0x38
+ 2099 0ad2 17       		.uleb128 0x17
+ 2100 0ad3 73000000 		.4byte	.LASF114
+ 2101 0ad7 73000000 		.4byte	.LASF114
+ 2102 0adb 11       		.byte	0x11
+ 2103 0adc 3B       		.byte	0x3b
+ 2104 0add 17       		.uleb128 0x17
+ 2105 0ade C8030000 		.4byte	.LASF115
+ 2106 0ae2 C8030000 		.4byte	.LASF115
+ 2107 0ae6 11       		.byte	0x11
+ 2108 0ae7 3F       		.byte	0x3f
+ 2109 0ae8 17       		.uleb128 0x17
+ 2110 0ae9 5A050000 		.4byte	.LASF116
+ 2111 0aed 5A050000 		.4byte	.LASF116
+ 2112 0af1 11       		.byte	0x11
+ 2113 0af2 2F       		.byte	0x2f
+ 2114 0af3 17       		.uleb128 0x17
+ 2115 0af4 13040000 		.4byte	.LASF117
+ 2116 0af8 13040000 		.4byte	.LASF117
+ 2117 0afc 11       		.byte	0x11
+ 2118 0afd 29       		.byte	0x29
+ 2119 0afe 00       		.byte	0
+ 2120              		.section	.debug_abbrev,"",%progbits
+ 2121              	.Ldebug_abbrev0:
+ 2122 0000 01       		.uleb128 0x1
+ 2123 0001 11       		.uleb128 0x11
+ 2124 0002 01       		.byte	0x1
+ 2125 0003 25       		.uleb128 0x25
+ 2126 0004 0E       		.uleb128 0xe
+ 2127 0005 13       		.uleb128 0x13
+ 2128 0006 0B       		.uleb128 0xb
+ 2129 0007 03       		.uleb128 0x3
+ 2130 0008 0E       		.uleb128 0xe
+ 2131 0009 1B       		.uleb128 0x1b
+ 2132 000a 0E       		.uleb128 0xe
+ 2133 000b 55       		.uleb128 0x55
+ 2134 000c 17       		.uleb128 0x17
+ 2135 000d 11       		.uleb128 0x11
+ 2136 000e 01       		.uleb128 0x1
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 43
+
+
+ 2137 000f 10       		.uleb128 0x10
+ 2138 0010 17       		.uleb128 0x17
+ 2139 0011 00       		.byte	0
+ 2140 0012 00       		.byte	0
+ 2141 0013 02       		.uleb128 0x2
+ 2142 0014 24       		.uleb128 0x24
+ 2143 0015 00       		.byte	0
+ 2144 0016 0B       		.uleb128 0xb
+ 2145 0017 0B       		.uleb128 0xb
+ 2146 0018 3E       		.uleb128 0x3e
+ 2147 0019 0B       		.uleb128 0xb
+ 2148 001a 03       		.uleb128 0x3
+ 2149 001b 0E       		.uleb128 0xe
+ 2150 001c 00       		.byte	0
+ 2151 001d 00       		.byte	0
+ 2152 001e 03       		.uleb128 0x3
+ 2153 001f 16       		.uleb128 0x16
+ 2154 0020 00       		.byte	0
+ 2155 0021 03       		.uleb128 0x3
+ 2156 0022 0E       		.uleb128 0xe
+ 2157 0023 3A       		.uleb128 0x3a
+ 2158 0024 0B       		.uleb128 0xb
+ 2159 0025 3B       		.uleb128 0x3b
+ 2160 0026 0B       		.uleb128 0xb
+ 2161 0027 49       		.uleb128 0x49
+ 2162 0028 13       		.uleb128 0x13
+ 2163 0029 00       		.byte	0
+ 2164 002a 00       		.byte	0
+ 2165 002b 04       		.uleb128 0x4
+ 2166 002c 24       		.uleb128 0x24
+ 2167 002d 00       		.byte	0
+ 2168 002e 0B       		.uleb128 0xb
+ 2169 002f 0B       		.uleb128 0xb
+ 2170 0030 3E       		.uleb128 0x3e
+ 2171 0031 0B       		.uleb128 0xb
+ 2172 0032 03       		.uleb128 0x3
+ 2173 0033 08       		.uleb128 0x8
+ 2174 0034 00       		.byte	0
+ 2175 0035 00       		.byte	0
+ 2176 0036 05       		.uleb128 0x5
+ 2177 0037 16       		.uleb128 0x16
+ 2178 0038 00       		.byte	0
+ 2179 0039 03       		.uleb128 0x3
+ 2180 003a 0E       		.uleb128 0xe
+ 2181 003b 3A       		.uleb128 0x3a
+ 2182 003c 0B       		.uleb128 0xb
+ 2183 003d 3B       		.uleb128 0x3b
+ 2184 003e 05       		.uleb128 0x5
+ 2185 003f 49       		.uleb128 0x49
+ 2186 0040 13       		.uleb128 0x13
+ 2187 0041 00       		.byte	0
+ 2188 0042 00       		.byte	0
+ 2189 0043 06       		.uleb128 0x6
+ 2190 0044 35       		.uleb128 0x35
+ 2191 0045 00       		.byte	0
+ 2192 0046 49       		.uleb128 0x49
+ 2193 0047 13       		.uleb128 0x13
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 44
+
+
+ 2194 0048 00       		.byte	0
+ 2195 0049 00       		.byte	0
+ 2196 004a 07       		.uleb128 0x7
+ 2197 004b 13       		.uleb128 0x13
+ 2198 004c 01       		.byte	0x1
+ 2199 004d 0B       		.uleb128 0xb
+ 2200 004e 0B       		.uleb128 0xb
+ 2201 004f 3A       		.uleb128 0x3a
+ 2202 0050 0B       		.uleb128 0xb
+ 2203 0051 3B       		.uleb128 0x3b
+ 2204 0052 0B       		.uleb128 0xb
+ 2205 0053 01       		.uleb128 0x1
+ 2206 0054 13       		.uleb128 0x13
+ 2207 0055 00       		.byte	0
+ 2208 0056 00       		.byte	0
+ 2209 0057 08       		.uleb128 0x8
+ 2210 0058 0D       		.uleb128 0xd
+ 2211 0059 00       		.byte	0
+ 2212 005a 03       		.uleb128 0x3
+ 2213 005b 0E       		.uleb128 0xe
+ 2214 005c 3A       		.uleb128 0x3a
+ 2215 005d 0B       		.uleb128 0xb
+ 2216 005e 3B       		.uleb128 0x3b
+ 2217 005f 0B       		.uleb128 0xb
+ 2218 0060 49       		.uleb128 0x49
+ 2219 0061 13       		.uleb128 0x13
+ 2220 0062 38       		.uleb128 0x38
+ 2221 0063 0B       		.uleb128 0xb
+ 2222 0064 00       		.byte	0
+ 2223 0065 00       		.byte	0
+ 2224 0066 09       		.uleb128 0x9
+ 2225 0067 01       		.uleb128 0x1
+ 2226 0068 01       		.byte	0x1
+ 2227 0069 49       		.uleb128 0x49
+ 2228 006a 13       		.uleb128 0x13
+ 2229 006b 01       		.uleb128 0x1
+ 2230 006c 13       		.uleb128 0x13
+ 2231 006d 00       		.byte	0
+ 2232 006e 00       		.byte	0
+ 2233 006f 0A       		.uleb128 0xa
+ 2234 0070 21       		.uleb128 0x21
+ 2235 0071 00       		.byte	0
+ 2236 0072 49       		.uleb128 0x49
+ 2237 0073 13       		.uleb128 0x13
+ 2238 0074 2F       		.uleb128 0x2f
+ 2239 0075 0B       		.uleb128 0xb
+ 2240 0076 00       		.byte	0
+ 2241 0077 00       		.byte	0
+ 2242 0078 0B       		.uleb128 0xb
+ 2243 0079 2E       		.uleb128 0x2e
+ 2244 007a 01       		.byte	0x1
+ 2245 007b 3F       		.uleb128 0x3f
+ 2246 007c 19       		.uleb128 0x19
+ 2247 007d 03       		.uleb128 0x3
+ 2248 007e 0E       		.uleb128 0xe
+ 2249 007f 3A       		.uleb128 0x3a
+ 2250 0080 0B       		.uleb128 0xb
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 45
+
+
+ 2251 0081 3B       		.uleb128 0x3b
+ 2252 0082 0B       		.uleb128 0xb
+ 2253 0083 27       		.uleb128 0x27
+ 2254 0084 19       		.uleb128 0x19
+ 2255 0085 11       		.uleb128 0x11
+ 2256 0086 01       		.uleb128 0x1
+ 2257 0087 12       		.uleb128 0x12
+ 2258 0088 06       		.uleb128 0x6
+ 2259 0089 40       		.uleb128 0x40
+ 2260 008a 18       		.uleb128 0x18
+ 2261 008b 9742     		.uleb128 0x2117
+ 2262 008d 19       		.uleb128 0x19
+ 2263 008e 01       		.uleb128 0x1
+ 2264 008f 13       		.uleb128 0x13
+ 2265 0090 00       		.byte	0
+ 2266 0091 00       		.byte	0
+ 2267 0092 0C       		.uleb128 0xc
+ 2268 0093 34       		.uleb128 0x34
+ 2269 0094 00       		.byte	0
+ 2270 0095 03       		.uleb128 0x3
+ 2271 0096 08       		.uleb128 0x8
+ 2272 0097 3A       		.uleb128 0x3a
+ 2273 0098 0B       		.uleb128 0xb
+ 2274 0099 3B       		.uleb128 0x3b
+ 2275 009a 0B       		.uleb128 0xb
+ 2276 009b 49       		.uleb128 0x49
+ 2277 009c 13       		.uleb128 0x13
+ 2278 009d 02       		.uleb128 0x2
+ 2279 009e 17       		.uleb128 0x17
+ 2280 009f 00       		.byte	0
+ 2281 00a0 00       		.byte	0
+ 2282 00a1 0D       		.uleb128 0xd
+ 2283 00a2 898201   		.uleb128 0x4109
+ 2284 00a5 00       		.byte	0
+ 2285 00a6 11       		.uleb128 0x11
+ 2286 00a7 01       		.uleb128 0x1
+ 2287 00a8 31       		.uleb128 0x31
+ 2288 00a9 13       		.uleb128 0x13
+ 2289 00aa 00       		.byte	0
+ 2290 00ab 00       		.byte	0
+ 2291 00ac 0E       		.uleb128 0xe
+ 2292 00ad 0B       		.uleb128 0xb
+ 2293 00ae 01       		.byte	0x1
+ 2294 00af 11       		.uleb128 0x11
+ 2295 00b0 01       		.uleb128 0x1
+ 2296 00b1 12       		.uleb128 0x12
+ 2297 00b2 06       		.uleb128 0x6
+ 2298 00b3 01       		.uleb128 0x1
+ 2299 00b4 13       		.uleb128 0x13
+ 2300 00b5 00       		.byte	0
+ 2301 00b6 00       		.byte	0
+ 2302 00b7 0F       		.uleb128 0xf
+ 2303 00b8 2E       		.uleb128 0x2e
+ 2304 00b9 01       		.byte	0x1
+ 2305 00ba 3F       		.uleb128 0x3f
+ 2306 00bb 19       		.uleb128 0x19
+ 2307 00bc 03       		.uleb128 0x3
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 46
+
+
+ 2308 00bd 0E       		.uleb128 0xe
+ 2309 00be 3A       		.uleb128 0x3a
+ 2310 00bf 0B       		.uleb128 0xb
+ 2311 00c0 3B       		.uleb128 0x3b
+ 2312 00c1 0B       		.uleb128 0xb
+ 2313 00c2 49       		.uleb128 0x49
+ 2314 00c3 13       		.uleb128 0x13
+ 2315 00c4 3C       		.uleb128 0x3c
+ 2316 00c5 19       		.uleb128 0x19
+ 2317 00c6 01       		.uleb128 0x1
+ 2318 00c7 13       		.uleb128 0x13
+ 2319 00c8 00       		.byte	0
+ 2320 00c9 00       		.byte	0
+ 2321 00ca 10       		.uleb128 0x10
+ 2322 00cb 18       		.uleb128 0x18
+ 2323 00cc 00       		.byte	0
+ 2324 00cd 00       		.byte	0
+ 2325 00ce 00       		.byte	0
+ 2326 00cf 11       		.uleb128 0x11
+ 2327 00d0 898201   		.uleb128 0x4109
+ 2328 00d3 01       		.byte	0x1
+ 2329 00d4 11       		.uleb128 0x11
+ 2330 00d5 01       		.uleb128 0x1
+ 2331 00d6 31       		.uleb128 0x31
+ 2332 00d7 13       		.uleb128 0x13
+ 2333 00d8 01       		.uleb128 0x1
+ 2334 00d9 13       		.uleb128 0x13
+ 2335 00da 00       		.byte	0
+ 2336 00db 00       		.byte	0
+ 2337 00dc 12       		.uleb128 0x12
+ 2338 00dd 8A8201   		.uleb128 0x410a
+ 2339 00e0 00       		.byte	0
+ 2340 00e1 02       		.uleb128 0x2
+ 2341 00e2 18       		.uleb128 0x18
+ 2342 00e3 9142     		.uleb128 0x2111
+ 2343 00e5 18       		.uleb128 0x18
+ 2344 00e6 00       		.byte	0
+ 2345 00e7 00       		.byte	0
+ 2346 00e8 13       		.uleb128 0x13
+ 2347 00e9 898201   		.uleb128 0x4109
+ 2348 00ec 01       		.byte	0x1
+ 2349 00ed 11       		.uleb128 0x11
+ 2350 00ee 01       		.uleb128 0x1
+ 2351 00ef 31       		.uleb128 0x31
+ 2352 00f0 13       		.uleb128 0x13
+ 2353 00f1 00       		.byte	0
+ 2354 00f2 00       		.byte	0
+ 2355 00f3 14       		.uleb128 0x14
+ 2356 00f4 34       		.uleb128 0x34
+ 2357 00f5 00       		.byte	0
+ 2358 00f6 03       		.uleb128 0x3
+ 2359 00f7 0E       		.uleb128 0xe
+ 2360 00f8 3A       		.uleb128 0x3a
+ 2361 00f9 0B       		.uleb128 0xb
+ 2362 00fa 3B       		.uleb128 0x3b
+ 2363 00fb 05       		.uleb128 0x5
+ 2364 00fc 49       		.uleb128 0x49
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 47
+
+
+ 2365 00fd 13       		.uleb128 0x13
+ 2366 00fe 3F       		.uleb128 0x3f
+ 2367 00ff 19       		.uleb128 0x19
+ 2368 0100 3C       		.uleb128 0x3c
+ 2369 0101 19       		.uleb128 0x19
+ 2370 0102 00       		.byte	0
+ 2371 0103 00       		.byte	0
+ 2372 0104 15       		.uleb128 0x15
+ 2373 0105 34       		.uleb128 0x34
+ 2374 0106 00       		.byte	0
+ 2375 0107 03       		.uleb128 0x3
+ 2376 0108 0E       		.uleb128 0xe
+ 2377 0109 3A       		.uleb128 0x3a
+ 2378 010a 0B       		.uleb128 0xb
+ 2379 010b 3B       		.uleb128 0x3b
+ 2380 010c 0B       		.uleb128 0xb
+ 2381 010d 49       		.uleb128 0x49
+ 2382 010e 13       		.uleb128 0x13
+ 2383 010f 3F       		.uleb128 0x3f
+ 2384 0110 19       		.uleb128 0x19
+ 2385 0111 02       		.uleb128 0x2
+ 2386 0112 18       		.uleb128 0x18
+ 2387 0113 00       		.byte	0
+ 2388 0114 00       		.byte	0
+ 2389 0115 16       		.uleb128 0x16
+ 2390 0116 34       		.uleb128 0x34
+ 2391 0117 00       		.byte	0
+ 2392 0118 03       		.uleb128 0x3
+ 2393 0119 08       		.uleb128 0x8
+ 2394 011a 3A       		.uleb128 0x3a
+ 2395 011b 0B       		.uleb128 0xb
+ 2396 011c 3B       		.uleb128 0x3b
+ 2397 011d 0B       		.uleb128 0xb
+ 2398 011e 49       		.uleb128 0x49
+ 2399 011f 13       		.uleb128 0x13
+ 2400 0120 3F       		.uleb128 0x3f
+ 2401 0121 19       		.uleb128 0x19
+ 2402 0122 02       		.uleb128 0x2
+ 2403 0123 18       		.uleb128 0x18
+ 2404 0124 00       		.byte	0
+ 2405 0125 00       		.byte	0
+ 2406 0126 17       		.uleb128 0x17
+ 2407 0127 2E       		.uleb128 0x2e
+ 2408 0128 00       		.byte	0
+ 2409 0129 3F       		.uleb128 0x3f
+ 2410 012a 19       		.uleb128 0x19
+ 2411 012b 3C       		.uleb128 0x3c
+ 2412 012c 19       		.uleb128 0x19
+ 2413 012d 6E       		.uleb128 0x6e
+ 2414 012e 0E       		.uleb128 0xe
+ 2415 012f 03       		.uleb128 0x3
+ 2416 0130 0E       		.uleb128 0xe
+ 2417 0131 3A       		.uleb128 0x3a
+ 2418 0132 0B       		.uleb128 0xb
+ 2419 0133 3B       		.uleb128 0x3b
+ 2420 0134 0B       		.uleb128 0xb
+ 2421 0135 00       		.byte	0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 48
+
+
+ 2422 0136 00       		.byte	0
+ 2423 0137 00       		.byte	0
+ 2424              		.section	.debug_loc,"",%progbits
+ 2425              	.Ldebug_loc0:
+ 2426              	.LLST0:
+ 2427 0000 0C000000 		.4byte	.LVL1
+ 2428 0004 83000000 		.4byte	.LVL2-1
+ 2429 0008 0100     		.2byte	0x1
+ 2430 000a 50       		.byte	0x50
+ 2431 000b 00000000 		.4byte	0
+ 2432 000f 00000000 		.4byte	0
+ 2433              	.LLST1:
+ 2434 0013 0C000000 		.4byte	.LVL10
+ 2435 0017 10000000 		.4byte	.LVL11
+ 2436 001b 0200     		.2byte	0x2
+ 2437 001d 30       		.byte	0x30
+ 2438 001e 9F       		.byte	0x9f
+ 2439 001f 10000000 		.4byte	.LVL11
+ 2440 0023 2A000000 		.4byte	.LVL13
+ 2441 0027 0100     		.2byte	0x1
+ 2442 0029 53       		.byte	0x53
+ 2443 002a 2A000000 		.4byte	.LVL13
+ 2444 002e 42000000 		.4byte	.LVL15
+ 2445 0032 0100     		.2byte	0x1
+ 2446 0034 52       		.byte	0x52
+ 2447 0035 44000000 		.4byte	.LVL16
+ 2448 0039 60000000 		.4byte	.LVL18
+ 2449 003d 0100     		.2byte	0x1
+ 2450 003f 52       		.byte	0x52
+ 2451 0040 62000000 		.4byte	.LVL19
+ 2452 0044 81000000 		.4byte	.LVL21-1
+ 2453 0048 0100     		.2byte	0x1
+ 2454 004a 52       		.byte	0x52
+ 2455 004b 00000000 		.4byte	0
+ 2456 004f 00000000 		.4byte	0
+ 2457              		.section	.debug_aranges,"",%progbits
+ 2458 0000 3C000000 		.4byte	0x3c
+ 2459 0004 0200     		.2byte	0x2
+ 2460 0006 00000000 		.4byte	.Ldebug_info0
+ 2461 000a 04       		.byte	0x4
+ 2462 000b 00       		.byte	0
+ 2463 000c 0000     		.2byte	0
+ 2464 000e 0000     		.2byte	0
+ 2465 0010 00000000 		.4byte	.LFB64
+ 2466 0014 C0000000 		.4byte	.LFE64-.LFB64
+ 2467 0018 00000000 		.4byte	.LFB65
+ 2468 001c 20000000 		.4byte	.LFE65-.LFB65
+ 2469 0020 00000000 		.4byte	.LFB66
+ 2470 0024 6C010000 		.4byte	.LFE66-.LFB66
+ 2471 0028 00000000 		.4byte	.LFB67
+ 2472 002c 1C000000 		.4byte	.LFE67-.LFB67
+ 2473 0030 00000000 		.4byte	.LFB63
+ 2474 0034 14010000 		.4byte	.LFE63-.LFB63
+ 2475 0038 00000000 		.4byte	0
+ 2476 003c 00000000 		.4byte	0
+ 2477              		.section	.debug_ranges,"",%progbits
+ 2478              	.Ldebug_ranges0:
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 49
+
+
+ 2479 0000 00000000 		.4byte	.LFB64
+ 2480 0004 C0000000 		.4byte	.LFE64
+ 2481 0008 00000000 		.4byte	.LFB65
+ 2482 000c 20000000 		.4byte	.LFE65
+ 2483 0010 00000000 		.4byte	.LFB66
+ 2484 0014 6C010000 		.4byte	.LFE66
+ 2485 0018 00000000 		.4byte	.LFB67
+ 2486 001c 1C000000 		.4byte	.LFE67
+ 2487 0020 00000000 		.4byte	.LFB63
+ 2488 0024 14010000 		.4byte	.LFE63
+ 2489 0028 00000000 		.4byte	0
+ 2490 002c 00000000 		.4byte	0
+ 2491              		.section	.debug_line,"",%progbits
+ 2492              	.Ldebug_line0:
+ 2493 0000 08030000 		.section	.debug_str,"MS",%progbits,1
+ 2493      02000802 
+ 2493      00000201 
+ 2493      FB0E0D00 
+ 2493      01010101 
+ 2494              	.LASF80:
+ 2495 0000 61646356 		.ascii	"adcValue\000"
+ 2495      616C7565 
+ 2495      00
+ 2496              	.LASF50:
+ 2497 0009 464C4147 		.ascii	"FLAG_SER_EVENT\000"
+ 2497      5F534552 
+ 2497      5F455645 
+ 2497      4E5400
+ 2498              	.LASF39:
+ 2499 0018 43524547 		.ascii	"CREG_INJ_RES_Write\000"
+ 2499      5F494E4A 
+ 2499      5F524553 
+ 2499      5F577269 
+ 2499      746500
+ 2500              	.LASF70:
+ 2501 002b 69326352 		.ascii	"i2cRun\000"
+ 2501      756E00
+ 2502              	.LASF98:
+ 2503 0032 6D313654 		.ascii	"m16Track\000"
+ 2503      7261636B 
+ 2503      00
+ 2504              	.LASF107:
+ 2505 003b 4953525F 		.ascii	"ISR_INJ_CHECK_ClearPending\000"
+ 2505      494E4A5F 
+ 2505      43484543 
+ 2505      4B5F436C 
+ 2505      65617250 
+ 2506              	.LASF10:
+ 2507 0056 756E7369 		.ascii	"unsigned int\000"
+ 2507      676E6564 
+ 2507      20696E74 
+ 2507      00
+ 2508              	.LASF88:
+ 2509 0063 73685F74 		.ascii	"sh_test\000"
+ 2509      65737400 
+ 2510              	.LASF31:
+ 2511 006b 68466965 		.ascii	"hFields\000"
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 50
+
+
+ 2511      6C647300 
+ 2512              	.LASF114:
+ 2513 0073 4379446D 		.ascii	"CyDmaTdSetConfiguration\000"
+ 2513      61546453 
+ 2513      6574436F 
+ 2513      6E666967 
+ 2513      75726174 
+ 2514              	.LASF5:
+ 2515 008b 5F5F696E 		.ascii	"__int32_t\000"
+ 2515      7433325F 
+ 2515      7400
+ 2516              	.LASF17:
+ 2517 0095 696E7431 		.ascii	"int16\000"
+ 2517      3600
+ 2518              	.LASF21:
+ 2519 009b 72656738 		.ascii	"reg8\000"
+ 2519      00
+ 2520              	.LASF95:
+ 2521 00a0 6D325472 		.ascii	"m2Track\000"
+ 2521      61636B00 
+ 2522              	.LASF73:
+ 2523 00a8 64657669 		.ascii	"deviceAddress\000"
+ 2523      63654164 
+ 2523      64726573 
+ 2523      7300
+ 2524              	.LASF34:
+ 2525 00b6 696E5573 		.ascii	"inUse\000"
+ 2525      6500
+ 2526              	.LASF106:
+ 2527 00bc 4953525F 		.ascii	"ISR_SYMB_ClearPending\000"
+ 2527      53594D42 
+ 2527      5F436C65 
+ 2527      61725065 
+ 2527      6E64696E 
+ 2528              	.LASF49:
+ 2529 00d2 62756666 		.ascii	"bufferUart\000"
+ 2529      65725561 
+ 2529      727400
+ 2530              	.LASF57:
+ 2531 00dd 74657374 		.ascii	"test16\000"
+ 2531      313600
+ 2532              	.LASF51:
+ 2533 00e4 464C4147 		.ascii	"FLAG_SER_TX_INIT\000"
+ 2533      5F534552 
+ 2533      5F54585F 
+ 2533      494E4954 
+ 2533      00
+ 2534              	.LASF18:
+ 2535 00f5 666C6F61 		.ascii	"float\000"
+ 2535      7400
+ 2536              	.LASF109:
+ 2537 00fb 4953525F 		.ascii	"ISR_SYMB_Enable\000"
+ 2537      53594D42 
+ 2537      5F456E61 
+ 2537      626C6500 
+ 2538              	.LASF69:
+ 2539 010b 69326344 		.ascii	"i2cData\000"
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 51
+
+
+ 2539      61746100 
+ 2540              	.LASF89:
+ 2541 0113 73685F6C 		.ascii	"sh_load\000"
+ 2541      6F616400 
+ 2542              	.LASF110:
+ 2543 011b 4953525F 		.ascii	"ISR_INJ_CHECK_StartEx\000"
+ 2543      494E4A5F 
+ 2543      43484543 
+ 2543      4B5F5374 
+ 2543      61727445 
+ 2544              	.LASF9:
+ 2545 0131 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2545      206C6F6E 
+ 2545      6720756E 
+ 2545      7369676E 
+ 2545      65642069 
+ 2546              	.LASF53:
+ 2547 0148 6C657665 		.ascii	"levels_15\000"
+ 2547      6C735F31 
+ 2547      3500
+ 2548              	.LASF111:
+ 2549 0152 4953525F 		.ascii	"ISR_INJ_CHECK_Enable\000"
+ 2549      494E4A5F 
+ 2549      43484543 
+ 2549      4B5F456E 
+ 2549      61626C65 
+ 2550              	.LASF36:
+ 2551 0167 4953525F 		.ascii	"ISR_SYMB_h\000"
+ 2551      53594D42 
+ 2551      5F6800
+ 2552              	.LASF37:
+ 2553 0172 4953525F 		.ascii	"ISR_INJ_CHECK_h\000"
+ 2553      494E4A5F 
+ 2553      43484543 
+ 2553      4B5F6800 
+ 2554              	.LASF118:
+ 2555 0182 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2555      43313120 
+ 2555      352E342E 
+ 2555      31203230 
+ 2555      31363036 
+ 2556 01b5 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2556      20726576 
+ 2556      6973696F 
+ 2556      6E203233 
+ 2556      37373135 
+ 2557 01e8 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2557      66756E63 
+ 2557      74696F6E 
+ 2557      2D736563 
+ 2557      74696F6E 
+ 2558              	.LASF96:
+ 2559 0210 6D345472 		.ascii	"m4Track\000"
+ 2559      61636B00 
+ 2560              	.LASF33:
+ 2561 0218 7061796C 		.ascii	"payload\000"
+ 2561      6F616400 
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 52
+
+
+ 2562              	.LASF65:
+ 2563 0220 69326353 		.ascii	"i2cSda\000"
+ 2563      646100
+ 2564              	.LASF30:
+ 2565 0227 5F426F6F 		.ascii	"_Bool\000"
+ 2565      6C00
+ 2566              	.LASF29:
+ 2567 022d 506F7274 		.ascii	"Port\000"
+ 2567      00
+ 2568              	.LASF41:
+ 2569 0232 4953525F 		.ascii	"ISR_TX_DONE_h\000"
+ 2569      54585F44 
+ 2569      4F4E455F 
+ 2569      6800
+ 2570              	.LASF47:
+ 2571 0240 4953525F 		.ascii	"ISR_TX_DONE_Enable\000"
+ 2571      54585F44 
+ 2571      4F4E455F 
+ 2571      456E6162 
+ 2571      6C6500
+ 2572              	.LASF101:
+ 2573 0253 73796D62 		.ascii	"symbolNext\000"
+ 2573      6F6C4E65 
+ 2573      787400
+ 2574              	.LASF99:
+ 2575 025e 6D333254 		.ascii	"m32Track\000"
+ 2575      7261636B 
+ 2575      00
+ 2576              	.LASF113:
+ 2577 0267 4379446D 		.ascii	"CyDmaTdAllocate\000"
+ 2577      61546441 
+ 2577      6C6C6F63 
+ 2577      61746500 
+ 2578              	.LASF91:
+ 2579 0277 444D415F 		.ascii	"DMA_HAM2SER_Chan\000"
+ 2579      48414D32 
+ 2579      5345525F 
+ 2579      4368616E 
+ 2579      00
+ 2580              	.LASF27:
+ 2581 0288 4C696E6B 		.ascii	"Link\000"
+ 2581      00
+ 2582              	.LASF62:
+ 2583 028d 7369676E 		.ascii	"signalMean\000"
+ 2583      616C4D65 
+ 2583      616E00
+ 2584              	.LASF108:
+ 2585 0298 4953525F 		.ascii	"ISR_SYMB_StartEx\000"
+ 2585      53594D42 
+ 2585      5F537461 
+ 2585      72744578 
+ 2585      00
+ 2586              	.LASF61:
+ 2587 02a9 73656E64 		.ascii	"send15Cont\000"
+ 2587      3135436F 
+ 2587      6E7400
+ 2588              	.LASF20:
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 53
+
+
+ 2589 02b4 63686172 		.ascii	"char\000"
+ 2589      00
+ 2590              	.LASF81:
+ 2591 02b9 72784D6F 		.ascii	"rxModLevel\000"
+ 2591      644C6576 
+ 2591      656C00
+ 2592              	.LASF86:
+ 2593 02c4 68656164 		.ascii	"headCnt\000"
+ 2593      436E7400 
+ 2594              	.LASF83:
+ 2595 02cc 72785472 		.ascii	"rxTrackSum\000"
+ 2595      61636B53 
+ 2595      756D00
+ 2596              	.LASF14:
+ 2597 02d7 75696E74 		.ascii	"uint16\000"
+ 2597      313600
+ 2598              	.LASF16:
+ 2599 02de 696E7438 		.ascii	"int8\000"
+ 2599      00
+ 2600              	.LASF87:
+ 2601 02e3 68616D57 		.ascii	"hamWordCheck\000"
+ 2601      6F726443 
+ 2601      6865636B 
+ 2601      00
+ 2602              	.LASF52:
+ 2603 02f0 6C657665 		.ascii	"levels_48\000"
+ 2603      6C735F34 
+ 2603      3800
+ 2604              	.LASF11:
+ 2605 02fa 75696E74 		.ascii	"uint8_t\000"
+ 2605      385F7400 
+ 2606              	.LASF63:
+ 2607 0302 69326353 		.ascii	"i2cStart\000"
+ 2607      74617274 
+ 2607      00
+ 2608              	.LASF79:
+ 2609 030b 636F6C56 		.ascii	"colValH\000"
+ 2609      616C4800 
+ 2610              	.LASF94:
+ 2611 0313 464C4147 		.ascii	"FLAG_TX_DONE\000"
+ 2611      5F54585F 
+ 2611      444F4E45 
+ 2611      00
+ 2612              	.LASF8:
+ 2613 0320 6C6F6E67 		.ascii	"long long int\000"
+ 2613      206C6F6E 
+ 2613      6720696E 
+ 2613      7400
+ 2614              	.LASF77:
+ 2615 032e 444D415F 		.ascii	"DMA_PAY_TD\000"
+ 2615      5041595F 
+ 2615      544400
+ 2616              	.LASF64:
+ 2617 0339 69326343 		.ascii	"i2cClk\000"
+ 2617      6C6B00
+ 2618              	.LASF74:
+ 2619 0340 726F7574 		.ascii	"routingTable\000"
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 54
+
+
+ 2619      696E6754 
+ 2619      61626C65 
+ 2619      00
+ 2620              	.LASF15:
+ 2621 034d 75696E74 		.ascii	"uint32\000"
+ 2621      333200
+ 2622              	.LASF32:
+ 2623 0354 68656164 		.ascii	"header\000"
+ 2623      657200
+ 2624              	.LASF71:
+ 2625 035b 69326357 		.ascii	"i2cWord\000"
+ 2625      6F726400 
+ 2626              	.LASF22:
+ 2627 0363 6C6F6E67 		.ascii	"long double\000"
+ 2627      20646F75 
+ 2627      626C6500 
+ 2628              	.LASF82:
+ 2629 036f 72784C65 		.ascii	"rxLength\000"
+ 2629      6E677468 
+ 2629      00
+ 2630              	.LASF75:
+ 2631 0378 64696D4C 		.ascii	"dimLevel\000"
+ 2631      6576656C 
+ 2631      00
+ 2632              	.LASF38:
+ 2633 0381 4953525F 		.ascii	"ISR_INJ_h\000"
+ 2633      494E4A5F 
+ 2633      6800
+ 2634              	.LASF60:
+ 2635 038b 73746570 		.ascii	"stepSize\000"
+ 2635      53697A65 
+ 2635      00
+ 2636              	.LASF28:
+ 2637 0394 6C696E6B 		.ascii	"links\000"
+ 2637      7300
+ 2638              	.LASF58:
+ 2639 039a 62756666 		.ascii	"buffer_uart\000"
+ 2639      65725F75 
+ 2639      61727400 
+ 2640              	.LASF67:
+ 2641 03a6 69326341 		.ascii	"i2cAddr\000"
+ 2641      64647200 
+ 2642              	.LASF112:
+ 2643 03ae 444D415F 		.ascii	"DMA_HAM2SER_DmaInitialize\000"
+ 2643      48414D32 
+ 2643      5345525F 
+ 2643      446D6149 
+ 2643      6E697469 
+ 2644              	.LASF115:
+ 2645 03c8 4379446D 		.ascii	"CyDmaTdSetAddress\000"
+ 2645      61546453 
+ 2645      65744164 
+ 2645      64726573 
+ 2645      7300
+ 2646              	.LASF2:
+ 2647 03da 73686F72 		.ascii	"short int\000"
+ 2647      7420696E 
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 55
+
+
+ 2647      7400
+ 2648              	.LASF55:
+ 2649 03e4 73657269 		.ascii	"serialTest\000"
+ 2649      616C5465 
+ 2649      737400
+ 2650              	.LASF6:
+ 2651 03ef 6C6F6E67 		.ascii	"long int\000"
+ 2651      20696E74 
+ 2651      00
+ 2652              	.LASF119:
+ 2653 03f8 74787375 		.ascii	"txsubsystem.c\000"
+ 2653      62737973 
+ 2653      74656D2E 
+ 2653      6300
+ 2654              	.LASF48:
+ 2655 0406 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2655      52784275 
+ 2655      66666572 
+ 2655      00
+ 2656              	.LASF117:
+ 2657 0413 4379446D 		.ascii	"CyDmaChEnable\000"
+ 2657      61436845 
+ 2657      6E61626C 
+ 2657      6500
+ 2658              	.LASF93:
+ 2659 0421 464C4147 		.ascii	"FLAG_TX_EVENT\000"
+ 2659      5F54585F 
+ 2659      4556454E 
+ 2659      5400
+ 2660              	.LASF54:
+ 2661 042f 6C657665 		.ascii	"levels_82\000"
+ 2661      6C735F38 
+ 2661      3200
+ 2662              	.LASF66:
+ 2663 0439 69326342 		.ascii	"i2cBuf\000"
+ 2663      756600
+ 2664              	.LASF24:
+ 2665 0440 6E6F6465 		.ascii	"node\000"
+ 2665      00
+ 2666              	.LASF78:
+ 2667 0445 7061636B 		.ascii	"packets4\000"
+ 2667      65747334 
+ 2667      00
+ 2668              	.LASF42:
+ 2669 044e 4953525F 		.ascii	"ISR_TX_DONE_ClearPending\000"
+ 2669      54585F44 
+ 2669      4F4E455F 
+ 2669      436C6561 
+ 2669      7250656E 
+ 2670              	.LASF90:
+ 2671 0467 73685F66 		.ascii	"sh_fifo\000"
+ 2671      69666F00 
+ 2672              	.LASF104:
+ 2673 046f 73796D43 		.ascii	"symCnt\000"
+ 2673      6E7400
+ 2674              	.LASF4:
+ 2675 0476 5F5F7569 		.ascii	"__uint8_t\000"
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 56
+
+
+ 2675      6E74385F 
+ 2675      7400
+ 2676              	.LASF44:
+ 2677 0480 4953525F 		.ascii	"ISR_INJ_StartEx\000"
+ 2677      494E4A5F 
+ 2677      53746172 
+ 2677      74457800 
+ 2678              	.LASF26:
+ 2679 0490 6D6F644C 		.ascii	"modLevel\000"
+ 2679      6576656C 
+ 2679      00
+ 2680              	.LASF97:
+ 2681 0499 6D385472 		.ascii	"m8Track\000"
+ 2681      61636B00 
+ 2682              	.LASF100:
+ 2683 04a1 74726163 		.ascii	"trackSum\000"
+ 2683      6B53756D 
+ 2683      00
+ 2684              	.LASF68:
+ 2685 04aa 69326349 		.ascii	"i2cInstr\000"
+ 2685      6E737472 
+ 2685      00
+ 2686              	.LASF23:
+ 2687 04b3 73697A65 		.ascii	"sizetype\000"
+ 2687      74797065 
+ 2687      00
+ 2688              	.LASF43:
+ 2689 04bc 494E4954 		.ascii	"INIT_TX_SUBSYSTEM\000"
+ 2689      5F54585F 
+ 2689      53554253 
+ 2689      59535445 
+ 2689      4D00
+ 2690              	.LASF7:
+ 2691 04ce 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2691      20756E73 
+ 2691      69676E65 
+ 2691      6420696E 
+ 2691      7400
+ 2692              	.LASF12:
+ 2693 04e0 696E7433 		.ascii	"int32_t\000"
+ 2693      325F7400 
+ 2694              	.LASF35:
+ 2695 04e8 5061636B 		.ascii	"Packet4\000"
+ 2695      65743400 
+ 2696              	.LASF105:
+ 2697 04f0 53524547 		.ascii	"SREG_SYMB_Read\000"
+ 2697      5F53594D 
+ 2697      425F5265 
+ 2697      616400
+ 2698              	.LASF1:
+ 2699 04ff 756E7369 		.ascii	"unsigned char\000"
+ 2699      676E6564 
+ 2699      20636861 
+ 2699      7200
+ 2700              	.LASF59:
+ 2701 050d 75617274 		.ascii	"uart_type\000"
+ 2701      5F747970 
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 57
+
+
+ 2701      6500
+ 2702              	.LASF84:
+ 2703 0517 72785372 		.ascii	"rxSrc\000"
+ 2703      6300
+ 2704              	.LASF45:
+ 2705 051d 4953525F 		.ascii	"ISR_INJ_Enable\000"
+ 2705      494E4A5F 
+ 2705      456E6162 
+ 2705      6C6500
+ 2706              	.LASF102:
+ 2707 052c 6C4D6173 		.ascii	"lMask\000"
+ 2707      6B00
+ 2708              	.LASF92:
+ 2709 0532 444D415F 		.ascii	"DMA_HAM2SER_TD\000"
+ 2709      48414D32 
+ 2709      5345525F 
+ 2709      544400
+ 2710              	.LASF76:
+ 2711 0541 444D415F 		.ascii	"DMA_PAY_Chan\000"
+ 2711      5041595F 
+ 2711      4368616E 
+ 2711      00
+ 2712              	.LASF0:
+ 2713 054e 7369676E 		.ascii	"signed char\000"
+ 2713      65642063 
+ 2713      68617200 
+ 2714              	.LASF116:
+ 2715 055a 4379446D 		.ascii	"CyDmaChSetInitialTd\000"
+ 2715      61436853 
+ 2715      6574496E 
+ 2715      69746961 
+ 2715      6C546400 
+ 2716              	.LASF3:
+ 2717 056e 73686F72 		.ascii	"short unsigned int\000"
+ 2717      7420756E 
+ 2717      7369676E 
+ 2717      65642069 
+ 2717      6E7400
+ 2718              	.LASF103:
+ 2719 0581 73796D54 		.ascii	"symTx\000"
+ 2719      7800
+ 2720              	.LASF72:
+ 2721 0587 64657669 		.ascii	"deviceID\000"
+ 2721      63654944 
+ 2721      00
+ 2722              	.LASF13:
+ 2723 0590 75696E74 		.ascii	"uint8\000"
+ 2723      3800
+ 2724              	.LASF19:
+ 2725 0596 646F7562 		.ascii	"double\000"
+ 2725      6C6500
+ 2726              	.LASF25:
+ 2727 059d 6E6F6973 		.ascii	"noise\000"
+ 2727      6500
+ 2728              	.LASF46:
+ 2729 05a3 4953525F 		.ascii	"ISR_TX_DONE_StartEx\000"
+ 2729      54585F44 
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cchrIvgf.s 			page 58
+
+
+ 2729      4F4E455F 
+ 2729      53746172 
+ 2729      74457800 
+ 2730              	.LASF120:
+ 2731 05b7 433A5C55 		.ascii	"C:\\Users\\dr\\Documents\\GitHub\\SHW\\SHW_full\\SH"
+ 2731      73657273 
+ 2731      5C64725C 
+ 2731      446F6375 
+ 2731      6D656E74 
+ 2732 05e3 575F6675 		.ascii	"W_full.cydsn\000"
+ 2732      6C6C2E63 
+ 2732      7964736E 
+ 2732      00
+ 2733              	.LASF56:
+ 2734 05f0 74657374 		.ascii	"test8\000"
+ 2734      3800
+ 2735              	.LASF85:
+ 2736 05f6 72784473 		.ascii	"rxDst\000"
+ 2736      7400
+ 2737              	.LASF40:
+ 2738 05fc 4953525F 		.ascii	"ISR_INJ_ClearPending\000"
+ 2738      494E4A5F 
+ 2738      436C6561 
+ 2738      7250656E 
+ 2738      64696E67 
+ 2739              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran
