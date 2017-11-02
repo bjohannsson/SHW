@@ -557,6 +557,23 @@
 </file>
 <file name=".\Generated_Source\PSoC5\DMA_PAY_dma.H" />
 <file name=".\Generated_Source\PSoC5\DMA_PAY_dma.c" />
+<file name=".\CortexM3\ARM_GCC_541\Debug\DMA_RX_dma.o">
+<dep name=".\Generated_Source\PSoC5\CYDMAC.H" />
+<dep name=".\Generated_Source\PSoC5\CYFITTER.H" />
+<dep name=".\Generated_Source\PSoC5\CYLIB.H" />
+<dep name=".\Generated_Source\PSoC5\CyFlash.h" />
+<dep name=".\Generated_Source\PSoC5\CyLib.h" />
+<dep name=".\Generated_Source\PSoC5\CySpc.h" />
+<dep name=".\Generated_Source\PSoC5\DMA_RX_dma.H" />
+<dep name=".\Generated_Source\PSoC5\DMA_RX_dma.c" />
+<dep name=".\Generated_Source\PSoC5\cyPm.h" />
+<dep name=".\Generated_Source\PSoC5\cydevice.h" />
+<dep name=".\Generated_Source\PSoC5\cydevice_trm.h" />
+<dep name=".\Generated_Source\PSoC5\cyfitter.h" />
+<dep name=".\Generated_Source\PSoC5\cytypes.h" />
+</file>
+<file name=".\Generated_Source\PSoC5\DMA_RX_dma.H" />
+<file name=".\Generated_Source\PSoC5\DMA_RX_dma.c" />
 <file name=".\CortexM3\ARM_GCC_541\Debug\ISR_HEADER_READ.o">
 <dep name=".\Generated_Source\PSoC5\CyFlash.h" />
 <dep name=".\Generated_Source\PSoC5\CyLib.h" />
@@ -866,6 +883,7 @@
 <dep name=".\Generated_Source\PSoC5\DMA_AVG_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_HAM2SER_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_PAY_dma.h" />
+<dep name=".\Generated_Source\PSoC5\DMA_RX_dma.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_armcc.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_compiler.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_gcc.h" />
@@ -957,6 +975,7 @@
 <dep name=".\Generated_Source\PSoC5\DMA_AVG_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_HAM2SER_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_PAY_dma.h" />
+<dep name=".\Generated_Source\PSoC5\DMA_RX_dma.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_armcc.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_compiler.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_gcc.h" />
@@ -1029,6 +1048,7 @@
 <dep name=".\Generated_Source\PSoC5\DMA_AVG_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_HAM2SER_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_PAY_dma.h" />
+<dep name=".\Generated_Source\PSoC5\DMA_RX_dma.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_armcc.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_compiler.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_gcc.h" />
@@ -1101,6 +1121,7 @@
 <dep name=".\Generated_Source\PSoC5\DMA_AVG_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_HAM2SER_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_PAY_dma.h" />
+<dep name=".\Generated_Source\PSoC5\DMA_RX_dma.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_armcc.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_compiler.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_gcc.h" />
@@ -1178,6 +1199,7 @@
 <dep name=".\Generated_Source\PSoC5\DMA_AVG_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_HAM2SER_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_PAY_dma.h" />
+<dep name=".\Generated_Source\PSoC5\DMA_RX_dma.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_armcc.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_compiler.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_gcc.h" />
@@ -1255,6 +1277,7 @@
 <dep name=".\Generated_Source\PSoC5\DMA_AVG_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_HAM2SER_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_PAY_dma.h" />
+<dep name=".\Generated_Source\PSoC5\DMA_RX_dma.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_armcc.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_compiler.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_gcc.h" />
@@ -1332,6 +1355,7 @@
 <dep name=".\Generated_Source\PSoC5\DMA_AVG_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_HAM2SER_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_PAY_dma.h" />
+<dep name=".\Generated_Source\PSoC5\DMA_RX_dma.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_armcc.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_compiler.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_gcc.h" />
@@ -1403,6 +1427,7 @@
 <dep name=".\Generated_Source\PSoC5\DMA_AVG_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_HAM2SER_dma.h" />
 <dep name=".\Generated_Source\PSoC5\DMA_PAY_dma.h" />
+<dep name=".\Generated_Source\PSoC5\DMA_RX_dma.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_armcc.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_compiler.h" />
 <dep name=".\Generated_Source\PSoC5\cmsis_gcc.h" />
@@ -1759,6 +1784,8 @@
 <name_val_pair name="Generated_Source\PSoC5\DAC_FAST_VDAC8.c" v="-mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=${OutputDir}/${CompileFile}.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og" />
 <name_val_pair name="Generated_Source\PSoC5\DAC_FAST_VDAC8_PM.c" v="-mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=${OutputDir}/${CompileFile}.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og" />
 <name_val_pair name="Generated_Source\PSoC5\DAC_FAST_IntClock.c" v="-mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=${OutputDir}/${CompileFile}.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og" />
+<name_val_pair name="Generated_Source\PSoC5\DMA_RX_dma.c" v="-mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=${OutputDir}/${CompileFile}.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og" />
+<name_val_pair name="Generated_Source\PSoC5\ISR_ADC_RX.c" v="-mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=${OutputDir}/${CompileFile}.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og" />
 </name>
 </genericCmdLineData>
 <codeGenCmdLineTag v="-.appdatapath &quot;C:\Users\dr\AppData\Local\Cypress Semiconductor\PSoC Creator\4.1&quot; -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -.fdsreffile=referenced_files.txt -p C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\SHW_full.cyprj -d CY8C5888LTI-LP097 -s C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\Generated_Source\PSoC5 -- -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE" />
@@ -2274,6 +2301,10 @@
 <v>Generated_Source\PSoC5\DAC_FAST_VDAC8_PM.c</v>
 <v>Generated_Source\PSoC5\DAC_FAST_IntClock.c</v>
 <v>Generated_Source\PSoC5\DAC_FAST_IntClock.h</v>
+<v>Generated_Source\PSoC5\DMA_RX_dma.c</v>
+<v>Generated_Source\PSoC5\DMA_RX_dma.h</v>
+<v>Generated_Source\PSoC5\ISR_ADC_RX.c</v>
+<v>Generated_Source\PSoC5\ISR_ADC_RX.h</v>
 </gen_list>
 <warp_dep>
 <v>C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\warp\lib\ieee\work\stdlogic.vif</v>
@@ -2283,7 +2314,7 @@
 <v>C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\warp\lib\common\stdlogic\rtlpkg.vif</v>
 <v>C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\warp\lib\common\stdlogic\cy_psoc3.vif</v>
 </warp_dep>
-<deps_time v="131539831888875074" />
+<deps_time v="131540552112692881" />
 <top_block v="TopDesign" />
 <last_generation v="0" />
 <pdl_path v="" />
@@ -2298,7 +2329,7 @@
 <v>Off-Chip</v>
 </tree_states_tab_names>
 <tree_states>
-<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Cypress Component Catalog\Digital\Logic\De-Multiplexer [v1.10]">
+<CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Cypress Component Catalog\Digital\Utility\Edge Detector [v1.0]">
 <ExpandedNodeIds>
 <v>Cypress Component Catalog</v>
 <v>Cypress Component Catalog\Analog</v>
@@ -2313,6 +2344,31 @@
 <v>Cypress Component Catalog\System</v>
 </ExpandedNodeIds>
 <VisibleNodeIds>
+<v>Cypress Component Catalog\Digital</v>
+<v>Cypress Component Catalog\Digital\Functions</v>
+<v>Cypress Component Catalog\Digital\Logic</v>
+<v>Cypress Component Catalog\Digital\Logic\And [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\Bufoe [v1.10]</v>
+<v>Cypress Component Catalog\Digital\Logic\D Flip Flop [v1.30]</v>
+<v>Cypress Component Catalog\Digital\Logic\D Flip Flop w/ Enable [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\De-Multiplexer [v1.10]</v>
+<v>Cypress Component Catalog\Digital\Logic\Digital Constant [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\Logic High '1' [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\Logic Low '0' [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\Lookup Table [v1.50]</v>
+<v>Cypress Component Catalog\Digital\Logic\Multiplexer [v1.10]</v>
+<v>Cypress Component Catalog\Digital\Logic\Nand [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\Nor [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\Not [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\Or [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\SR Flip Flop [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\Toggle Flip Flop [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\Virtual Mux [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\Xnor [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Logic\Xor [v1.0]</v>
+<v>Cypress Component Catalog\Digital\Registers</v>
+<v>Cypress Component Catalog\Digital\Registers\Control Register [v1.80]</v>
+<v>Cypress Component Catalog\Digital\Registers\Status Register [v1.90]</v>
 <v>Cypress Component Catalog\Digital\Utility</v>
 <v>Cypress Component Catalog\Digital\Utility\Basic Counter [v1.0]</v>
 <v>Cypress Component Catalog\Digital\Utility\Debouncer [v1.0]</v>
@@ -2323,31 +2379,6 @@
 <v>Cypress Component Catalog\Digital\Utility\Glitch Filter [v2.0]</v>
 <v>Cypress Component Catalog\Digital\Utility\Pulse Converter [v1.0]</v>
 <v>Cypress Component Catalog\Digital\Utility\Sync [v1.0]</v>
-<v>Cypress Component Catalog\Digital\Utility\UDB Clock Enable [v1.0]</v>
-<v>Cypress Component Catalog\Display</v>
-<v>Cypress Component Catalog\Filters</v>
-<v>Cypress Component Catalog\Ports and Pins</v>
-<v>Cypress Component Catalog\Ports and Pins\Analog Pin [v2.20]</v>
-<v>Cypress Component Catalog\Ports and Pins\Digital Bidirectional Pin [v2.20]</v>
-<v>Cypress Component Catalog\Ports and Pins\Digital Input Pin [v2.20]</v>
-<v>Cypress Component Catalog\Ports and Pins\Digital Output Pin [v2.20]</v>
-<v>Cypress Component Catalog\Power Supervision</v>
-<v>Cypress Component Catalog\System</v>
-<v>Cypress Component Catalog\System\Boost Converter [v5.0]</v>
-<v>Cypress Component Catalog\System\Bootloadable [v1.50]</v>
-<v>Cypress Component Catalog\System\Bootloader [v1.50]</v>
-<v>Cypress Component Catalog\System\Clock [v2.20]</v>
-<v>Cypress Component Catalog\System\Die Temperature [v2.0]</v>
-<v>Cypress Component Catalog\System\DMA [v1.70]</v>
-<v>Cypress Component Catalog\System\EEPROM [v3.0]</v>
-<v>Cypress Component Catalog\System\Emulated EEPROM [v1.20]</v>
-<v>Cypress Component Catalog\System\External Memory Interface</v>
-<v>Cypress Component Catalog\System\Global Signal Reference [v2.10]</v>
-<v>Cypress Component Catalog\System\ILO Trim [v2.0]</v>
-<v>Cypress Component Catalog\System\Interrupt [v1.70]</v>
-<v>Cypress Component Catalog\System\RTC [v2.0]</v>
-<v>Cypress Component Catalog\System\SleepTimer [v3.20]</v>
-<v>Cypress Component Catalog\Thermal Management</v>
 </VisibleNodeIds>
 </CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237>
 <CyGuid_2a325b3b-c96a-4e9f-b7a0-2c44ecb5f237 type_name="CyDesigner.Common.Base.Controls.CyTreeViewState" version="1" SelectedNodeId="Default Component Catalog\Components\PerCounter [v0.0]">
@@ -2358,6 +2389,7 @@
 <VisibleNodeIds>
 <v>Default Component Catalog</v>
 <v>Default Component Catalog\Components</v>
+<v>Default Component Catalog\Components\EdgeRising [v0.0]</v>
 <v>Default Component Catalog\Components\PerCounter2bit [v0.0]</v>
 <v>Default Component Catalog\Components\PerCounter3bit [v0.0]</v>
 <v>Default Component Catalog\Components\PerCounter5bit [v0.0]</v>
@@ -2385,7 +2417,7 @@
 <dataGuid v="769d31ea-68b1-4f0c-b90a-7c10a43ee563">
 <CyGuid_769d31ea-68b1-4f0c-b90a-7c10a43ee563 type_name="CyDesigner.Common.ProjMgmt.Model.CyLinkCustomData" version="1">
 <link_deps_times>
-<name_val_pair name="c9323d49-d323-40b8-9b59-cc008d68a989@Debug@CortexM3" v="131539831976733924" />
+<name_val_pair name="c9323d49-d323-40b8-9b59-cc008d68a989@Debug@CortexM3" v="131540550387021836" />
 </link_deps_times>
 </CyGuid_769d31ea-68b1-4f0c-b90a-7c10a43ee563>
 </dataGuid>

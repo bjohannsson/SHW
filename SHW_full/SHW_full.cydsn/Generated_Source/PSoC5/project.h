@@ -54,6 +54,8 @@
 #include "ADC_SAR.h"
 #include "DMA_AVG_dma.h"
 #include "ISR_HEADER_READ.h"
+#include "DMA_RX_dma.h"
+#include "ISR_ADC_RX.h"
 #include "UART_IntClock.h"
 #include "DAC_SLOW_DMA_dma.h"
 #include "DAC_SLOW_VDAC8.h"

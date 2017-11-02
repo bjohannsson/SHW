@@ -11,9 +11,6 @@
 #include "main.h"
 
 
-
-
-
 int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
@@ -56,6 +53,22 @@ int main(void)
 				FLAG_TX_DONE = false;
 			}
 			FLAG_TX_EVENT = false;
+		}
+		
+		if (FLAG_IC_EVENT) {
+			
+			switch(IC_EVENT) {
+				
+				case IC_EVENT_ADC_TH:
+					calculateTh();
+					break;
+				case IC_EVENT_TH:
+					headCnt = 0;
+					// init preamble detection
+					break;
+				default:
+					break;
+			}
 		}
 		
     }

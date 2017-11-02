@@ -10,27 +10,27 @@
 
 #include "rxsubsystem.h"
 
+
+/* -------------------------------------------------------------------------*
+ * Function to initialize the RX-Subsystem of the controller				*
+ * -------------------------------------------------------------------------*
+*/
 void INIT_RX_SUBSYSTEM(void)
 {
 
-	hamWordCheck[0] = 0x00;
-	hamWordCheck[1] = 0x47;
-	hamWordCheck[2] = 0x26;
-	hamWordCheck[3] = 0x61;
-	hamWordCheck[4] = 0x15;
-	hamWordCheck[5] = 0x52;
-	hamWordCheck[6] = 0x33;
-	hamWordCheck[7] = 0x74;
-	hamWordCheck[8] = 0x11;
-	hamWordCheck[9] = 0x4C;
-	hamWordCheck[10] = 0x2D;
-	hamWordCheck[11] = 0x6A;
-	hamWordCheck[12] = 0x1E;
-	hamWordCheck[13] = 0x59;
-	hamWordCheck[14] = 0x38;
-	hamWordCheck[15] = 0x3F;
+	/* Enable interrupts */	
+	ISR_ADC_RX_StartEx(ISR_ADC_RX_h);
+	ISR_ADC_RX_Enable();
+	ISR_HEADER_READ_StartEx(ISR_HEADER_READ_h);
+	ISR_HEADER_READ_Enable();
+	
 }
 
+
+/* -------------------------------------------------------------------------*
+ * Function to decode a received Hamming codeword							*
+ * -------------------------------------------------------------------------*
+*/
 uint8 decodeHamming(uint8 hamWord)
 {
 	uint8 row, col, s[3];
@@ -71,30 +71,52 @@ uint8 decodeHamming(uint8 hamWord)
 	return 1;
 }
 
+/* -------------------------------------------------------------------------*
+ * Interrupt handler, getting average adc value for demodulation			*
+ * -------------------------------------------------------------------------*
+*/
+CY_ISR(ISR_ADC_RX_h)
+{
+	
+	adcSum = 0;
+	for (i=0; i<3; i++) {
+		
+		adcSum += adcValue[i];
+	}
+	adcMean = adcSum / 3;
+	
+	
+	
+	ISR_ADC_RX_ClearPending();
+}
+
+/* -------------------------------------------------------------------------*
+ * Interrupt handler, reading header field contents of an incoming packet	*
+ * -------------------------------------------------------------------------*
+*/
 CY_ISR(ISR_HEADER_READ_h)
 {
-	uint8 val = SREG_HEAD_Read();
-	if (headCnt == 0) { //src
+	
+	uint8 val = (SREG_HEAD_Read() & MASK_HEADER_DATA);
+	switch(headCnt) {
 		
-		rxSrc = val;
-	}
-	else if (headCnt == 1) { //dst
-		
-		if (val == deviceAddress) {
-			
+		case 0:
+			rxSrc = val;
+			break;
+		case 1:
 			rxDst = val;
-			// packet man
-		}
+			break;
+		case 2:
+			rxModLevel = val;
+			break;
+		case 3:
+			rxSize = val;
+			break;
+		default:
+			break;
 	}
-	else if (headCnt == 2) {
-		
-		rxModLevel = val;
-	}
-	else if (headCnt == 3) {
 	
-		rxLength = val;
-	}
-	
+	headCnt++;
 	ISR_HEADER_READ_ClearPending();
 }
 

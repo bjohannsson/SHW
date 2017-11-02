@@ -1,4 +1,4 @@
---------------- Rebuild Started: 11/01/2017 05:12:52 Project: SHW_full, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+--------------- Rebuild Started: 11/02/2017 01:10:11 Project: SHW_full, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\main.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\packetman.o"
 Deleting file ".\CortexM3\ARM_GCC_541\Debug\dimmingcontrol.o"
@@ -121,6 +121,10 @@ API Generation...
 Dependency Generation...
 Cleanup...
 arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/main.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c main.c -o .\CortexM3\ARM_GCC_541\Debug\main.o
+main.c: In function 'main':
+main.c:26:2: warning: implicit declaration of function 'INIT_RX_SUBSYSTEM' [-Wimplicit-function-declaration]
+  INIT_RX_SUBSYSTEM();
+  ^
 arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/packetman.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c packetman.c -o .\CortexM3\ARM_GCC_541\Debug\packetman.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/dimmingcontrol.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c dimmingcontrol.c -o .\CortexM3\ARM_GCC_541\Debug\dimmingcontrol.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/dlm.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c dlm.c -o .\CortexM3\ARM_GCC_541\Debug\dlm.o
@@ -153,15 +157,15 @@ dlm.c:23:5: note: previous implicit declaration of 'set_address' was here
      ^
 arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/inputcontrol.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c inputcontrol.c -o .\CortexM3\ARM_GCC_541\Debug\inputcontrol.o
 inputcontrol.c: In function 'INIT_INPUT_CONTROL':
-arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/rxsubsystem.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c rxsubsystem.c -o .\CortexM3\ARM_GCC_541\Debug\rxsubsystem.o
 inputcontrol.c:51:2: warning: implicit declaration of function 'ISR_DMA_AVG_StartEx' [-Wimplicit-function-declaration]
   ISR_DMA_AVG_StartEx(ISR_AVG_h);
   ^
 inputcontrol.c:52:2: warning: implicit declaration of function 'ISR_DMA_AVG_Enable' [-Wimplicit-function-declaration]
   ISR_DMA_AVG_Enable();
   ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/rxsubsystem.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c rxsubsystem.c -o .\CortexM3\ARM_GCC_541\Debug\rxsubsystem.o
 rxsubsystem.c: In function 'decodeHamming':
-rxsubsystem.c:65:6: warning: 'syndrome' may be used uninitialized in this function [-Wmaybe-uninitialized]
+rxsubsystem.c:60:6: warning: 'syndrome' may be used uninitialized in this function [-Wmaybe-uninitialized]
    if (syndrome == colValH[col]) {
       ^
 arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/serial.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c serial.c -o .\CortexM3\ARM_GCC_541\Debug\serial.o
@@ -263,28 +267,36 @@ arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-
 arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/DAC_FAST_VDAC8.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC5\DAC_FAST_VDAC8.c -o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_VDAC8.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/DAC_FAST_VDAC8_PM.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC5\DAC_FAST_VDAC8_PM.c -o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_VDAC8_PM.o
 arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/DAC_FAST_IntClock.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC5\DAC_FAST_IntClock.c -o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_IntClock.o
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/DMA_RX_dma.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c Generated_Source\PSoC5\DMA_RX_dma.c -o .\CortexM3\ARM_GCC_541\Debug\DMA_RX_dma.o
 arm-none-eabi-as.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -alh=.\CortexM3\ARM_GCC_541\Debug/CyBootAsmGnu.lst -g -W -o .\CortexM3\ARM_GCC_541\Debug\CyBootAsmGnu.o Generated_Source\PSoC5\CyBootAsmGnu.s
-arm-none-eabi-ar.exe -rs .\CortexM3\ARM_GCC_541\Debug\SHW_full.a .\CortexM3\ARM_GCC_541\Debug\CyDmac.o .\CortexM3\ARM_GCC_541\Debug\CyFlash.o .\CortexM3\ARM_GCC_541\Debug\CyLib.o .\CortexM3\ARM_GCC_541\Debug\cyPm.o .\CortexM3\ARM_GCC_541\Debug\CySpc.o .\CortexM3\ARM_GCC_541\Debug\cyutils.o .\CortexM3\ARM_GCC_541\Debug\SLOT_CLK.o .\CortexM3\ARM_GCC_541\Debug\CREG_PAY.o .\CortexM3\ARM_GCC_541\Debug\CREG_PAY_PM.o .\CortexM3\ARM_GCC_541\Debug\SHIFT_CLK.o .\CortexM3\ARM_GCC_541\Debug\SREG_HAM_OUT.o .\CortexM3\ARM_GCC_541\Debug\DMA_HAM2SER_dma.o .\CortexM3\ARM_GCC_541\Debug\CREG_SER.o .\CortexM3\ARM_GCC_541\Debug\CREG_SER_PM.o .\CortexM3\ARM_GCC_541\Debug\SREG_SYMB.o .\CortexM3\ARM_GCC_541\Debug\DMA_PAY_dma.o .\CortexM3\ARM_GCC_541\Debug\CREG_L.o .\CortexM3\ARM_GCC_541\Debug\CREG_L_PM.o .\CortexM3\ARM_GCC_541\Debug\ISR_SYMB.o .\CortexM3\ARM_GCC_541\Debug\ISR_INJ_CHECK.o .\CortexM3\ARM_GCC_541\Debug\UART.o .\CortexM3\ARM_GCC_541\Debug\UART_PM.o .\CortexM3\ARM_GCC_541\Debug\UART_INT.o .\CortexM3\ARM_GCC_541\Debug\UART_BOOT.o .\CortexM3\ARM_GCC_541\Debug\UART_IntClock.o .\CortexM3\ARM_GCC_541\Debug\CREG_INJ_DONE.o .\CortexM3\ARM_GCC_541\Debug\CREG_INJ_DONE_PM.o .\CortexM3\ARM_GCC_541\Debug\CREG_INIT_TX.o .\CortexM3\ARM_GCC_541\Debug\CREG_INIT_TX_PM.o .\CortexM3\ARM_GCC_541\Debug\PWM_LED.o .\CortexM3\ARM_GCC_541\Debug\PWM_LED_PM.o .\CortexM3\ARM_GCC_541\Debug\Pin_1.o .\CortexM3\ARM_GCC_541\Debug\CREG_RX_SLOTS1.o .\CortexM3\ARM_GCC_541\Debug\CREG_RX_SLOTS1_PM.o .\CortexM3\ARM_GCC_541\Debug\CREG_RX_SLOTS2.o .\CortexM3\ARM_GCC_541\Debug\CREG_RX_SLOTS2_PM.o .\CortexM3\ARM_GCC_541\Debug\SREG_HEAD.o .\CortexM3\ARM_GCC_541\Debug\COMP_SLOW.o .\CortexM3\ARM_GCC_541\Debug\COMP_SLOW_PM.o .\CortexM3\ARM_GCC_541\Debug\COMP_FAST.o .\CortexM3\ARM_GCC_541\Debug\COMP_FAST_PM.o .\CortexM3\ARM_GCC_541\Debug\Pin_2.o .\CortexM3\ARM_GCC_541\Debug\Pin_3.o .\CortexM3\ARM_GCC_541\Debug\Pin_4.o .\CortexM3\ARM_GCC_541\Debug\Pin_5.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR_INT.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR_PM.o .\CortexM3\ARM_GCC_541\Debug\DMA_AVG_dma.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR_IRQ.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR_theACLK.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR_Bypass.o .\CortexM3\ARM_GCC_541\Debug\ISR_HEADER_READ.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW_PM.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_PM.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW_DMA_dma.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW_VDAC8.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW_VDAC8_PM.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW_IntClock.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_DMA_dma.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_VDAC8.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_VDAC8_PM.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_IntClock.o .\CortexM3\ARM_GCC_541\Debug\CyBootAsmGnu.o
+arm-none-eabi-ar.exe -rs .\CortexM3\ARM_GCC_541\Debug\SHW_full.a .\CortexM3\ARM_GCC_541\Debug\CyDmac.o .\CortexM3\ARM_GCC_541\Debug\CyFlash.o .\CortexM3\ARM_GCC_541\Debug\CyLib.o .\CortexM3\ARM_GCC_541\Debug\cyPm.o .\CortexM3\ARM_GCC_541\Debug\CySpc.o .\CortexM3\ARM_GCC_541\Debug\cyutils.o .\CortexM3\ARM_GCC_541\Debug\SLOT_CLK.o .\CortexM3\ARM_GCC_541\Debug\CREG_PAY.o .\CortexM3\ARM_GCC_541\Debug\CREG_PAY_PM.o .\CortexM3\ARM_GCC_541\Debug\SHIFT_CLK.o .\CortexM3\ARM_GCC_541\Debug\SREG_HAM_OUT.o .\CortexM3\ARM_GCC_541\Debug\DMA_HAM2SER_dma.o .\CortexM3\ARM_GCC_541\Debug\CREG_SER.o .\CortexM3\ARM_GCC_541\Debug\CREG_SER_PM.o .\CortexM3\ARM_GCC_541\Debug\SREG_SYMB.o .\CortexM3\ARM_GCC_541\Debug\DMA_PAY_dma.o .\CortexM3\ARM_GCC_541\Debug\CREG_L.o .\CortexM3\ARM_GCC_541\Debug\CREG_L_PM.o .\CortexM3\ARM_GCC_541\Debug\ISR_SYMB.o .\CortexM3\ARM_GCC_541\Debug\ISR_INJ_CHECK.o .\CortexM3\ARM_GCC_541\Debug\UART.o .\CortexM3\ARM_GCC_541\Debug\UART_PM.o .\CortexM3\ARM_GCC_541\Debug\UART_INT.o .\CortexM3\ARM_GCC_541\Debug\UART_BOOT.o .\CortexM3\ARM_GCC_541\Debug\UART_IntClock.o .\CortexM3\ARM_GCC_541\Debug\CREG_INJ_DONE.o .\CortexM3\ARM_GCC_541\Debug\CREG_INJ_DONE_PM.o .\CortexM3\ARM_GCC_541\Debug\CREG_INIT_TX.o .\CortexM3\ARM_GCC_541\Debug\CREG_INIT_TX_PM.o .\CortexM3\ARM_GCC_541\Debug\PWM_LED.o .\CortexM3\ARM_GCC_541\Debug\PWM_LED_PM.o .\CortexM3\ARM_GCC_541\Debug\Pin_1.o .\CortexM3\ARM_GCC_541\Debug\CREG_RX_SLOTS1.o .\CortexM3\ARM_GCC_541\Debug\CREG_RX_SLOTS1_PM.o .\CortexM3\ARM_GCC_541\Debug\CREG_RX_SLOTS2.o .\CortexM3\ARM_GCC_541\Debug\CREG_RX_SLOTS2_PM.o .\CortexM3\ARM_GCC_541\Debug\SREG_HEAD.o .\CortexM3\ARM_GCC_541\Debug\COMP_SLOW.o .\CortexM3\ARM_GCC_541\Debug\COMP_SLOW_PM.o .\CortexM3\ARM_GCC_541\Debug\COMP_FAST.o .\CortexM3\ARM_GCC_541\Debug\COMP_FAST_PM.o .\CortexM3\ARM_GCC_541\Debug\Pin_2.o .\CortexM3\ARM_GCC_541\Debug\Pin_3.o .\CortexM3\ARM_GCC_541\Debug\Pin_4.o .\CortexM3\ARM_GCC_541\Debug\Pin_5.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR_INT.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR_PM.o .\CortexM3\ARM_GCC_541\Debug\DMA_AVG_dma.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR_IRQ.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR_theACLK.o .\CortexM3\ARM_GCC_541\Debug\ADC_SAR_Bypass.o .\CortexM3\ARM_GCC_541\Debug\ISR_HEADER_READ.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW_PM.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_PM.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW_DMA_dma.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW_VDAC8.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW_VDAC8_PM.o .\CortexM3\ARM_GCC_541\Debug\DAC_SLOW_IntClock.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_DMA_dma.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_VDAC8.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_VDAC8_PM.o .\CortexM3\ARM_GCC_541\Debug\DAC_FAST_IntClock.o .\CortexM3\ARM_GCC_541\Debug\DMA_RX_dma.o .\CortexM3\ARM_GCC_541\Debug\CyBootAsmGnu.o
 arm-none-eabi-ar.exe: creating .\CortexM3\ARM_GCC_541\Debug\SHW_full.a
 arm-none-eabi-gcc.exe -Wl,--start-group -o C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\CortexM3\ARM_GCC_541\Debug\SHW_full.elf .\CortexM3\ARM_GCC_541\Debug\main.o .\CortexM3\ARM_GCC_541\Debug\packetman.o .\CortexM3\ARM_GCC_541\Debug\dimmingcontrol.o .\CortexM3\ARM_GCC_541\Debug\dlm.o .\CortexM3\ARM_GCC_541\Debug\inputcontrol.o .\CortexM3\ARM_GCC_541\Debug\rxsubsystem.o .\CortexM3\ARM_GCC_541\Debug\serial.o .\CortexM3\ARM_GCC_541\Debug\txsubsystem.o .\CortexM3\ARM_GCC_541\Debug\cyfitter_cfg.o .\CortexM3\ARM_GCC_541\Debug\cymetadata.o .\CortexM3\ARM_GCC_541\Debug\Cm3Start.o .\CortexM3\ARM_GCC_541\Debug\SHW_full.a "C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CortexM3\ARM_GCC_541\Debug\CyComponentLibrary.a" -mcpu=cortex-m3 -mthumb -L Generated_Source\PSoC5 -Wl,-Map,.\CortexM3\ARM_GCC_541\Debug/SHW_full.map -T Generated_Source\PSoC5\cm3gcc.ld -specs=nano.specs -Wl,--gc-sections -g -ffunction-sections -Og -ffat-lto-objects -Wl,--end-group
 .\CortexM3\ARM_GCC_541\Debug\packetman.o:(.data+0x0): multiple definition of `colValH'
 .\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x0): first defined here
 .\CortexM3\ARM_GCC_541\Debug\packetman.o:(.data+0x8): multiple definition of `H'
 .\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x8): first defined here
+.\CortexM3\ARM_GCC_541\Debug\packetman.o:(.data+0x20): multiple definition of `hamWordCheck'
+.\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x20): first defined here
 .\CortexM3\ARM_GCC_541\Debug\dimmingcontrol.o:(.data+0x0): multiple definition of `colValH'
 .\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x0): first defined here
 .\CortexM3\ARM_GCC_541\Debug\dimmingcontrol.o:(.data+0x8): multiple definition of `H'
 .\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x8): first defined here
-.\CortexM3\ARM_GCC_541\Debug\rxsubsystem.o:(.data+0x18): multiple definition of `colValH'
+.\CortexM3\ARM_GCC_541\Debug\dimmingcontrol.o:(.data+0x20): multiple definition of `hamWordCheck'
+.\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x20): first defined here
+.\CortexM3\ARM_GCC_541\Debug\rxsubsystem.o:(.data+0x0): multiple definition of `hamWordCheck'
+.\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x20): first defined here
+.\CortexM3\ARM_GCC_541\Debug\rxsubsystem.o:(.data+0x28): multiple definition of `colValH'
 .\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x0): first defined here
-.\CortexM3\ARM_GCC_541\Debug\rxsubsystem.o:(.data+0x0): multiple definition of `H'
+.\CortexM3\ARM_GCC_541\Debug\rxsubsystem.o:(.data+0x10): multiple definition of `H'
 .\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x8): first defined here
 .\CortexM3\ARM_GCC_541\Debug\txsubsystem.o:(.data+0x0): multiple definition of `colValH'
 .\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x0): first defined here
 .\CortexM3\ARM_GCC_541\Debug\txsubsystem.o:(.data+0x8): multiple definition of `H'
 .\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x8): first defined here
+.\CortexM3\ARM_GCC_541\Debug\txsubsystem.o:(.data+0x20): multiple definition of `hamWordCheck'
+.\CortexM3\ARM_GCC_541\Debug\main.o:(.data+0x20): first defined here
 .\CortexM3\ARM_GCC_541\Debug\main.o: In function `main':
-The command 'arm-none-eabi-gcc.exe' failed with exit code '1'.
 C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn/main.c:41: undefined reference to `CREG_INIT_TX_Write'
 C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn/main.c:43: undefined reference to `CREG_INIT_TX_Write'
 .\CortexM3\ARM_GCC_541\Debug\serial.o: In function `serialRead':
@@ -300,9 +312,10 @@ C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn/txsubsystem.c:214: unde
 .\CortexM3\ARM_GCC_541\Debug\txsubsystem.o: In function `ISR_TX_DONE_h':
 C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn/txsubsystem.c:224: undefined reference to `ISR_TX_DONE_ClearPending'
 .\CortexM3\ARM_GCC_541\Debug\txsubsystem.o: In function `INIT_TX_SUBSYSTEM':
+The command 'arm-none-eabi-gcc.exe' failed with exit code '1'.
 C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn/txsubsystem.c:47: undefined reference to `ISR_INJ_StartEx'
 C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn/txsubsystem.c:48: undefined reference to `ISR_INJ_Enable'
 C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn/txsubsystem.c:53: undefined reference to `ISR_TX_DONE_StartEx'
 C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn/txsubsystem.c:54: undefined reference to `ISR_TX_DONE_Enable'
 collect2.exe: error: ld returned 1 exit status
---------------- Rebuild Failed: 11/01/2017 05:13:17 ---------------
+--------------- Rebuild Failed: 11/02/2017 01:10:38 ---------------

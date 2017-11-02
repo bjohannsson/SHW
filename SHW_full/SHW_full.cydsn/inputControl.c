@@ -10,17 +10,21 @@
 
 #include "inputcontrol.h"
 
+/* -------------------------------------------------------------------------*
+ * Initialize system component												*
+ * -------------------------------------------------------------------------*
+*/
 void INIT_INPUT_CONTROL()
 {
 	// Setup DMA for thresholds
-	DMA_AVG_Chan = DMA_AVG_DmaInitialize(DMA_AVG_BYTES_PER_BURST, DMA_AVG_REQUEST_PER_BURST, 
-	    HI16(DMA_AVG_SRC_BASE), HI16(DMA_AVG_DST_BASE));
-	DMA_AVG_TD[0] = CyDmaTdAllocate();
+	DMA_TH_Chan = DMA_TH_DmaInitialize(DMA_TH_BYTES_PER_BURST, DMA_TH_REQUEST_PER_BURST, 
+	    HI16(DMA_TH_SRC_BASE), HI16(DMA_TH_DST_BASE));
+	DMA_TH_TD[0] = CyDmaTdAllocate();
 
-	CyDmaTdSetConfiguration(DMA_AVG_TD[0], 2, CY_DMA_DISABLE_TD, DMA_AVG__TD_TERMOUT_EN);
-	CyDmaTdSetAddress(DMA_AVG_TD[0], LO16((uint32)ADC_SAR_SAR_WRK0_PTR), LO16((uint32)&avgCurrSample));
-	CyDmaChSetInitialTd(DMA_AVG_Chan, DMA_AVG_TD[0]);
-	CyDmaChEnable(DMA_AVG_Chan, 1);
+	CyDmaTdSetConfiguration(DMA_TH_TD[0], 2, CY_DMA_DISABLE_TD, DMA_AVG__TD_TERMOUT_EN);
+	CyDmaTdSetAddress(DMA_TH_TD[0], LO16((uint32)ADC_SAR_SAR_WRK0_PTR), LO16((uint32)&avgCurrSample));
+	CyDmaChSetInitialTd(DMA_TH_Chan, DMA_TH_TD[0]);
+	CyDmaChEnable(DMA_TH_Chan, 1);
 	
 	
 	// Start DACs and comparators
@@ -48,11 +52,41 @@ void INIT_INPUT_CONTROL()
 	}
 
 	// Setup ISR
-	ISR_DMA_AVG_StartEx(ISR_AVG_h);
-	ISR_DMA_AVG_Enable();
+	ISR_ADC_TH_StartEx(ISR_ADC_TH_h);
+	ISR_ADC_TH_Enable();
 }
 
-/* Calculate and update thresholds */
+/* -------------------------------------------------------------------------*
+ * Interrupt handler, triggered on a threshold detection					*
+ * -------------------------------------------------------------------------*
+*/
+CY_ISR(ISR_TH_h)
+{
+	
+	FLAG_IC_EVENT = true;
+	IC_EVENT = IC_EVENT_TH;
+	
+	ISR_TH_ClearPending();
+}
+
+/* -------------------------------------------------------------------------*
+ * Interrupt handler, triggered on a ADC sample ready						*
+ * -------------------------------------------------------------------------*
+*/
+CY_ISR(ISR_ADC_TH_h)
+{
+	
+	FLAG_IC_EVENT = true;
+	IC_EVENT = IC_EVENT_ADC_TH;
+	
+	ISR_ADC_TH_ClearPending();
+}
+
+
+/* -------------------------------------------------------------------------*
+ * Function to calculate threshold values									*
+ * -------------------------------------------------------------------------*
+*/
 void calculateTh()
 {
 	// Update average

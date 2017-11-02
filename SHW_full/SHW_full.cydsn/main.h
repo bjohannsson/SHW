@@ -18,6 +18,7 @@
 #include "dimmingcontrol.h"
 #include "rxsubsystem.h"
 #include "txsubsystem.h"
+#include "inputcontrol.h"
 
 
 
