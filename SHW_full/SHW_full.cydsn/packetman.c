@@ -57,19 +57,19 @@ void makeHeader(uint8 p)
 		switch(fSum[f]) {
 			
 			case 0:
-				packets4[p].header[f] = (0xF0 & packets4[p].hFields[f]);
+				packets4[p].header[f] = (0xF0 | packets4[p].hFields[f]);
 				break;
 			case 1:
-				packets4[p].header[f] = (0xE0 & packets4[p].hFields[f]);
+				packets4[p].header[f] = (0xE0 | packets4[p].hFields[f]);
 				break;
 			case 2:
-				packets4[p].header[f] = (0xC0 & packets4[p].hFields[f]);
+				packets4[p].header[f] = (0xC0 | packets4[p].hFields[f]);
 				break;
 			case 3:
-				packets4[p].header[f] = (0x80 & packets4[p].hFields[f]);
+				packets4[p].header[f] = (0x80 | packets4[p].hFields[f]);
 				break;
 			case 4:
-				packets4[p].header[f] = (0x00 & packets4[p].hFields[f]);
+				packets4[p].header[f] = (0x00 | packets4[p].hFields[f]);
 				break;
 			default:
 				break;

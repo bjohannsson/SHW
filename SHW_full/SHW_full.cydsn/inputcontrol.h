@@ -86,7 +86,8 @@ int16 thStdTemp;
 uint16 thFastValue;
 
 
-
+uint8 rxSlotTh;
+uint16 rxCompVal;
 	
 #endif
 /* [] END OF FILE */

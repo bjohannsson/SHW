@@ -62,7 +62,8 @@ void INIT_INPUT_CONTROL()
 */
 CY_ISR(ISR_TH_h)
 {
-	
+	rxSlotTh = SREG_RX_SLOT_Read() & 0x0F;
+	CREG_TH_EN_Write(0);
 	FLAG_IC_EVENT = true;
 	IC_EVENT = IC_EVENT_TH;
 	

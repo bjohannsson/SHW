@@ -1,61 +1,11 @@
---------------- Build Started: 11/02/2017 02:49:45 Project: SHW_full, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+--------------- Build Started: 11/03/2017 00:20:26 Project: SHW_full, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
 cydsfit.exe -.appdatapath "C:\Users\dr\AppData\Local\Cypress Semiconductor\PSoC Creator\4.1" -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -.fdsreffile=referenced_files.txt -p C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\SHW_full.cyprj -d CY8C5888LTI-LP097 -s C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\Generated_Source\PSoC5 -- -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE
 Elaborating Design...
-ADD: sdb.M0025: error: No input on Instance "and_18", terminal "term0".
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Signal: rx_en)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1336.3)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1351)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1355)
-ADD: sdb.M0050: error: Terminal "term0" requires connection when it is visible.
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Signal: rx_en)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1336.3)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1351)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1355)
-ADD: sdb.M0025: error: No input on Instance "and_19", terminal "term1".
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Signal: th_en)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1366)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1371.5)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1385)
-ADD: sdb.M0050: error: Terminal "term1" requires connection when it is visible.
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Signal: th_en)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1366)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1371.5)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1385)
-ADD: sdb.M0024: error: Terminal "CMP_RX_OFFS.a[2:0]" with width 3 is connected to "rx_slot_cnt[3:0]" with width 4.
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Signal: rx_slot_cnt)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1118.12)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1125)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1481.2)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1500)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1501)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1502)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1503)
-ADD: sdb.M0018: error: Multiple drivers on signal "dma_th_trig", bit(s) "0".
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Signal: dma_th_trig)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1260.8)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1646.1)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1648.9)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1650)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1651)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1658)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1685.5)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1690)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1691)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1692)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1693)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1694)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1704)
-ADD: sdb.M0025: error: No input on Instance "and_20", terminal "term0".
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Signal: Net_1160)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1633.3)
-ADD: sdb.M0050: error: Terminal "term0" requires connection when it is visible.
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Signal: Net_1160)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1633.3)
-ADD: sdb.M0025: error: No input on Instance "and_20", terminal "term1".
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Signal: Net_1161)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1633.5)
-ADD: sdb.M0050: error: Terminal "term1" requires connection when it is visible.
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Signal: Net_1161)
- * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (Shape_1633.5)
+HDL Generation...
+Synthesis...
+ADD: fit.M0002: error: Signal 'comp_out' is floating (not driven by anything).
+ * C:\Users\dr\Documents\GitHub\SHW\SHW_full\SHW_full.cydsn\TopDesign\TopDesign.cysch (comp_out)
+Dependency Generation...
+Cleanup...
 Error: fit.M0050: The fitter aborted due to errors, please address all errors and rebuild. (App=cydsfit)
---------------- Build Failed: 11/02/2017 02:49:49 ---------------
+--------------- Build Failed: 11/03/2017 00:20:32 ---------------
