@@ -31,7 +31,19 @@ The system is divided into modules according to the image below.
 
 ![alt text](images/arch5.PNG?raw=true "System architecture")
 
-The *Optical Front End* (OFE) contains a photodiode for reading incoming VLC transmissions, and an LED to provide lighting and transmit messages. 
+* Input Control - This block monitors channel activity and controls the input sensitivity.
+
+* Data Link Control - Basic routing functionality.
+
+* Dimming Control - Controls the dimming level of the LED, and calculates transmission symbols according to the dimming level.
+
+* RX Subsystem - Demodulates an incoming packet.
+
+* Packet Storage - Stores packets.
+
+* TX Subsystem - Handles packet transmissions, modulating the LED according to the packet payload.
+
+* OFE - The *Optical Front End* (OFE) contains a photodiode for reading incoming VLC transmissions, and an LED to provide lighting and transmit messages. 
 
 ## TX Subsystem
 When transmitting a packet, the following task pipeline is triggered:
