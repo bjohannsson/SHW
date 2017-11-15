@@ -1,6 +1,8 @@
 # SHW
 Visible light communication controller on a PSoC.
 
+![alt text](images/stellar_crop.png?raw=true "PWM to PAM")
+
 * Updates throughout the week of 30.10.2017-5.11.2017
 
 Are you looking for a guide on how a PSoC can be used to implement a low-cost [VLC](https://en.wikipedia.org/wiki/Visible_light_communication) controller? If yes, you are in luck. Throughout this document we will attempt to share how the programmable arrays of the PSoC are used to perform a chain of shift operations on data, providing a basis for a communication system. We use VLC in this project, but the idea is applicable to other forms of communication as well.
@@ -8,6 +10,40 @@ Are you looking for a guide on how a PSoC can be used to implement a low-cost [V
 The device sends messages by modulating its LED, the messages to be picked up by another device and decoded. The modulation used is a novel scheme named ARPWM. A received ARPWM signal is de-modulated as a the well known [PAM](https://en.wikipedia.org/wiki/Pulse-amplitude_modulation) signal.
 
 The repository is in an active state, where improvements are being made on the device, mainly on the receiver side. Details of theoretical concepts are not discussed here, but are readily [*googlable*](https://www.google.com/) for the interested reader.
+
+## Operation
+
+The controller serves dual purpose, to provide lighting and to modulate the light to transmit messages. We will refer to *TX mode* when the controller is transmitting a packet, otherwise it is in *Idle mode*. In *Idle mode*, the dimming level of the light is controlled with [PWM](https://en.wikipedia.org/wiki/Pulse-width_modulation), and can be set by the user via serial commands or VLC control packets. In *TX mode*, the light is modulated to form an ARPWM signal, which is briefly described here.
+
+Symbols are transmitted in the form of short pulses (4 shown, 10 used) within a symbol period *T<sub>s</sub>*. The signal travels through the optical channel to the receiver. The short individual pulses get low-pass filtered at the receiver, where the symbols can be decoded based on the amplitude of the received symbol. This combination is a common way to convert a [digital pulse-train to an analog signal](https://en.wikipedia.org/wiki/Digital-to-analog_converter#Types).
+
+![alt text](images/pwm_pam_lpf.PNG?raw=true "PWM to PAM")
+
+To avoid unwanted flickering of the light while transmitting data, *compensation symbols* are injected into the transmission to correct the light level. Consider the tow cases shown below, and let us assume that the dimming level is set to 50%. In the upper case, the symbols average to a light intensity of 50% and we can continue. In the lower case, the symbols' average light is lower than the desired dimming level so we inject compensation symbols into the stream. These compensation symbols are removed from the stream when decoding the packet, as otherwise they would corrupt the data.
+
+![alt text](images/comp_no.png?raw=true "No compensation")
+
+![alt text](images/comp_inj_req.png?raw=true "Compensation required")
+![alt text](images/comp_inj.png?raw=true "Compensation")
+
+## System Architecture
+The system is divided into modules according to the image below.
+
+![alt text](images/arch5.PNG?raw=true "System architecture")
+
+* Input Control - This block monitors channel activity and controls the input sensitivity.
+
+* Data Link Control - Basic routing functionality.
+
+* Dimming Control - Controls the dimming level of the LED, and calculates transmission symbols according to the dimming level.
+
+* RX Subsystem - Demodulates an incoming packet.
+
+* Packet Storage - Stores packets.
+
+* TX Subsystem - Handles packet transmissions, modulating the LED according to the packet payload.
+
+* OFE - The *Optical Front End* (OFE) contains a photodiode for reading incoming VLC transmissions, and an LED to provide lighting and transmit messages. 
 
 ## TX Subsystem
 When transmitting a packet, the following task pipeline is triggered:
