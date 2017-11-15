@@ -3,11 +3,11 @@ Visible light communication controller on a PSoC.
 
 ![alt text](images/stellar_crop.png?raw=true "PWM to PAM")
 
-* Updates throughout the week of 30.10.2017-5.11.2017
+* Updates expected as time allows
 
 Are you looking for a guide on how a PSoC can be used to implement a low-cost [VLC](https://en.wikipedia.org/wiki/Visible_light_communication) controller? If yes, you are in luck. Throughout this document we will attempt to share how the programmable arrays of the PSoC are used to perform a chain of shift operations on data, providing a basis for a communication system. We use VLC in this project, but the idea is applicable to other forms of communication as well.
 
-The device sends messages by modulating its LED, the messages to be picked up by another device and decoded. The modulation used is a novel scheme named ARPWM. A received ARPWM signal is de-modulated as a the well known [PAM](https://en.wikipedia.org/wiki/Pulse-amplitude_modulation) signal.
+The device sends messages by modulating its LED, the messages to be picked up by another device and decoded. The modulation used is a novel scheme named ARPWM. A received ARPWM signal is de-modulated as the well known [PAM](https://en.wikipedia.org/wiki/Pulse-amplitude_modulation) signal.
 
 The repository is in an active state, where improvements are being made on the device, mainly on the receiver side. Details of theoretical concepts are not discussed here, but are readily [*googlable*](https://www.google.com/) for the interested reader.
 
@@ -19,7 +19,7 @@ Symbols are transmitted in the form of short pulses (4 shown, 10 used) within a 
 
 ![alt text](images/pwm_pam_lpf.PNG?raw=true "PWM to PAM")
 
-To avoid unwanted flickering of the light while transmitting data, *compensation symbols* are injected into the transmission to correct the light level. Consider the tow cases shown below, and let us assume that the dimming level is set to 50%. In the upper case, the symbols average to a light intensity of 50% and we can continue. In the lower case, the symbols' average light is lower than the desired dimming level so we inject compensation symbols into the stream. These compensation symbols are removed from the stream when decoding the packet, as otherwise they would corrupt the data.
+To avoid unwanted flickering of the light while transmitting data, *compensation symbols* are injected into the transmission to correct the light level. Consider the two cases shown below, and let us assume that the dimming level is set to 50%. In the upper case, the symbols average to a light intensity of 50% and we can continue. In the lower case, the symbols' average light is lower than the desired dimming level so we inject compensation symbols into the stream. These compensation symbols are removed from the stream when decoding the packet, as otherwise they would corrupt the data.
 
 ![alt text](images/comp_no.png?raw=true "No compensation")
 
