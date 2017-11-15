@@ -14,7 +14,7 @@
 void INIT_DIMMING_CONTROL(void) 
 {
 	dimLevel = 60;
-    PWM_LED_Start();
+    	PWM_LED_Start();
 	PWM_LED_WriteCompare(20);
 	CyDelay(500);
 	PWM_LED_WriteCompare(dimLevel);
