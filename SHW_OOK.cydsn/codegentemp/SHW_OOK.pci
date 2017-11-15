@@ -1,0 +1,17 @@
+# SHW_OOK
+# 2017-11-05 00:11:48Z
+
+# IO_0@[IOP=(1)][IoId=(0)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 0
+# IO_1@[IOP=(1)][IoId=(1)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 1
+# IO_3@[IOP=(1)][IoId=(3)] is reserved: SWDDebugEnabled
+dont_use_io iocell 1 3
+set_io "DEB_PIN1(0)" iocell 1 4
+set_io "DEB_PIN0(0)" iocell 1 2
+set_io "LED_OUT(0)" iocell 3 0
+set_io "FTDI_TX(0)" iocell 12 7
+set_io "FTDI_RX(0)" iocell 12 6
+set_io "DEB_PIN2(0)" iocell 1 5
+set_io "DEB_PIN3(0)" iocell 1 6
+set_io "DEB_PIN4(0)" iocell 12 0

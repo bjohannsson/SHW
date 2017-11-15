@@ -1,0 +1,2824 @@
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 1
+
+
+   1              		.syntax unified
+   2              		.cpu cortex-m3
+   3              		.fpu softvfp
+   4              		.eabi_attribute 20, 1
+   5              		.eabi_attribute 21, 1
+   6              		.eabi_attribute 23, 3
+   7              		.eabi_attribute 24, 1
+   8              		.eabi_attribute 25, 1
+   9              		.eabi_attribute 26, 1
+  10              		.eabi_attribute 30, 1
+  11              		.eabi_attribute 34, 1
+  12              		.eabi_attribute 18, 4
+  13              		.thumb
+  14              		.syntax unified
+  15              		.file	"serial.c"
+  16              		.text
+  17              	.Ltext0:
+  18              		.cfi_sections	.debug_frame
+  19              		.section	.text.INIT_SERIAL,"ax",%progbits
+  20              		.align	2
+  21              		.global	INIT_SERIAL
+  22              		.thumb
+  23              		.thumb_func
+  24              		.type	INIT_SERIAL, %function
+  25              	INIT_SERIAL:
+  26              	.LFB63:
+  27              		.file 1 "serial.c"
+   1:serial.c      **** /* ========================================
+   2:serial.c      ****  *
+   3:serial.c      ****  * SHW - Visible light Communication Controller
+   4:serial.c      ****  * Bjarki Johannsson 2017
+   5:serial.c      ****  * Open Source
+   6:serial.c      ****  *
+   7:serial.c      ****  *
+   8:serial.c      ****  * ========================================
+   9:serial.c      **** */
+  10:serial.c      **** 
+  11:serial.c      **** #include "serial.h"
+  12:serial.c      **** 
+  13:serial.c      **** 
+  14:serial.c      **** void INIT_SERIAL()
+  15:serial.c      **** {
+  28              		.loc 1 15 0
+  29              		.cfi_startproc
+  30              		@ args = 0, pretend = 0, frame = 0
+  31              		@ frame_needed = 0, uses_anonymous_args = 0
+  32 0000 08B5     		push	{r3, lr}
+  33              		.cfi_def_cfa_offset 8
+  34              		.cfi_offset 3, -8
+  35              		.cfi_offset 14, -4
+  16:serial.c      **** 	uart_type = UART_FTDI;
+  36              		.loc 1 16 0
+  37 0002 0122     		movs	r2, #1
+  38 0004 084B     		ldr	r3, .L3
+  39 0006 1A70     		strb	r2, [r3]
+  17:serial.c      **** 	UART_Start();
+  40              		.loc 1 17 0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 2
+
+
+  41 0008 FFF7FEFF 		bl	UART_Start
+  42              	.LVL0:
+  18:serial.c      **** 	
+  19:serial.c      **** 	
+  20:serial.c      ****     serialTest[0] = 0x39;
+  43              		.loc 1 20 0
+  44 000c 074B     		ldr	r3, .L3+4
+  45 000e 3922     		movs	r2, #57
+  46 0010 1A70     		strb	r2, [r3]
+  21:serial.c      ****     serialTest[1] = 0x37;
+  47              		.loc 1 21 0
+  48 0012 3722     		movs	r2, #55
+  49 0014 5A70     		strb	r2, [r3, #1]
+  22:serial.c      **** 	test8 = 21;
+  50              		.loc 1 22 0
+  51 0016 1522     		movs	r2, #21
+  52 0018 054B     		ldr	r3, .L3+8
+  53 001a 1A70     		strb	r2, [r3]
+  23:serial.c      **** 	test16 = 999;
+  54              		.loc 1 23 0
+  55 001c 40F2E732 		movw	r2, #999
+  56 0020 044B     		ldr	r3, .L3+12
+  57 0022 1A80     		strh	r2, [r3]	@ movhi
+  58 0024 08BD     		pop	{r3, pc}
+  59              	.L4:
+  60 0026 00BF     		.align	2
+  61              	.L3:
+  62 0028 00000000 		.word	uart_type
+  63 002c 00000000 		.word	serialTest
+  64 0030 00000000 		.word	test8
+  65 0034 00000000 		.word	test16
+  66              		.cfi_endproc
+  67              	.LFE63:
+  68              		.size	INIT_SERIAL, .-INIT_SERIAL
+  69              		.section	.text.serialSend8bit,"ax",%progbits
+  70              		.align	2
+  71              		.global	serialSend8bit
+  72              		.thumb
+  73              		.thumb_func
+  74              		.type	serialSend8bit, %function
+  75              	serialSend8bit:
+  76              	.LFB66:
+  24:serial.c      **** }
+  25:serial.c      **** 
+  26:serial.c      **** void serialResolve(uint8* b)
+  27:serial.c      **** {
+  28:serial.c      ****     switch(*b) {
+  29:serial.c      **** 
+  30:serial.c      ****         case SERIAL_TEST:
+  31:serial.c      ****             serialSend8bit(&serialTest[0], 2, SER_TX_TEST);
+  32:serial.c      ****             serialSend8bit(&test8, 1, SER_TX_TEST8);
+  33:serial.c      ****             serialSend16bit(&test16, 1, SER_TX_TEST16);
+  34:serial.c      ****             break;
+  35:serial.c      **** 		case INIT_TX:
+  36:serial.c      **** 			FLAG_SER_EVENT = true;
+  37:serial.c      **** 			FLAG_SER_TX_INIT = true;
+  38:serial.c      **** 			break;
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 3
+
+
+  39:serial.c      ****         default:
+  40:serial.c      ****             break;
+  41:serial.c      ****     }
+  42:serial.c      ****     memset(bufferUart, 0, 64);
+  43:serial.c      **** }
+  44:serial.c      **** 
+  45:serial.c      **** void serialRead()
+  46:serial.c      **** {
+  47:serial.c      **** 	uint8 errorStatus;
+  48:serial.c      **** 	if (uart_type == UART_FTDI) {
+  49:serial.c      ****         int cCount = 0;
+  50:serial.c      ****         bool reading = true;
+  51:serial.c      ****         while(reading) {
+  52:serial.c      ****             /* Read status register. */
+  53:serial.c      ****             uint8 rxStatus = UART_ReadRxStatus();
+  54:serial.c      ****             
+  55:serial.c      ****             /* Check if data is received. */
+  56:serial.c      ****             if((rxStatus & UART_RX_STS_FIFO_NOTEMPTY) != 0u)    
+  57:serial.c      ****             {
+  58:serial.c      ****                 /* Read received data */
+  59:serial.c      ****                 bufferUart[cCount++] = UART_ReadRxData();    
+  60:serial.c      **** 
+  61:serial.c      ****                 /* Check status on error*/
+  62:serial.c      ****                 if((rxStatus & (UART_RX_STS_BREAK      | UART_RX_STS_PAR_ERROR |
+  63:serial.c      ****                                 UART_RX_STS_STOP_ERROR | UART_RX_STS_OVERRUN)) != 0u)
+  64:serial.c      ****                 {
+  65:serial.c      ****                     errorStatus |= rxStatus & ( UART_RX_STS_BREAK      | UART_RX_STS_PAR_ERROR | 
+  66:serial.c      ****                                                 UART_RX_STS_STOP_ERROR | UART_RX_STS_OVERRUN);
+  67:serial.c      ****                     reading = false;
+  68:serial.c      **** 					
+  69:serial.c      ****                 }
+  70:serial.c      ****                 else
+  71:serial.c      ****                 {
+  72:serial.c      ****                     /* Send data backward */
+  73:serial.c      **** //                    UART_WriteTxData(0x01);
+  74:serial.c      ****                     CREG_LED_Write(1);
+  75:serial.c      ****                     CyDelay(20);
+  76:serial.c      ****                     CREG_LED_Write(0);
+  77:serial.c      ****                     
+  78:serial.c      ****                 }
+  79:serial.c      ****             }
+  80:serial.c      ****             else {
+  81:serial.c      ****                 reading = false;
+  82:serial.c      ****             }
+  83:serial.c      ****             if (cCount > 0) {
+  84:serial.c      **** //				UART_WriteTxData(0x02);
+  85:serial.c      ****                 serialResolve(bufferUart);
+  86:serial.c      ****             }
+  87:serial.c      ****         }
+  88:serial.c      **** 
+  89:serial.c      ****     }
+  90:serial.c      **** }
+  91:serial.c      **** 
+  92:serial.c      **** 
+  93:serial.c      **** 
+  94:serial.c      **** void serialSend8bit(uint8* data, uint16 length, uint8 msgID) 
+  95:serial.c      **** {
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 4
+
+
+  77              		.loc 1 95 0
+  78              		.cfi_startproc
+  79              		@ args = 0, pretend = 0, frame = 8
+  80              		@ frame_needed = 0, uses_anonymous_args = 0
+  81              	.LVL1:
+  82 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+  83              		.cfi_def_cfa_offset 20
+  84              		.cfi_offset 4, -20
+  85              		.cfi_offset 5, -16
+  86              		.cfi_offset 6, -12
+  87              		.cfi_offset 7, -8
+  88              		.cfi_offset 14, -4
+  89 0002 83B0     		sub	sp, sp, #12
+  90              		.cfi_def_cfa_offset 32
+  91 0004 0646     		mov	r6, r0
+  92 0006 0D46     		mov	r5, r1
+  93 0008 1746     		mov	r7, r2
+  94              	.LVL2:
+  96:serial.c      ****     uint16 i;
+  97:serial.c      ****     uint8 bytes[3];
+  98:serial.c      **** 
+  99:serial.c      ****     for (i=0; i<length; i++) {
+  95              		.loc 1 99 0
+  96 000a 0024     		movs	r4, #0
+  97 000c 20E0     		b	.L6
+  98              	.LVL3:
+  99              	.L10:
+ 100:serial.c      ****         if (length > 1) bytes[0] = serMaskCtrl | serMask8bit | serMaskArray | ((data[i] & 0xF0) >> 
+ 100              		.loc 1 100 0
+ 101 000e 012D     		cmp	r5, #1
+ 102 0010 06D9     		bls	.L7
+ 103              		.loc 1 100 0 is_stmt 0 discriminator 1
+ 104 0012 335D     		ldrb	r3, [r6, r4]	@ zero_extendqisi2
+ 105 0014 1B09     		lsrs	r3, r3, #4
+ 106 0016 43F0A003 		orr	r3, r3, #160
+ 107 001a 8DF80430 		strb	r3, [sp, #4]
+ 108 001e 05E0     		b	.L8
+ 109              	.L7:
+ 101:serial.c      ****         else bytes[0] = serMaskCtrl | serMask8bit | serMaskSingle | ((data[i] & 0xF0) >> 4);
+ 110              		.loc 1 101 0 is_stmt 1
+ 111 0020 335D     		ldrb	r3, [r6, r4]	@ zero_extendqisi2
+ 112 0022 1B09     		lsrs	r3, r3, #4
+ 113 0024 43F08003 		orr	r3, r3, #128
+ 114 0028 8DF80430 		strb	r3, [sp, #4]
+ 115              	.L8:
+ 102:serial.c      ****         
+ 103:serial.c      ****         bytes[1] = serMaskData | serMask8bit | ((data[i] & 0x0F) << 2);
+ 116              		.loc 1 103 0
+ 117 002c 335D     		ldrb	r3, [r6, r4]	@ zero_extendqisi2
+ 118 002e 9B00     		lsls	r3, r3, #2
+ 119 0030 03F03C03 		and	r3, r3, #60
+ 120 0034 8DF80530 		strb	r3, [sp, #5]
+ 104:serial.c      ****         bytes[2] = msgID;
+ 121              		.loc 1 104 0
+ 122 0038 8DF80670 		strb	r7, [sp, #6]
+ 105:serial.c      ****         
+ 106:serial.c      ****         if (uart_type == UART_FTDI) {
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 5
+
+
+ 123              		.loc 1 106 0
+ 124 003c 064B     		ldr	r3, .L12
+ 125 003e 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 126 0040 012B     		cmp	r3, #1
+ 127 0042 03D1     		bne	.L9
+ 107:serial.c      ****             UART_PutArray(&bytes[0], 3);
+ 128              		.loc 1 107 0
+ 129 0044 0321     		movs	r1, #3
+ 130 0046 01A8     		add	r0, sp, #4
+ 131 0048 FFF7FEFF 		bl	UART_PutArray
+ 132              	.LVL4:
+ 133              	.L9:
+  99:serial.c      ****         if (length > 1) bytes[0] = serMaskCtrl | serMask8bit | serMaskArray | ((data[i] & 0xF0) >> 
+ 134              		.loc 1 99 0 discriminator 2
+ 135 004c 0134     		adds	r4, r4, #1
+ 136              	.LVL5:
+ 137 004e A4B2     		uxth	r4, r4
+ 138              	.LVL6:
+ 139              	.L6:
+  99:serial.c      ****         if (length > 1) bytes[0] = serMaskCtrl | serMask8bit | serMaskArray | ((data[i] & 0xF0) >> 
+ 140              		.loc 1 99 0 is_stmt 0 discriminator 1
+ 141 0050 AC42     		cmp	r4, r5
+ 142 0052 DCD3     		bcc	.L10
+ 108:serial.c      ****         }
+ 109:serial.c      **** //        else {
+ 110:serial.c      **** //            while(USBUART_1_CDCIsReady() == 0u);
+ 111:serial.c      **** //            USBUART_1_PutData(&bytes[0], 3);
+ 112:serial.c      **** //        }
+ 113:serial.c      ****     }
+ 114:serial.c      ****     
+ 115:serial.c      **** }
+ 143              		.loc 1 115 0 is_stmt 1
+ 144 0054 03B0     		add	sp, sp, #12
+ 145              		.cfi_def_cfa_offset 20
+ 146              		@ sp needed
+ 147 0056 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 148              	.LVL7:
+ 149              	.L13:
+ 150              		.align	2
+ 151              	.L12:
+ 152 0058 00000000 		.word	uart_type
+ 153              		.cfi_endproc
+ 154              	.LFE66:
+ 155              		.size	serialSend8bit, .-serialSend8bit
+ 156              		.section	.text.serialSend16bit,"ax",%progbits
+ 157              		.align	2
+ 158              		.global	serialSend16bit
+ 159              		.thumb
+ 160              		.thumb_func
+ 161              		.type	serialSend16bit, %function
+ 162              	serialSend16bit:
+ 163              	.LFB67:
+ 116:serial.c      **** 
+ 117:serial.c      **** void serialSend16bit(uint16* data, uint16 length, uint8 msgID) 
+ 118:serial.c      **** {
+ 164              		.loc 1 118 0
+ 165              		.cfi_startproc
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 6
+
+
+ 166              		@ args = 0, pretend = 0, frame = 8
+ 167              		@ frame_needed = 0, uses_anonymous_args = 0
+ 168              	.LVL8:
+ 169 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 170              		.cfi_def_cfa_offset 20
+ 171              		.cfi_offset 4, -20
+ 172              		.cfi_offset 5, -16
+ 173              		.cfi_offset 6, -12
+ 174              		.cfi_offset 7, -8
+ 175              		.cfi_offset 14, -4
+ 176 0002 83B0     		sub	sp, sp, #12
+ 177              		.cfi_def_cfa_offset 32
+ 178 0004 0646     		mov	r6, r0
+ 179 0006 0D46     		mov	r5, r1
+ 180 0008 1746     		mov	r7, r2
+ 181              	.LVL9:
+ 119:serial.c      ****     uint16 i;
+ 120:serial.c      ****     uint8 bytes[4];
+ 121:serial.c      **** 
+ 122:serial.c      ****     for (i=0; i<length; i++) {
+ 182              		.loc 1 122 0
+ 183 000a 0024     		movs	r4, #0
+ 184 000c 27E0     		b	.L15
+ 185              	.LVL10:
+ 186              	.L19:
+ 123:serial.c      ****         if (length > 1) bytes[0] = serMaskCtrl | serMask16bit | serMaskArray | ((data[i] & 0xF000) 
+ 187              		.loc 1 123 0
+ 188 000e 012D     		cmp	r5, #1
+ 189 0010 07D9     		bls	.L16
+ 190              		.loc 1 123 0 is_stmt 0 discriminator 1
+ 191 0012 36F81430 		ldrh	r3, [r6, r4, lsl #1]
+ 192 0016 1B0B     		lsrs	r3, r3, #12
+ 193 0018 63F01F03 		orn	r3, r3, #31
+ 194 001c 8DF80430 		strb	r3, [sp, #4]
+ 195 0020 02E0     		b	.L17
+ 196              	.L16:
+ 124:serial.c      ****         else bytes[0] = serMaskCtrl | serMask16bit | serMaskSingle | ((data[i] & 0x0F00) >> 12);
+ 197              		.loc 1 124 0 is_stmt 1
+ 198 0022 C023     		movs	r3, #192
+ 199 0024 8DF80430 		strb	r3, [sp, #4]
+ 200              	.L17:
+ 125:serial.c      ****         
+ 126:serial.c      ****         bytes[1] = serMaskData | serMask16bit | ((data[i] & 0x0FC0) >> 6);
+ 201              		.loc 1 126 0
+ 202 0028 36F81430 		ldrh	r3, [r6, r4, lsl #1]
+ 203 002c C3F38512 		ubfx	r2, r3, #6, #6
+ 204 0030 42F04002 		orr	r2, r2, #64
+ 205 0034 8DF80520 		strb	r2, [sp, #5]
+ 127:serial.c      ****         bytes[2] = serMaskData | serMask16bit | ((data[i] & 0x003F));
+ 206              		.loc 1 127 0
+ 207 0038 03F03F03 		and	r3, r3, #63
+ 208 003c 43F04003 		orr	r3, r3, #64
+ 209 0040 8DF80630 		strb	r3, [sp, #6]
+ 128:serial.c      ****         bytes[3] = msgID;
+ 210              		.loc 1 128 0
+ 211 0044 8DF80770 		strb	r7, [sp, #7]
+ 129:serial.c      ****         
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 7
+
+
+ 130:serial.c      ****         if (uart_type == UART_FTDI) {
+ 212              		.loc 1 130 0
+ 213 0048 074B     		ldr	r3, .L21
+ 214 004a 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 215 004c 012B     		cmp	r3, #1
+ 216 004e 04D1     		bne	.L18
+ 131:serial.c      ****             UART_PutArray(&bytes[0], 4);
+ 217              		.loc 1 131 0
+ 218 0050 0421     		movs	r1, #4
+ 219 0052 0DEB0100 		add	r0, sp, r1
+ 220 0056 FFF7FEFF 		bl	UART_PutArray
+ 221              	.LVL11:
+ 222              	.L18:
+ 122:serial.c      ****         if (length > 1) bytes[0] = serMaskCtrl | serMask16bit | serMaskArray | ((data[i] & 0xF000) 
+ 223              		.loc 1 122 0 discriminator 2
+ 224 005a 0134     		adds	r4, r4, #1
+ 225              	.LVL12:
+ 226 005c A4B2     		uxth	r4, r4
+ 227              	.LVL13:
+ 228              	.L15:
+ 122:serial.c      ****         if (length > 1) bytes[0] = serMaskCtrl | serMask16bit | serMaskArray | ((data[i] & 0xF000) 
+ 229              		.loc 1 122 0 is_stmt 0 discriminator 1
+ 230 005e AC42     		cmp	r4, r5
+ 231 0060 D5D3     		bcc	.L19
+ 132:serial.c      ****         }
+ 133:serial.c      **** //        else {
+ 134:serial.c      **** //            while(USBUART_1_CDCIsReady() == 0u);
+ 135:serial.c      **** //            USBUART_1_PutData(&bytes[0], 4);
+ 136:serial.c      **** //        }
+ 137:serial.c      ****     }
+ 138:serial.c      **** 
+ 139:serial.c      **** }
+ 232              		.loc 1 139 0 is_stmt 1
+ 233 0062 03B0     		add	sp, sp, #12
+ 234              		.cfi_def_cfa_offset 20
+ 235              		@ sp needed
+ 236 0064 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 237              	.LVL14:
+ 238              	.L22:
+ 239 0066 00BF     		.align	2
+ 240              	.L21:
+ 241 0068 00000000 		.word	uart_type
+ 242              		.cfi_endproc
+ 243              	.LFE67:
+ 244              		.size	serialSend16bit, .-serialSend16bit
+ 245              		.section	.text.serialResolve,"ax",%progbits
+ 246              		.align	2
+ 247              		.global	serialResolve
+ 248              		.thumb
+ 249              		.thumb_func
+ 250              		.type	serialResolve, %function
+ 251              	serialResolve:
+ 252              	.LFB64:
+  27:serial.c      ****     switch(*b) {
+ 253              		.loc 1 27 0
+ 254              		.cfi_startproc
+ 255              		@ args = 0, pretend = 0, frame = 0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 8
+
+
+ 256              		@ frame_needed = 0, uses_anonymous_args = 0
+ 257              	.LVL15:
+ 258 0000 08B5     		push	{r3, lr}
+ 259              		.cfi_def_cfa_offset 8
+ 260              		.cfi_offset 3, -8
+ 261              		.cfi_offset 14, -4
+  28:serial.c      **** 
+ 262              		.loc 1 28 0
+ 263 0002 0378     		ldrb	r3, [r0]	@ zero_extendqisi2
+ 264 0004 4B2B     		cmp	r3, #75
+ 265 0006 02D0     		beq	.L25
+ 266 0008 822B     		cmp	r3, #130
+ 267 000a 10D0     		beq	.L26
+ 268 000c 14E0     		b	.L24
+ 269              	.L25:
+  31:serial.c      ****             serialSend8bit(&test8, 1, SER_TX_TEST8);
+ 270              		.loc 1 31 0
+ 271 000e 0422     		movs	r2, #4
+ 272 0010 0221     		movs	r1, #2
+ 273 0012 0C48     		ldr	r0, .L28
+ 274              	.LVL16:
+ 275 0014 FFF7FEFF 		bl	serialSend8bit
+ 276              	.LVL17:
+  32:serial.c      ****             serialSend16bit(&test16, 1, SER_TX_TEST16);
+ 277              		.loc 1 32 0
+ 278 0018 0622     		movs	r2, #6
+ 279 001a 0121     		movs	r1, #1
+ 280 001c 0A48     		ldr	r0, .L28+4
+ 281 001e FFF7FEFF 		bl	serialSend8bit
+ 282              	.LVL18:
+  33:serial.c      ****             break;
+ 283              		.loc 1 33 0
+ 284 0022 0722     		movs	r2, #7
+ 285 0024 0121     		movs	r1, #1
+ 286 0026 0948     		ldr	r0, .L28+8
+ 287 0028 FFF7FEFF 		bl	serialSend16bit
+ 288              	.LVL19:
+  34:serial.c      **** 		case INIT_TX:
+ 289              		.loc 1 34 0
+ 290 002c 04E0     		b	.L24
+ 291              	.LVL20:
+ 292              	.L26:
+  36:serial.c      **** 			FLAG_SER_TX_INIT = true;
+ 293              		.loc 1 36 0
+ 294 002e 0123     		movs	r3, #1
+ 295 0030 074A     		ldr	r2, .L28+12
+ 296 0032 1370     		strb	r3, [r2]
+  37:serial.c      **** 			break;
+ 297              		.loc 1 37 0
+ 298 0034 074A     		ldr	r2, .L28+16
+ 299 0036 1370     		strb	r3, [r2]
+ 300              	.LVL21:
+ 301              	.L24:
+  42:serial.c      **** }
+ 302              		.loc 1 42 0
+ 303 0038 4022     		movs	r2, #64
+ 304 003a 0021     		movs	r1, #0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 9
+
+
+ 305 003c 0648     		ldr	r0, .L28+20
+ 306 003e FFF7FEFF 		bl	memset
+ 307              	.LVL22:
+ 308 0042 08BD     		pop	{r3, pc}
+ 309              	.L29:
+ 310              		.align	2
+ 311              	.L28:
+ 312 0044 00000000 		.word	serialTest
+ 313 0048 00000000 		.word	test8
+ 314 004c 00000000 		.word	test16
+ 315 0050 00000000 		.word	FLAG_SER_EVENT
+ 316 0054 00000000 		.word	FLAG_SER_TX_INIT
+ 317 0058 00000000 		.word	bufferUart
+ 318              		.cfi_endproc
+ 319              	.LFE64:
+ 320              		.size	serialResolve, .-serialResolve
+ 321              		.section	.text.serialRead,"ax",%progbits
+ 322              		.align	2
+ 323              		.global	serialRead
+ 324              		.thumb
+ 325              		.thumb_func
+ 326              		.type	serialRead, %function
+ 327              	serialRead:
+ 328              	.LFB65:
+  46:serial.c      **** 	uint8 errorStatus;
+ 329              		.loc 1 46 0
+ 330              		.cfi_startproc
+ 331              		@ args = 0, pretend = 0, frame = 0
+ 332              		@ frame_needed = 0, uses_anonymous_args = 0
+ 333 0000 F8B5     		push	{r3, r4, r5, r6, r7, lr}
+ 334              		.cfi_def_cfa_offset 24
+ 335              		.cfi_offset 3, -24
+ 336              		.cfi_offset 4, -20
+ 337              		.cfi_offset 5, -16
+ 338              		.cfi_offset 6, -12
+ 339              		.cfi_offset 7, -8
+ 340              		.cfi_offset 14, -4
+  48:serial.c      ****         int cCount = 0;
+ 341              		.loc 1 48 0
+ 342 0002 164B     		ldr	r3, .L40
+ 343 0004 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 344 0006 012B     		cmp	r3, #1
+ 345 0008 27D1     		bne	.L30
+ 346 000a 22E0     		b	.L36
+ 347              	.LVL23:
+ 348              	.L35:
+ 349              	.LBB2:
+ 350              	.LBB3:
+  53:serial.c      ****             
+ 351              		.loc 1 53 0
+ 352 000c FFF7FEFF 		bl	UART_ReadRxStatus
+ 353              	.LVL24:
+ 354 0010 0446     		mov	r4, r0
+ 355              	.LVL25:
+  56:serial.c      ****             {
+ 356              		.loc 1 56 0
+ 357 0012 10F0200F 		tst	r0, #32
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 10
+
+
+ 358 0016 12D0     		beq	.L37
+  59:serial.c      **** 
+ 359              		.loc 1 59 0
+ 360 0018 771C     		adds	r7, r6, #1
+ 361              	.LVL26:
+ 362 001a FFF7FEFF 		bl	UART_ReadRxData
+ 363              	.LVL27:
+ 364 001e 104B     		ldr	r3, .L40+4
+ 365 0020 9855     		strb	r0, [r3, r6]
+  62:serial.c      ****                                 UART_RX_STS_STOP_ERROR | UART_RX_STS_OVERRUN)) != 0u)
+ 366              		.loc 1 62 0
+ 367 0022 14F01E0F 		tst	r4, #30
+ 368 0026 0CD1     		bne	.L38
+ 369              	.LBB4:
+  74:serial.c      ****                     CyDelay(20);
+ 370              		.loc 1 74 0
+ 371 0028 0120     		movs	r0, #1
+ 372 002a FFF7FEFF 		bl	CREG_LED_Write
+ 373              	.LVL28:
+  75:serial.c      ****                     CREG_LED_Write(0);
+ 374              		.loc 1 75 0
+ 375 002e 1420     		movs	r0, #20
+ 376 0030 FFF7FEFF 		bl	CyDelay
+ 377              	.LVL29:
+  76:serial.c      ****                     
+ 378              		.loc 1 76 0
+ 379 0034 0020     		movs	r0, #0
+ 380 0036 FFF7FEFF 		bl	CREG_LED_Write
+ 381              	.LVL30:
+ 382              	.LBE4:
+  59:serial.c      **** 
+ 383              		.loc 1 59 0
+ 384 003a 3E46     		mov	r6, r7
+ 385 003c 03E0     		b	.L33
+ 386              	.LVL31:
+ 387              	.L37:
+  81:serial.c      ****             }
+ 388              		.loc 1 81 0
+ 389 003e 0025     		movs	r5, #0
+ 390              	.LVL32:
+ 391 0040 01E0     		b	.L33
+ 392              	.LVL33:
+ 393              	.L38:
+  59:serial.c      **** 
+ 394              		.loc 1 59 0
+ 395 0042 3E46     		mov	r6, r7
+  67:serial.c      **** 					
+ 396              		.loc 1 67 0
+ 397 0044 0025     		movs	r5, #0
+ 398              	.LVL34:
+ 399              	.L33:
+  83:serial.c      **** //				UART_WriteTxData(0x02);
+ 400              		.loc 1 83 0
+ 401 0046 002E     		cmp	r6, #0
+ 402 0048 05DD     		ble	.L31
+  85:serial.c      ****             }
+ 403              		.loc 1 85 0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 11
+
+
+ 404 004a 0548     		ldr	r0, .L40+4
+ 405 004c FFF7FEFF 		bl	serialResolve
+ 406              	.LVL35:
+ 407 0050 01E0     		b	.L31
+ 408              	.LVL36:
+ 409              	.L36:
+ 410              	.LBE3:
+ 411              	.LBE2:
+ 412 0052 0125     		movs	r5, #1
+ 413 0054 0026     		movs	r6, #0
+ 414              	.L31:
+ 415              	.LVL37:
+ 416              	.LBB5:
+  51:serial.c      ****             /* Read status register. */
+ 417              		.loc 1 51 0
+ 418 0056 002D     		cmp	r5, #0
+ 419 0058 D8D1     		bne	.L35
+ 420              	.LVL38:
+ 421              	.L30:
+ 422 005a F8BD     		pop	{r3, r4, r5, r6, r7, pc}
+ 423              	.L41:
+ 424              		.align	2
+ 425              	.L40:
+ 426 005c 00000000 		.word	uart_type
+ 427 0060 00000000 		.word	bufferUart
+ 428              	.LBE5:
+ 429              		.cfi_endproc
+ 430              	.LFE65:
+ 431              		.size	serialRead, .-serialRead
+ 432              		.section	.text.serial_send_s16bit,"ax",%progbits
+ 433              		.align	2
+ 434              		.global	serial_send_s16bit
+ 435              		.thumb
+ 436              		.thumb_func
+ 437              		.type	serial_send_s16bit, %function
+ 438              	serial_send_s16bit:
+ 439              	.LFB68:
+ 140:serial.c      **** 
+ 141:serial.c      **** void serial_send_s16bit(volatile int16* data, uint16 length, uint8 msgID)
+ 142:serial.c      **** {
+ 440              		.loc 1 142 0
+ 441              		.cfi_startproc
+ 442              		@ args = 0, pretend = 0, frame = 8
+ 443              		@ frame_needed = 0, uses_anonymous_args = 0
+ 444              	.LVL39:
+ 445 0000 F0B5     		push	{r4, r5, r6, r7, lr}
+ 446              		.cfi_def_cfa_offset 20
+ 447              		.cfi_offset 4, -20
+ 448              		.cfi_offset 5, -16
+ 449              		.cfi_offset 6, -12
+ 450              		.cfi_offset 7, -8
+ 451              		.cfi_offset 14, -4
+ 452 0002 83B0     		sub	sp, sp, #12
+ 453              		.cfi_def_cfa_offset 32
+ 454 0004 0546     		mov	r5, r0
+ 455 0006 0E46     		mov	r6, r1
+ 456 0008 1746     		mov	r7, r2
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 12
+
+
+ 457              	.LVL40:
+ 143:serial.c      ****     uint16 i;
+ 144:serial.c      ****     uint8 bytes[4];
+ 145:serial.c      **** 
+ 146:serial.c      ****     for (i=0; i<length; i++) {
+ 458              		.loc 1 146 0
+ 459 000a 0024     		movs	r4, #0
+ 460 000c 57E0     		b	.L43
+ 461              	.LVL41:
+ 462              	.L50:
+ 147:serial.c      **** 		if (data[i] < 0) {
+ 463              		.loc 1 147 0
+ 464 000e 6200     		lsls	r2, r4, #1
+ 465 0010 35F81430 		ldrh	r3, [r5, r4, lsl #1]
+ 466 0014 13F4004F 		tst	r3, #32768
+ 467 0018 27D0     		beq	.L44
+ 468              	.LBB6:
+ 148:serial.c      **** 			int d;
+ 149:serial.c      **** 			d = -data[i];
+ 469              		.loc 1 149 0
+ 470 001a 35F81430 		ldrh	r3, [r5, r4, lsl #1]
+ 471 001e 1BB2     		sxth	r3, r3
+ 472 0020 5B42     		negs	r3, r3
+ 473              	.LVL42:
+ 150:serial.c      **** 	        if (length > 1) bytes[0] = serMaskCtrl | serMask16bit | serMaskArray | ((d & 0xF000) >> 12
+ 474              		.loc 1 150 0
+ 475 0022 012E     		cmp	r6, #1
+ 476 0024 06D9     		bls	.L45
+ 477              		.loc 1 150 0 is_stmt 0 discriminator 1
+ 478 0026 C3F30332 		ubfx	r2, r3, #12, #4
+ 479 002a 62F01F02 		orn	r2, r2, #31
+ 480 002e 8DF80420 		strb	r2, [sp, #4]
+ 481 0032 02E0     		b	.L46
+ 482              	.L45:
+ 151:serial.c      **** 	        else bytes[0] = serMaskCtrl | serMask16bit | serMaskSingle | serMaskSignFlip | ((d & 0x0F0
+ 483              		.loc 1 151 0 is_stmt 1
+ 484 0034 D022     		movs	r2, #208
+ 485 0036 8DF80420 		strb	r2, [sp, #4]
+ 486              	.L46:
+ 152:serial.c      ****         
+ 153:serial.c      **** 	        bytes[1] = serMaskData | serMask16bit | ((d & 0x0FC0) >> 6);
+ 487              		.loc 1 153 0
+ 488 003a C3F38512 		ubfx	r2, r3, #6, #6
+ 489 003e 42F04002 		orr	r2, r2, #64
+ 490 0042 8DF80520 		strb	r2, [sp, #5]
+ 154:serial.c      **** 	        bytes[2] = serMaskData | serMask16bit | ((d & 0x003F));
+ 491              		.loc 1 154 0
+ 492 0046 03F03F03 		and	r3, r3, #63
+ 493              	.LVL43:
+ 494 004a 43F04003 		orr	r3, r3, #64
+ 495 004e 8DF80630 		strb	r3, [sp, #6]
+ 155:serial.c      **** 	        bytes[3] = msgID;
+ 496              		.loc 1 155 0
+ 497 0052 8DF80770 		strb	r7, [sp, #7]
+ 156:serial.c      ****         
+ 157:serial.c      **** 	        if (uart_type == UART_FTDI) {
+ 498              		.loc 1 157 0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 13
+
+
+ 499 0056 1C4B     		ldr	r3, .L52
+ 500 0058 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 501 005a 012B     		cmp	r3, #1
+ 502 005c 2DD1     		bne	.L47
+ 158:serial.c      **** 	            UART_PutArray(&bytes[0], 4);
+ 503              		.loc 1 158 0
+ 504 005e 0421     		movs	r1, #4
+ 505 0060 0DEB0100 		add	r0, sp, r1
+ 506 0064 FFF7FEFF 		bl	UART_PutArray
+ 507              	.LVL44:
+ 508 0068 27E0     		b	.L47
+ 509              	.L44:
+ 510              	.LBE6:
+ 159:serial.c      **** 	        }
+ 160:serial.c      **** 	        else {
+ 161:serial.c      **** 	//            while(USBUART_1_CDCIsReady() == 0u);
+ 162:serial.c      **** 	//            USBUART_1_PutData(&bytes[0], 4);
+ 163:serial.c      **** 	        }
+ 164:serial.c      **** 		}
+ 165:serial.c      **** 		else {
+ 166:serial.c      **** 			if (length > 1) bytes[0] = serMaskCtrl | serMask16bit | serMaskArray | ((data[i] & 0xF000) >> 12
+ 511              		.loc 1 166 0
+ 512 006a 012E     		cmp	r6, #1
+ 513 006c 07D9     		bls	.L48
+ 514              		.loc 1 166 0 is_stmt 0 discriminator 1
+ 515 006e AB5A     		ldrh	r3, [r5, r2]
+ 516 0070 C3F30333 		ubfx	r3, r3, #12, #4
+ 517 0074 63F01F03 		orn	r3, r3, #31
+ 518 0078 8DF80430 		strb	r3, [sp, #4]
+ 519 007c 04E0     		b	.L49
+ 520              	.L48:
+ 167:serial.c      **** 	        else bytes[0] = serMaskCtrl | serMask16bit | serMaskSingle | ((data[i] & 0x0F00) >> 12);
+ 521              		.loc 1 167 0 is_stmt 1
+ 522 007e AB5A     		ldrh	r3, [r5, r2]
+ 523 0080 6FF03F03 		mvn	r3, #63
+ 524 0084 8DF80430 		strb	r3, [sp, #4]
+ 525              	.L49:
+ 168:serial.c      ****         
+ 169:serial.c      **** 	        bytes[1] = serMaskData | serMask16bit | ((data[i] & 0x0FC0) >> 6);
+ 526              		.loc 1 169 0
+ 527 0088 AB5A     		ldrh	r3, [r5, r2]
+ 528 008a C3F38513 		ubfx	r3, r3, #6, #6
+ 529 008e 43F04003 		orr	r3, r3, #64
+ 530 0092 8DF80530 		strb	r3, [sp, #5]
+ 170:serial.c      **** 	        bytes[2] = serMaskData | serMask16bit | ((data[i] & 0x003F));
+ 531              		.loc 1 170 0
+ 532 0096 AB5A     		ldrh	r3, [r5, r2]
+ 533 0098 03F03F03 		and	r3, r3, #63
+ 534 009c 43F04003 		orr	r3, r3, #64
+ 535 00a0 8DF80630 		strb	r3, [sp, #6]
+ 171:serial.c      **** 	        bytes[3] = msgID;
+ 536              		.loc 1 171 0
+ 537 00a4 8DF80770 		strb	r7, [sp, #7]
+ 172:serial.c      ****         
+ 173:serial.c      **** 	        if (uart_type == UART_FTDI) {
+ 538              		.loc 1 173 0
+ 539 00a8 074B     		ldr	r3, .L52
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 14
+
+
+ 540 00aa 1B78     		ldrb	r3, [r3]	@ zero_extendqisi2
+ 541 00ac 012B     		cmp	r3, #1
+ 542 00ae 04D1     		bne	.L47
+ 174:serial.c      **** 	            UART_PutArray(&bytes[0], 4);
+ 543              		.loc 1 174 0
+ 544 00b0 0421     		movs	r1, #4
+ 545 00b2 0DEB0100 		add	r0, sp, r1
+ 546 00b6 FFF7FEFF 		bl	UART_PutArray
+ 547              	.LVL45:
+ 548              	.L47:
+ 146:serial.c      **** 		if (data[i] < 0) {
+ 549              		.loc 1 146 0 discriminator 2
+ 550 00ba 0134     		adds	r4, r4, #1
+ 551              	.LVL46:
+ 552 00bc A4B2     		uxth	r4, r4
+ 553              	.LVL47:
+ 554              	.L43:
+ 146:serial.c      **** 		if (data[i] < 0) {
+ 555              		.loc 1 146 0 is_stmt 0 discriminator 1
+ 556 00be B442     		cmp	r4, r6
+ 557 00c0 A5D3     		bcc	.L50
+ 175:serial.c      **** 	        }
+ 176:serial.c      **** 	        else {
+ 177:serial.c      **** 	//            while(USBUART_1_CDCIsReady() == 0u);
+ 178:serial.c      **** 	//            USBUART_1_PutData(&bytes[0], 4);
+ 179:serial.c      **** 	        }
+ 180:serial.c      **** 		}
+ 181:serial.c      ****     }
+ 182:serial.c      **** }...
+ 558              		.loc 1 182 0 is_stmt 1
+ 559 00c2 03B0     		add	sp, sp, #12
+ 560              		.cfi_def_cfa_offset 20
+ 561              		@ sp needed
+ 562 00c4 F0BD     		pop	{r4, r5, r6, r7, pc}
+ 563              	.LVL48:
+ 564              	.L53:
+ 565 00c6 00BF     		.align	2
+ 566              	.L52:
+ 567 00c8 00000000 		.word	uart_type
+ 568              		.cfi_endproc
+ 569              	.LFE68:
+ 570              		.size	serial_send_s16bit, .-serial_send_s16bit
+ 571              		.comm	i2cWord,27,4
+ 572              		.comm	i2cRun,1,1
+ 573              		.comm	i2cData,1,1
+ 574              		.comm	i2cInstr,1,1
+ 575              		.comm	i2cAddr,1,1
+ 576              		.comm	i2cBuf,27,4
+ 577              		.comm	c,1,1
+ 578              		.comm	i2cSda,1,1
+ 579              		.comm	i2cClk,1,1
+ 580              		.comm	i2cStart,1,1
+ 581              		.comm	sum,4,4
+ 582              		.comm	signalMean,2,2
+ 583              		.comm	send15Cont,1,1
+ 584              		.comm	stepSize,1,1
+ 585              		.comm	uart_type,1,1
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 15
+
+
+ 586              		.comm	pre,1,1
+ 587              		.comm	del,1,1
+ 588              		.comm	buffer_uart,64,4
+ 589              		.comm	test16,2,2
+ 590              		.comm	test8,1,1
+ 591              		.comm	serialTest,2,4
+ 592              		.comm	levels_82,4,4
+ 593              		.comm	levels_15,4,4
+ 594              		.comm	levels_48,16,4
+ 595              		.comm	i,4,4
+ 596              		.comm	FLAG_SER_TX_INIT,1,1
+ 597              		.comm	FLAG_SER_EVENT,1,1
+ 598              		.comm	bufferUart,64,4
+ 599              		.text
+ 600              	.Letext0:
+ 601              		.file 2 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 602              		.file 3 "c:\\program files (x86)\\cypress\\psoc creator\\4.1\\psoc creator\\import\\gnu\\arm\\5.4.
+ 603              		.file 4 "Generated_Source\\PSoC5/cytypes.h"
+ 604              		.file 5 "Generated_Source\\PSoC5/core_cm3.h"
+ 605              		.file 6 "serial.h"
+ 606              		.file 7 "Generated_Source\\PSoC5/UART.h"
+ 607              		.file 8 "Generated_Source\\PSoC5/CyLib.h"
+ 608              		.section	.debug_info,"",%progbits
+ 609              	.Ldebug_info0:
+ 610 0000 A6060000 		.4byte	0x6a6
+ 611 0004 0400     		.2byte	0x4
+ 612 0006 00000000 		.4byte	.Ldebug_abbrev0
+ 613 000a 04       		.byte	0x4
+ 614 000b 01       		.uleb128 0x1
+ 615 000c DC020000 		.4byte	.LASF64
+ 616 0010 0C       		.byte	0xc
+ 617 0011 A3020000 		.4byte	.LASF65
+ 618 0015 A5000000 		.4byte	.LASF66
+ 619 0019 18000000 		.4byte	.Ldebug_ranges0+0x18
+ 620 001d 00000000 		.4byte	0
+ 621 0021 00000000 		.4byte	.Ldebug_line0
+ 622 0025 02       		.uleb128 0x2
+ 623 0026 01       		.byte	0x1
+ 624 0027 06       		.byte	0x6
+ 625 0028 A3010000 		.4byte	.LASF0
+ 626 002c 02       		.uleb128 0x2
+ 627 002d 01       		.byte	0x1
+ 628 002e 08       		.byte	0x8
+ 629 002f 51010000 		.4byte	.LASF1
+ 630 0033 02       		.uleb128 0x2
+ 631 0034 02       		.byte	0x2
+ 632 0035 05       		.byte	0x5
+ 633 0036 20000000 		.4byte	.LASF2
+ 634 003a 02       		.uleb128 0x2
+ 635 003b 02       		.byte	0x2
+ 636 003c 07       		.byte	0x7
+ 637 003d DB010000 		.4byte	.LASF3
+ 638 0041 03       		.uleb128 0x3
+ 639 0042 8A020000 		.4byte	.LASF9
+ 640 0046 02       		.byte	0x2
+ 641 0047 3F       		.byte	0x3f
+ 642 0048 4C000000 		.4byte	0x4c
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 16
+
+
+ 643 004c 02       		.uleb128 0x2
+ 644 004d 04       		.byte	0x4
+ 645 004e 05       		.byte	0x5
+ 646 004f 32010000 		.4byte	.LASF4
+ 647 0053 02       		.uleb128 0x2
+ 648 0054 04       		.byte	0x4
+ 649 0055 07       		.byte	0x7
+ 650 0056 3D020000 		.4byte	.LASF5
+ 651 005a 02       		.uleb128 0x2
+ 652 005b 08       		.byte	0x8
+ 653 005c 05       		.byte	0x5
+ 654 005d 5F000000 		.4byte	.LASF6
+ 655 0061 02       		.uleb128 0x2
+ 656 0062 08       		.byte	0x8
+ 657 0063 07       		.byte	0x7
+ 658 0064 B7010000 		.4byte	.LASF7
+ 659 0068 04       		.uleb128 0x4
+ 660 0069 04       		.byte	0x4
+ 661 006a 05       		.byte	0x5
+ 662 006b 696E7400 		.ascii	"int\000"
+ 663 006f 02       		.uleb128 0x2
+ 664 0070 04       		.byte	0x4
+ 665 0071 07       		.byte	0x7
+ 666 0072 CE010000 		.4byte	.LASF8
+ 667 0076 03       		.uleb128 0x3
+ 668 0077 AF010000 		.4byte	.LASF10
+ 669 007b 03       		.byte	0x3
+ 670 007c 2C       		.byte	0x2c
+ 671 007d 41000000 		.4byte	0x41
+ 672 0081 05       		.uleb128 0x5
+ 673 0082 0E020000 		.4byte	.LASF11
+ 674 0086 04       		.byte	0x4
+ 675 0087 9201     		.2byte	0x192
+ 676 0089 2C000000 		.4byte	0x2c
+ 677 008d 05       		.uleb128 0x5
+ 678 008e 8F000000 		.4byte	.LASF12
+ 679 0092 04       		.byte	0x4
+ 680 0093 9301     		.2byte	0x193
+ 681 0095 3A000000 		.4byte	0x3a
+ 682 0099 05       		.uleb128 0x5
+ 683 009a 36020000 		.4byte	.LASF13
+ 684 009e 04       		.byte	0x4
+ 685 009f 9401     		.2byte	0x194
+ 686 00a1 53000000 		.4byte	0x53
+ 687 00a5 05       		.uleb128 0x5
+ 688 00a6 96000000 		.4byte	.LASF14
+ 689 00aa 04       		.byte	0x4
+ 690 00ab 9601     		.2byte	0x196
+ 691 00ad 33000000 		.4byte	0x33
+ 692 00b1 02       		.uleb128 0x2
+ 693 00b2 04       		.byte	0x4
+ 694 00b3 04       		.byte	0x4
+ 695 00b4 FA000000 		.4byte	.LASF15
+ 696 00b8 02       		.uleb128 0x2
+ 697 00b9 08       		.byte	0x8
+ 698 00ba 04       		.byte	0x4
+ 699 00bb 00000000 		.4byte	.LASF16
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 17
+
+
+ 700 00bf 02       		.uleb128 0x2
+ 701 00c0 01       		.byte	0x1
+ 702 00c1 08       		.byte	0x8
+ 703 00c2 EE010000 		.4byte	.LASF17
+ 704 00c6 02       		.uleb128 0x2
+ 705 00c7 08       		.byte	0x8
+ 706 00c8 04       		.byte	0x4
+ 707 00c9 5F010000 		.4byte	.LASF18
+ 708 00cd 02       		.uleb128 0x2
+ 709 00ce 04       		.byte	0x4
+ 710 00cf 07       		.byte	0x7
+ 711 00d0 32000000 		.4byte	.LASF19
+ 712 00d4 06       		.uleb128 0x6
+ 713 00d5 3B010000 		.4byte	.LASF27
+ 714 00d9 01       		.byte	0x1
+ 715 00da 0E       		.byte	0xe
+ 716 00db 00000000 		.4byte	.LFB63
+ 717 00df 38000000 		.4byte	.LFE63-.LFB63
+ 718 00e3 01       		.uleb128 0x1
+ 719 00e4 9C       		.byte	0x9c
+ 720 00e5 F3000000 		.4byte	0xf3
+ 721 00e9 07       		.uleb128 0x7
+ 722 00ea 0C000000 		.4byte	.LVL0
+ 723 00ee 5E060000 		.4byte	0x65e
+ 724 00f2 00       		.byte	0
+ 725 00f3 08       		.uleb128 0x8
+ 726 00f4 1A020000 		.4byte	.LASF24
+ 727 00f8 01       		.byte	0x1
+ 728 00f9 5E       		.byte	0x5e
+ 729 00fa 00000000 		.4byte	.LFB66
+ 730 00fe 5C000000 		.4byte	.LFE66-.LFB66
+ 731 0102 01       		.uleb128 0x1
+ 732 0103 9C       		.byte	0x9c
+ 733 0104 66010000 		.4byte	0x166
+ 734 0108 09       		.uleb128 0x9
+ 735 0109 29020000 		.4byte	.LASF20
+ 736 010d 01       		.byte	0x1
+ 737 010e 5E       		.byte	0x5e
+ 738 010f 66010000 		.4byte	0x166
+ 739 0113 00000000 		.4byte	.LLST0
+ 740 0117 09       		.uleb128 0x9
+ 741 0118 F3000000 		.4byte	.LASF21
+ 742 011c 01       		.byte	0x1
+ 743 011d 5E       		.byte	0x5e
+ 744 011e 8D000000 		.4byte	0x8d
+ 745 0122 2C000000 		.4byte	.LLST1
+ 746 0126 09       		.uleb128 0x9
+ 747 0127 C3020000 		.4byte	.LASF22
+ 748 012b 01       		.byte	0x1
+ 749 012c 5E       		.byte	0x5e
+ 750 012d 81000000 		.4byte	0x81
+ 751 0131 4D000000 		.4byte	.LLST2
+ 752 0135 0A       		.uleb128 0xa
+ 753 0136 6900     		.ascii	"i\000"
+ 754 0138 01       		.byte	0x1
+ 755 0139 60       		.byte	0x60
+ 756 013a 8D000000 		.4byte	0x8d
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 18
+
+
+ 757 013e 6E000000 		.4byte	.LLST3
+ 758 0142 0B       		.uleb128 0xb
+ 759 0143 4F020000 		.4byte	.LASF23
+ 760 0147 01       		.byte	0x1
+ 761 0148 61       		.byte	0x61
+ 762 0149 6C010000 		.4byte	0x16c
+ 763 014d 02       		.uleb128 0x2
+ 764 014e 91       		.byte	0x91
+ 765 014f 64       		.sleb128 -28
+ 766 0150 0C       		.uleb128 0xc
+ 767 0151 4C000000 		.4byte	.LVL4
+ 768 0155 69060000 		.4byte	0x669
+ 769 0159 0D       		.uleb128 0xd
+ 770 015a 01       		.uleb128 0x1
+ 771 015b 50       		.byte	0x50
+ 772 015c 02       		.uleb128 0x2
+ 773 015d 91       		.byte	0x91
+ 774 015e 64       		.sleb128 -28
+ 775 015f 0D       		.uleb128 0xd
+ 776 0160 01       		.uleb128 0x1
+ 777 0161 51       		.byte	0x51
+ 778 0162 01       		.uleb128 0x1
+ 779 0163 33       		.byte	0x33
+ 780 0164 00       		.byte	0
+ 781 0165 00       		.byte	0
+ 782 0166 0E       		.uleb128 0xe
+ 783 0167 04       		.byte	0x4
+ 784 0168 81000000 		.4byte	0x81
+ 785 016c 0F       		.uleb128 0xf
+ 786 016d 81000000 		.4byte	0x81
+ 787 0171 7C010000 		.4byte	0x17c
+ 788 0175 10       		.uleb128 0x10
+ 789 0176 CD000000 		.4byte	0xcd
+ 790 017a 02       		.byte	0x2
+ 791 017b 00       		.byte	0
+ 792 017c 08       		.uleb128 0x8
+ 793 017d FE010000 		.4byte	.LASF25
+ 794 0181 01       		.byte	0x1
+ 795 0182 75       		.byte	0x75
+ 796 0183 00000000 		.4byte	.LFB67
+ 797 0187 6C000000 		.4byte	.LFE67-.LFB67
+ 798 018b 01       		.uleb128 0x1
+ 799 018c 9C       		.byte	0x9c
+ 800 018d EF010000 		.4byte	0x1ef
+ 801 0191 09       		.uleb128 0x9
+ 802 0192 29020000 		.4byte	.LASF20
+ 803 0196 01       		.byte	0x1
+ 804 0197 75       		.byte	0x75
+ 805 0198 EF010000 		.4byte	0x1ef
+ 806 019c 98000000 		.4byte	.LLST4
+ 807 01a0 09       		.uleb128 0x9
+ 808 01a1 F3000000 		.4byte	.LASF21
+ 809 01a5 01       		.byte	0x1
+ 810 01a6 75       		.byte	0x75
+ 811 01a7 8D000000 		.4byte	0x8d
+ 812 01ab C4000000 		.4byte	.LLST5
+ 813 01af 09       		.uleb128 0x9
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 19
+
+
+ 814 01b0 C3020000 		.4byte	.LASF22
+ 815 01b4 01       		.byte	0x1
+ 816 01b5 75       		.byte	0x75
+ 817 01b6 81000000 		.4byte	0x81
+ 818 01ba E5000000 		.4byte	.LLST6
+ 819 01be 0A       		.uleb128 0xa
+ 820 01bf 6900     		.ascii	"i\000"
+ 821 01c1 01       		.byte	0x1
+ 822 01c2 77       		.byte	0x77
+ 823 01c3 8D000000 		.4byte	0x8d
+ 824 01c7 06010000 		.4byte	.LLST7
+ 825 01cb 0B       		.uleb128 0xb
+ 826 01cc 4F020000 		.4byte	.LASF23
+ 827 01d0 01       		.byte	0x1
+ 828 01d1 78       		.byte	0x78
+ 829 01d2 F5010000 		.4byte	0x1f5
+ 830 01d6 02       		.uleb128 0x2
+ 831 01d7 91       		.byte	0x91
+ 832 01d8 64       		.sleb128 -28
+ 833 01d9 0C       		.uleb128 0xc
+ 834 01da 5A000000 		.4byte	.LVL11
+ 835 01de 69060000 		.4byte	0x669
+ 836 01e2 0D       		.uleb128 0xd
+ 837 01e3 01       		.uleb128 0x1
+ 838 01e4 50       		.byte	0x50
+ 839 01e5 02       		.uleb128 0x2
+ 840 01e6 91       		.byte	0x91
+ 841 01e7 64       		.sleb128 -28
+ 842 01e8 0D       		.uleb128 0xd
+ 843 01e9 01       		.uleb128 0x1
+ 844 01ea 51       		.byte	0x51
+ 845 01eb 01       		.uleb128 0x1
+ 846 01ec 34       		.byte	0x34
+ 847 01ed 00       		.byte	0
+ 848 01ee 00       		.byte	0
+ 849 01ef 0E       		.uleb128 0xe
+ 850 01f0 04       		.byte	0x4
+ 851 01f1 8D000000 		.4byte	0x8d
+ 852 01f5 0F       		.uleb128 0xf
+ 853 01f6 81000000 		.4byte	0x81
+ 854 01fa 05020000 		.4byte	0x205
+ 855 01fe 10       		.uleb128 0x10
+ 856 01ff CD000000 		.4byte	0xcd
+ 857 0203 03       		.byte	0x3
+ 858 0204 00       		.byte	0
+ 859 0205 08       		.uleb128 0x8
+ 860 0206 1D010000 		.4byte	.LASF26
+ 861 020a 01       		.byte	0x1
+ 862 020b 1A       		.byte	0x1a
+ 863 020c 00000000 		.4byte	.LFB64
+ 864 0210 5C000000 		.4byte	.LFE64-.LFB64
+ 865 0214 01       		.uleb128 0x1
+ 866 0215 9C       		.byte	0x9c
+ 867 0216 A9020000 		.4byte	0x2a9
+ 868 021a 11       		.uleb128 0x11
+ 869 021b 6200     		.ascii	"b\000"
+ 870 021d 01       		.byte	0x1
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 20
+
+
+ 871 021e 1A       		.byte	0x1a
+ 872 021f 66010000 		.4byte	0x166
+ 873 0223 30010000 		.4byte	.LLST8
+ 874 0227 12       		.uleb128 0x12
+ 875 0228 18000000 		.4byte	.LVL17
+ 876 022c F3000000 		.4byte	0xf3
+ 877 0230 48020000 		.4byte	0x248
+ 878 0234 0D       		.uleb128 0xd
+ 879 0235 01       		.uleb128 0x1
+ 880 0236 50       		.byte	0x50
+ 881 0237 05       		.uleb128 0x5
+ 882 0238 03       		.byte	0x3
+ 883 0239 00000000 		.4byte	serialTest
+ 884 023d 0D       		.uleb128 0xd
+ 885 023e 01       		.uleb128 0x1
+ 886 023f 51       		.byte	0x51
+ 887 0240 01       		.uleb128 0x1
+ 888 0241 32       		.byte	0x32
+ 889 0242 0D       		.uleb128 0xd
+ 890 0243 01       		.uleb128 0x1
+ 891 0244 52       		.byte	0x52
+ 892 0245 01       		.uleb128 0x1
+ 893 0246 34       		.byte	0x34
+ 894 0247 00       		.byte	0
+ 895 0248 12       		.uleb128 0x12
+ 896 0249 22000000 		.4byte	.LVL18
+ 897 024d F3000000 		.4byte	0xf3
+ 898 0251 69020000 		.4byte	0x269
+ 899 0255 0D       		.uleb128 0xd
+ 900 0256 01       		.uleb128 0x1
+ 901 0257 50       		.byte	0x50
+ 902 0258 05       		.uleb128 0x5
+ 903 0259 03       		.byte	0x3
+ 904 025a 00000000 		.4byte	test8
+ 905 025e 0D       		.uleb128 0xd
+ 906 025f 01       		.uleb128 0x1
+ 907 0260 51       		.byte	0x51
+ 908 0261 01       		.uleb128 0x1
+ 909 0262 31       		.byte	0x31
+ 910 0263 0D       		.uleb128 0xd
+ 911 0264 01       		.uleb128 0x1
+ 912 0265 52       		.byte	0x52
+ 913 0266 01       		.uleb128 0x1
+ 914 0267 36       		.byte	0x36
+ 915 0268 00       		.byte	0
+ 916 0269 12       		.uleb128 0x12
+ 917 026a 2C000000 		.4byte	.LVL19
+ 918 026e 7C010000 		.4byte	0x17c
+ 919 0272 8A020000 		.4byte	0x28a
+ 920 0276 0D       		.uleb128 0xd
+ 921 0277 01       		.uleb128 0x1
+ 922 0278 50       		.byte	0x50
+ 923 0279 05       		.uleb128 0x5
+ 924 027a 03       		.byte	0x3
+ 925 027b 00000000 		.4byte	test16
+ 926 027f 0D       		.uleb128 0xd
+ 927 0280 01       		.uleb128 0x1
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 21
+
+
+ 928 0281 51       		.byte	0x51
+ 929 0282 01       		.uleb128 0x1
+ 930 0283 31       		.byte	0x31
+ 931 0284 0D       		.uleb128 0xd
+ 932 0285 01       		.uleb128 0x1
+ 933 0286 52       		.byte	0x52
+ 934 0287 01       		.uleb128 0x1
+ 935 0288 37       		.byte	0x37
+ 936 0289 00       		.byte	0
+ 937 028a 0C       		.uleb128 0xc
+ 938 028b 42000000 		.4byte	.LVL22
+ 939 028f 74060000 		.4byte	0x674
+ 940 0293 0D       		.uleb128 0xd
+ 941 0294 01       		.uleb128 0x1
+ 942 0295 50       		.byte	0x50
+ 943 0296 05       		.uleb128 0x5
+ 944 0297 03       		.byte	0x3
+ 945 0298 00000000 		.4byte	bufferUart
+ 946 029c 0D       		.uleb128 0xd
+ 947 029d 01       		.uleb128 0x1
+ 948 029e 51       		.byte	0x51
+ 949 029f 01       		.uleb128 0x1
+ 950 02a0 30       		.byte	0x30
+ 951 02a1 0D       		.uleb128 0xd
+ 952 02a2 01       		.uleb128 0x1
+ 953 02a3 52       		.byte	0x52
+ 954 02a4 02       		.uleb128 0x2
+ 955 02a5 08       		.byte	0x8
+ 956 02a6 40       		.byte	0x40
+ 957 02a7 00       		.byte	0
+ 958 02a8 00       		.byte	0
+ 959 02a9 06       		.uleb128 0x6
+ 960 02aa 55020000 		.4byte	.LASF28
+ 961 02ae 01       		.byte	0x1
+ 962 02af 2D       		.byte	0x2d
+ 963 02b0 00000000 		.4byte	.LFB65
+ 964 02b4 64000000 		.4byte	.LFE65-.LFB65
+ 965 02b8 01       		.uleb128 0x1
+ 966 02b9 9C       		.byte	0x9c
+ 967 02ba 80030000 		.4byte	0x380
+ 968 02be 13       		.uleb128 0x13
+ 969 02bf DE000000 		.4byte	.LASF67
+ 970 02c3 01       		.byte	0x1
+ 971 02c4 2F       		.byte	0x2f
+ 972 02c5 81000000 		.4byte	0x81
+ 973 02c9 14       		.uleb128 0x14
+ 974 02ca 00000000 		.4byte	.Ldebug_ranges0+0
+ 975 02ce 15       		.uleb128 0x15
+ 976 02cf 7B030000 		.4byte	.LASF29
+ 977 02d3 01       		.byte	0x1
+ 978 02d4 31       		.byte	0x31
+ 979 02d5 68000000 		.4byte	0x68
+ 980 02d9 6A010000 		.4byte	.LLST9
+ 981 02dd 15       		.uleb128 0x15
+ 982 02de 2E020000 		.4byte	.LASF30
+ 983 02e2 01       		.byte	0x1
+ 984 02e3 32       		.byte	0x32
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 22
+
+
+ 985 02e4 80030000 		.4byte	0x380
+ 986 02e8 B4010000 		.4byte	.LLST10
+ 987 02ec 16       		.uleb128 0x16
+ 988 02ed 0C000000 		.4byte	.LBB3
+ 989 02f1 46000000 		.4byte	.LBE3-.LBB3
+ 990 02f5 15       		.uleb128 0x15
+ 991 02f6 72010000 		.4byte	.LASF31
+ 992 02fa 01       		.byte	0x1
+ 993 02fb 35       		.byte	0x35
+ 994 02fc 81000000 		.4byte	0x81
+ 995 0300 DD010000 		.4byte	.LLST11
+ 996 0304 17       		.uleb128 0x17
+ 997 0305 28000000 		.4byte	.LBB4
+ 998 0309 12000000 		.4byte	.LBE4-.LBB4
+ 999 030d 58030000 		.4byte	0x358
+ 1000 0311 18       		.uleb128 0x18
+ 1001 0312 94020000 		.4byte	.LASF60
+ 1002 0316 01       		.byte	0x1
+ 1003 0317 4A       		.byte	0x4a
+ 1004 0318 68000000 		.4byte	0x68
+ 1005 031c 22030000 		.4byte	0x322
+ 1006 0320 19       		.uleb128 0x19
+ 1007 0321 00       		.byte	0
+ 1008 0322 12       		.uleb128 0x12
+ 1009 0323 2E000000 		.4byte	.LVL28
+ 1010 0327 7D060000 		.4byte	0x67d
+ 1011 032b 35030000 		.4byte	0x335
+ 1012 032f 0D       		.uleb128 0xd
+ 1013 0330 01       		.uleb128 0x1
+ 1014 0331 50       		.byte	0x50
+ 1015 0332 01       		.uleb128 0x1
+ 1016 0333 31       		.byte	0x31
+ 1017 0334 00       		.byte	0
+ 1018 0335 12       		.uleb128 0x12
+ 1019 0336 34000000 		.4byte	.LVL29
+ 1020 033a 88060000 		.4byte	0x688
+ 1021 033e 48030000 		.4byte	0x348
+ 1022 0342 0D       		.uleb128 0xd
+ 1023 0343 01       		.uleb128 0x1
+ 1024 0344 50       		.byte	0x50
+ 1025 0345 01       		.uleb128 0x1
+ 1026 0346 44       		.byte	0x44
+ 1027 0347 00       		.byte	0
+ 1028 0348 0C       		.uleb128 0xc
+ 1029 0349 3A000000 		.4byte	.LVL30
+ 1030 034d 7D060000 		.4byte	0x67d
+ 1031 0351 0D       		.uleb128 0xd
+ 1032 0352 01       		.uleb128 0x1
+ 1033 0353 50       		.byte	0x50
+ 1034 0354 01       		.uleb128 0x1
+ 1035 0355 30       		.byte	0x30
+ 1036 0356 00       		.byte	0
+ 1037 0357 00       		.byte	0
+ 1038 0358 07       		.uleb128 0x7
+ 1039 0359 10000000 		.4byte	.LVL24
+ 1040 035d 93060000 		.4byte	0x693
+ 1041 0361 07       		.uleb128 0x7
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 23
+
+
+ 1042 0362 1E000000 		.4byte	.LVL27
+ 1043 0366 9E060000 		.4byte	0x69e
+ 1044 036a 0C       		.uleb128 0xc
+ 1045 036b 50000000 		.4byte	.LVL35
+ 1046 036f 05020000 		.4byte	0x205
+ 1047 0373 0D       		.uleb128 0xd
+ 1048 0374 01       		.uleb128 0x1
+ 1049 0375 50       		.byte	0x50
+ 1050 0376 05       		.uleb128 0x5
+ 1051 0377 03       		.byte	0x3
+ 1052 0378 00000000 		.4byte	bufferUart
+ 1053 037c 00       		.byte	0
+ 1054 037d 00       		.byte	0
+ 1055 037e 00       		.byte	0
+ 1056 037f 00       		.byte	0
+ 1057 0380 02       		.uleb128 0x2
+ 1058 0381 01       		.byte	0x1
+ 1059 0382 02       		.byte	0x2
+ 1060 0383 14020000 		.4byte	.LASF32
+ 1061 0387 08       		.uleb128 0x8
+ 1062 0388 0A010000 		.4byte	.LASF33
+ 1063 038c 01       		.byte	0x1
+ 1064 038d 8D       		.byte	0x8d
+ 1065 038e 00000000 		.4byte	.LFB68
+ 1066 0392 CC000000 		.4byte	.LFE68-.LFB68
+ 1067 0396 01       		.uleb128 0x1
+ 1068 0397 9C       		.byte	0x9c
+ 1069 0398 2A040000 		.4byte	0x42a
+ 1070 039c 09       		.uleb128 0x9
+ 1071 039d 29020000 		.4byte	.LASF20
+ 1072 03a1 01       		.byte	0x1
+ 1073 03a2 8D       		.byte	0x8d
+ 1074 03a3 2A040000 		.4byte	0x42a
+ 1075 03a7 FB010000 		.4byte	.LLST12
+ 1076 03ab 09       		.uleb128 0x9
+ 1077 03ac F3000000 		.4byte	.LASF21
+ 1078 03b0 01       		.byte	0x1
+ 1079 03b1 8D       		.byte	0x8d
+ 1080 03b2 8D000000 		.4byte	0x8d
+ 1081 03b6 27020000 		.4byte	.LLST13
+ 1082 03ba 09       		.uleb128 0x9
+ 1083 03bb C3020000 		.4byte	.LASF22
+ 1084 03bf 01       		.byte	0x1
+ 1085 03c0 8D       		.byte	0x8d
+ 1086 03c1 81000000 		.4byte	0x81
+ 1087 03c5 48020000 		.4byte	.LLST14
+ 1088 03c9 0A       		.uleb128 0xa
+ 1089 03ca 6900     		.ascii	"i\000"
+ 1090 03cc 01       		.byte	0x1
+ 1091 03cd 8F       		.byte	0x8f
+ 1092 03ce 8D000000 		.4byte	0x8d
+ 1093 03d2 69020000 		.4byte	.LLST15
+ 1094 03d6 0B       		.uleb128 0xb
+ 1095 03d7 4F020000 		.4byte	.LASF23
+ 1096 03db 01       		.byte	0x1
+ 1097 03dc 90       		.byte	0x90
+ 1098 03dd F5010000 		.4byte	0x1f5
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 24
+
+
+ 1099 03e1 02       		.uleb128 0x2
+ 1100 03e2 91       		.byte	0x91
+ 1101 03e3 64       		.sleb128 -28
+ 1102 03e4 17       		.uleb128 0x17
+ 1103 03e5 1A000000 		.4byte	.LBB6
+ 1104 03e9 50000000 		.4byte	.LBE6-.LBB6
+ 1105 03ed 14040000 		.4byte	0x414
+ 1106 03f1 0A       		.uleb128 0xa
+ 1107 03f2 6400     		.ascii	"d\000"
+ 1108 03f4 01       		.byte	0x1
+ 1109 03f5 94       		.byte	0x94
+ 1110 03f6 68000000 		.4byte	0x68
+ 1111 03fa 93020000 		.4byte	.LLST16
+ 1112 03fe 0C       		.uleb128 0xc
+ 1113 03ff 68000000 		.4byte	.LVL44
+ 1114 0403 69060000 		.4byte	0x669
+ 1115 0407 0D       		.uleb128 0xd
+ 1116 0408 01       		.uleb128 0x1
+ 1117 0409 50       		.byte	0x50
+ 1118 040a 02       		.uleb128 0x2
+ 1119 040b 91       		.byte	0x91
+ 1120 040c 64       		.sleb128 -28
+ 1121 040d 0D       		.uleb128 0xd
+ 1122 040e 01       		.uleb128 0x1
+ 1123 040f 51       		.byte	0x51
+ 1124 0410 01       		.uleb128 0x1
+ 1125 0411 34       		.byte	0x34
+ 1126 0412 00       		.byte	0
+ 1127 0413 00       		.byte	0
+ 1128 0414 0C       		.uleb128 0xc
+ 1129 0415 BA000000 		.4byte	.LVL45
+ 1130 0419 69060000 		.4byte	0x669
+ 1131 041d 0D       		.uleb128 0xd
+ 1132 041e 01       		.uleb128 0x1
+ 1133 041f 50       		.byte	0x50
+ 1134 0420 02       		.uleb128 0x2
+ 1135 0421 91       		.byte	0x91
+ 1136 0422 64       		.sleb128 -28
+ 1137 0423 0D       		.uleb128 0xd
+ 1138 0424 01       		.uleb128 0x1
+ 1139 0425 51       		.byte	0x51
+ 1140 0426 01       		.uleb128 0x1
+ 1141 0427 34       		.byte	0x34
+ 1142 0428 00       		.byte	0
+ 1143 0429 00       		.byte	0
+ 1144 042a 0E       		.uleb128 0xe
+ 1145 042b 04       		.byte	0x4
+ 1146 042c 30040000 		.4byte	0x430
+ 1147 0430 1A       		.uleb128 0x1a
+ 1148 0431 A5000000 		.4byte	0xa5
+ 1149 0435 1B       		.uleb128 0x1b
+ 1150 0436 CF020000 		.4byte	.LASF34
+ 1151 043a 05       		.byte	0x5
+ 1152 043b 1207     		.2byte	0x712
+ 1153 043d 41040000 		.4byte	0x441
+ 1154 0441 1A       		.uleb128 0x1a
+ 1155 0442 76000000 		.4byte	0x76
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 25
+
+
+ 1156 0446 0F       		.uleb128 0xf
+ 1157 0447 81000000 		.4byte	0x81
+ 1158 044b 56040000 		.4byte	0x456
+ 1159 044f 10       		.uleb128 0x10
+ 1160 0450 CD000000 		.4byte	0xcd
+ 1161 0454 3F       		.byte	0x3f
+ 1162 0455 00       		.byte	0
+ 1163 0456 1C       		.uleb128 0x1c
+ 1164 0457 6D000000 		.4byte	.LASF35
+ 1165 045b 06       		.byte	0x6
+ 1166 045c 79       		.byte	0x79
+ 1167 045d 46040000 		.4byte	0x446
+ 1168 0461 05       		.uleb128 0x5
+ 1169 0462 03       		.byte	0x3
+ 1170 0463 00000000 		.4byte	bufferUart
+ 1171 0467 1C       		.uleb128 0x1c
+ 1172 0468 B4020000 		.4byte	.LASF36
+ 1173 046c 06       		.byte	0x6
+ 1174 046d 7B       		.byte	0x7b
+ 1175 046e 80030000 		.4byte	0x380
+ 1176 0472 05       		.uleb128 0x5
+ 1177 0473 03       		.byte	0x3
+ 1178 0474 00000000 		.4byte	FLAG_SER_EVENT
+ 1179 0478 1C       		.uleb128 0x1c
+ 1180 0479 79020000 		.4byte	.LASF37
+ 1181 047d 06       		.byte	0x6
+ 1182 047e 7C       		.byte	0x7c
+ 1183 047f 80030000 		.4byte	0x380
+ 1184 0483 05       		.uleb128 0x5
+ 1185 0484 03       		.byte	0x3
+ 1186 0485 00000000 		.4byte	FLAG_SER_TX_INIT
+ 1187 0489 1D       		.uleb128 0x1d
+ 1188 048a 6900     		.ascii	"i\000"
+ 1189 048c 06       		.byte	0x6
+ 1190 048d 7F       		.byte	0x7f
+ 1191 048e 68000000 		.4byte	0x68
+ 1192 0492 05       		.uleb128 0x5
+ 1193 0493 03       		.byte	0x3
+ 1194 0494 00000000 		.4byte	i
+ 1195 0498 0F       		.uleb128 0xf
+ 1196 0499 81000000 		.4byte	0x81
+ 1197 049d A8040000 		.4byte	0x4a8
+ 1198 04a1 10       		.uleb128 0x10
+ 1199 04a2 CD000000 		.4byte	0xcd
+ 1200 04a6 0F       		.byte	0xf
+ 1201 04a7 00       		.byte	0
+ 1202 04a8 1C       		.uleb128 0x1c
+ 1203 04a9 00010000 		.4byte	.LASF38
+ 1204 04ad 06       		.byte	0x6
+ 1205 04ae 81       		.byte	0x81
+ 1206 04af 98040000 		.4byte	0x498
+ 1207 04b3 05       		.uleb128 0x5
+ 1208 04b4 03       		.byte	0x3
+ 1209 04b5 00000000 		.4byte	levels_48
+ 1210 04b9 1C       		.uleb128 0x1c
+ 1211 04ba 99010000 		.4byte	.LASF39
+ 1212 04be 06       		.byte	0x6
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 26
+
+
+ 1213 04bf 82       		.byte	0x82
+ 1214 04c0 F5010000 		.4byte	0x1f5
+ 1215 04c4 05       		.uleb128 0x5
+ 1216 04c5 03       		.byte	0x3
+ 1217 04c6 00000000 		.4byte	levels_15
+ 1218 04ca 1C       		.uleb128 0x1c
+ 1219 04cb 60020000 		.4byte	.LASF40
+ 1220 04cf 06       		.byte	0x6
+ 1221 04d0 83       		.byte	0x83
+ 1222 04d1 F5010000 		.4byte	0x1f5
+ 1223 04d5 05       		.uleb128 0x5
+ 1224 04d6 03       		.byte	0x3
+ 1225 04d7 00000000 		.4byte	levels_82
+ 1226 04db 0F       		.uleb128 0xf
+ 1227 04dc 81000000 		.4byte	0x81
+ 1228 04e0 EB040000 		.4byte	0x4eb
+ 1229 04e4 10       		.uleb128 0x10
+ 1230 04e5 CD000000 		.4byte	0xcd
+ 1231 04e9 01       		.byte	0x1
+ 1232 04ea 00       		.byte	0
+ 1233 04eb 1C       		.uleb128 0x1c
+ 1234 04ec 54000000 		.4byte	.LASF41
+ 1235 04f0 06       		.byte	0x6
+ 1236 04f1 85       		.byte	0x85
+ 1237 04f2 DB040000 		.4byte	0x4db
+ 1238 04f6 05       		.uleb128 0x5
+ 1239 04f7 03       		.byte	0x3
+ 1240 04f8 00000000 		.4byte	serialTest
+ 1241 04fc 1C       		.uleb128 0x1c
+ 1242 04fd C9020000 		.4byte	.LASF42
+ 1243 0501 06       		.byte	0x6
+ 1244 0502 86       		.byte	0x86
+ 1245 0503 81000000 		.4byte	0x81
+ 1246 0507 05       		.uleb128 0x5
+ 1247 0508 03       		.byte	0x3
+ 1248 0509 00000000 		.4byte	test8
+ 1249 050d 1C       		.uleb128 0x1c
+ 1250 050e 3B000000 		.4byte	.LASF43
+ 1251 0512 06       		.byte	0x6
+ 1252 0513 87       		.byte	0x87
+ 1253 0514 8D000000 		.4byte	0x8d
+ 1254 0518 05       		.uleb128 0x5
+ 1255 0519 03       		.byte	0x3
+ 1256 051a 00000000 		.4byte	test16
+ 1257 051e 1C       		.uleb128 0x1c
+ 1258 051f 78000000 		.4byte	.LASF44
+ 1259 0523 06       		.byte	0x6
+ 1260 0524 89       		.byte	0x89
+ 1261 0525 46040000 		.4byte	0x446
+ 1262 0529 05       		.uleb128 0x5
+ 1263 052a 03       		.byte	0x3
+ 1264 052b 00000000 		.4byte	buffer_uart
+ 1265 052f 1D       		.uleb128 0x1d
+ 1266 0530 64656C00 		.ascii	"del\000"
+ 1267 0534 06       		.byte	0x6
+ 1268 0535 8B       		.byte	0x8b
+ 1269 0536 81000000 		.4byte	0x81
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 27
+
+
+ 1270 053a 05       		.uleb128 0x5
+ 1271 053b 03       		.byte	0x3
+ 1272 053c 00000000 		.4byte	del
+ 1273 0540 1D       		.uleb128 0x1d
+ 1274 0541 70726500 		.ascii	"pre\000"
+ 1275 0545 06       		.byte	0x6
+ 1276 0546 8C       		.byte	0x8c
+ 1277 0547 81000000 		.4byte	0x81
+ 1278 054b 05       		.uleb128 0x5
+ 1279 054c 03       		.byte	0x3
+ 1280 054d 00000000 		.4byte	pre
+ 1281 0551 1C       		.uleb128 0x1c
+ 1282 0552 47010000 		.4byte	.LASF45
+ 1283 0556 06       		.byte	0x6
+ 1284 0557 8E       		.byte	0x8e
+ 1285 0558 81000000 		.4byte	0x81
+ 1286 055c 05       		.uleb128 0x5
+ 1287 055d 03       		.byte	0x3
+ 1288 055e 00000000 		.4byte	uart_type
+ 1289 0562 1C       		.uleb128 0x1c
+ 1290 0563 9C000000 		.4byte	.LASF46
+ 1291 0567 06       		.byte	0x6
+ 1292 0568 90       		.byte	0x90
+ 1293 0569 81000000 		.4byte	0x81
+ 1294 056d 05       		.uleb128 0x5
+ 1295 056e 03       		.byte	0x3
+ 1296 056f 00000000 		.4byte	stepSize
+ 1297 0573 1C       		.uleb128 0x1c
+ 1298 0574 84000000 		.4byte	.LASF47
+ 1299 0578 06       		.byte	0x6
+ 1300 0579 92       		.byte	0x92
+ 1301 057a 80030000 		.4byte	0x380
+ 1302 057e 05       		.uleb128 0x5
+ 1303 057f 03       		.byte	0x3
+ 1304 0580 00000000 		.4byte	send15Cont
+ 1305 0584 1C       		.uleb128 0x1c
+ 1306 0585 15000000 		.4byte	.LASF48
+ 1307 0589 06       		.byte	0x6
+ 1308 058a 94       		.byte	0x94
+ 1309 058b 8D000000 		.4byte	0x8d
+ 1310 058f 05       		.uleb128 0x5
+ 1311 0590 03       		.byte	0x3
+ 1312 0591 00000000 		.4byte	signalMean
+ 1313 0595 1D       		.uleb128 0x1d
+ 1314 0596 73756D00 		.ascii	"sum\000"
+ 1315 059a 06       		.byte	0x6
+ 1316 059b 95       		.byte	0x95
+ 1317 059c 99000000 		.4byte	0x99
+ 1318 05a0 05       		.uleb128 0x5
+ 1319 05a1 03       		.byte	0x3
+ 1320 05a2 00000000 		.4byte	sum
+ 1321 05a6 1C       		.uleb128 0x1c
+ 1322 05a7 EA000000 		.4byte	.LASF49
+ 1323 05ab 06       		.byte	0x6
+ 1324 05ac 97       		.byte	0x97
+ 1325 05ad 81000000 		.4byte	0x81
+ 1326 05b1 05       		.uleb128 0x5
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 28
+
+
+ 1327 05b2 03       		.byte	0x3
+ 1328 05b3 00000000 		.4byte	i2cStart
+ 1329 05b7 1C       		.uleb128 0x1c
+ 1330 05b8 72020000 		.4byte	.LASF50
+ 1331 05bc 06       		.byte	0x6
+ 1332 05bd 98       		.byte	0x98
+ 1333 05be 81000000 		.4byte	0x81
+ 1334 05c2 05       		.uleb128 0x5
+ 1335 05c3 03       		.byte	0x3
+ 1336 05c4 00000000 		.4byte	i2cClk
+ 1337 05c8 1C       		.uleb128 0x1c
+ 1338 05c9 07000000 		.4byte	.LASF51
+ 1339 05cd 06       		.byte	0x6
+ 1340 05ce 99       		.byte	0x99
+ 1341 05cf 81000000 		.4byte	0x81
+ 1342 05d3 05       		.uleb128 0x5
+ 1343 05d4 03       		.byte	0x3
+ 1344 05d5 00000000 		.4byte	i2cSda
+ 1345 05d9 1D       		.uleb128 0x1d
+ 1346 05da 6300     		.ascii	"c\000"
+ 1347 05dc 06       		.byte	0x6
+ 1348 05dd 9A       		.byte	0x9a
+ 1349 05de 81000000 		.4byte	0x81
+ 1350 05e2 05       		.uleb128 0x5
+ 1351 05e3 03       		.byte	0x3
+ 1352 05e4 00000000 		.4byte	c
+ 1353 05e8 0F       		.uleb128 0xf
+ 1354 05e9 81000000 		.4byte	0x81
+ 1355 05ed F8050000 		.4byte	0x5f8
+ 1356 05f1 10       		.uleb128 0x10
+ 1357 05f2 CD000000 		.4byte	0xcd
+ 1358 05f6 1A       		.byte	0x1a
+ 1359 05f7 00       		.byte	0
+ 1360 05f8 1C       		.uleb128 0x1c
+ 1361 05f9 0E000000 		.4byte	.LASF52
+ 1362 05fd 06       		.byte	0x6
+ 1363 05fe 9B       		.byte	0x9b
+ 1364 05ff E8050000 		.4byte	0x5e8
+ 1365 0603 05       		.uleb128 0x5
+ 1366 0604 03       		.byte	0x3
+ 1367 0605 00000000 		.4byte	i2cBuf
+ 1368 0609 1C       		.uleb128 0x1c
+ 1369 060a 6A020000 		.4byte	.LASF53
+ 1370 060e 06       		.byte	0x6
+ 1371 060f 9D       		.byte	0x9d
+ 1372 0610 81000000 		.4byte	0x81
+ 1373 0614 05       		.uleb128 0x5
+ 1374 0615 03       		.byte	0x3
+ 1375 0616 00000000 		.4byte	i2cAddr
+ 1376 061a 1C       		.uleb128 0x1c
+ 1377 061b 6A030000 		.4byte	.LASF54
+ 1378 061f 06       		.byte	0x6
+ 1379 0620 9E       		.byte	0x9e
+ 1380 0621 81000000 		.4byte	0x81
+ 1381 0625 05       		.uleb128 0x5
+ 1382 0626 03       		.byte	0x3
+ 1383 0627 00000000 		.4byte	i2cInstr
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 29
+
+
+ 1384 062b 1C       		.uleb128 0x1c
+ 1385 062c 2A000000 		.4byte	.LASF55
+ 1386 0630 06       		.byte	0x6
+ 1387 0631 9F       		.byte	0x9f
+ 1388 0632 81000000 		.4byte	0x81
+ 1389 0636 05       		.uleb128 0x5
+ 1390 0637 03       		.byte	0x3
+ 1391 0638 00000000 		.4byte	i2cData
+ 1392 063c 1C       		.uleb128 0x1c
+ 1393 063d 6B010000 		.4byte	.LASF56
+ 1394 0641 06       		.byte	0x6
+ 1395 0642 A0       		.byte	0xa0
+ 1396 0643 81000000 		.4byte	0x81
+ 1397 0647 05       		.uleb128 0x5
+ 1398 0648 03       		.byte	0x3
+ 1399 0649 00000000 		.4byte	i2cRun
+ 1400 064d 1C       		.uleb128 0x1c
+ 1401 064e AC020000 		.4byte	.LASF57
+ 1402 0652 06       		.byte	0x6
+ 1403 0653 A2       		.byte	0xa2
+ 1404 0654 E8050000 		.4byte	0x5e8
+ 1405 0658 05       		.uleb128 0x5
+ 1406 0659 03       		.byte	0x3
+ 1407 065a 00000000 		.4byte	i2cWord
+ 1408 065e 1E       		.uleb128 0x1e
+ 1409 065f F3010000 		.4byte	.LASF58
+ 1410 0663 F3010000 		.4byte	.LASF58
+ 1411 0667 07       		.byte	0x7
+ 1412 0668 54       		.byte	0x54
+ 1413 0669 1E       		.uleb128 0x1e
+ 1414 066a 7B010000 		.4byte	.LASF59
+ 1415 066e 7B010000 		.4byte	.LASF59
+ 1416 0672 07       		.byte	0x7
+ 1417 0673 8C       		.byte	0x8c
+ 1418 0674 1F       		.uleb128 0x1f
+ 1419 0675 2B010000 		.4byte	.LASF68
+ 1420 0679 2B010000 		.4byte	.LASF68
+ 1421 067d 1E       		.uleb128 0x1e
+ 1422 067e 94020000 		.4byte	.LASF60
+ 1423 0682 94020000 		.4byte	.LASF60
+ 1424 0686 01       		.byte	0x1
+ 1425 0687 4A       		.byte	0x4a
+ 1426 0688 1E       		.uleb128 0x1e
+ 1427 0689 73030000 		.4byte	.LASF61
+ 1428 068d 73030000 		.4byte	.LASF61
+ 1429 0691 08       		.byte	0x8
+ 1430 0692 76       		.byte	0x76
+ 1431 0693 1E       		.uleb128 0x1e
+ 1432 0694 42000000 		.4byte	.LASF62
+ 1433 0698 42000000 		.4byte	.LASF62
+ 1434 069c 07       		.byte	0x7
+ 1435 069d 70       		.byte	0x70
+ 1436 069e 1E       		.uleb128 0x1e
+ 1437 069f 89010000 		.4byte	.LASF63
+ 1438 06a3 89010000 		.4byte	.LASF63
+ 1439 06a7 07       		.byte	0x7
+ 1440 06a8 6F       		.byte	0x6f
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 30
+
+
+ 1441 06a9 00       		.byte	0
+ 1442              		.section	.debug_abbrev,"",%progbits
+ 1443              	.Ldebug_abbrev0:
+ 1444 0000 01       		.uleb128 0x1
+ 1445 0001 11       		.uleb128 0x11
+ 1446 0002 01       		.byte	0x1
+ 1447 0003 25       		.uleb128 0x25
+ 1448 0004 0E       		.uleb128 0xe
+ 1449 0005 13       		.uleb128 0x13
+ 1450 0006 0B       		.uleb128 0xb
+ 1451 0007 03       		.uleb128 0x3
+ 1452 0008 0E       		.uleb128 0xe
+ 1453 0009 1B       		.uleb128 0x1b
+ 1454 000a 0E       		.uleb128 0xe
+ 1455 000b 55       		.uleb128 0x55
+ 1456 000c 17       		.uleb128 0x17
+ 1457 000d 11       		.uleb128 0x11
+ 1458 000e 01       		.uleb128 0x1
+ 1459 000f 10       		.uleb128 0x10
+ 1460 0010 17       		.uleb128 0x17
+ 1461 0011 00       		.byte	0
+ 1462 0012 00       		.byte	0
+ 1463 0013 02       		.uleb128 0x2
+ 1464 0014 24       		.uleb128 0x24
+ 1465 0015 00       		.byte	0
+ 1466 0016 0B       		.uleb128 0xb
+ 1467 0017 0B       		.uleb128 0xb
+ 1468 0018 3E       		.uleb128 0x3e
+ 1469 0019 0B       		.uleb128 0xb
+ 1470 001a 03       		.uleb128 0x3
+ 1471 001b 0E       		.uleb128 0xe
+ 1472 001c 00       		.byte	0
+ 1473 001d 00       		.byte	0
+ 1474 001e 03       		.uleb128 0x3
+ 1475 001f 16       		.uleb128 0x16
+ 1476 0020 00       		.byte	0
+ 1477 0021 03       		.uleb128 0x3
+ 1478 0022 0E       		.uleb128 0xe
+ 1479 0023 3A       		.uleb128 0x3a
+ 1480 0024 0B       		.uleb128 0xb
+ 1481 0025 3B       		.uleb128 0x3b
+ 1482 0026 0B       		.uleb128 0xb
+ 1483 0027 49       		.uleb128 0x49
+ 1484 0028 13       		.uleb128 0x13
+ 1485 0029 00       		.byte	0
+ 1486 002a 00       		.byte	0
+ 1487 002b 04       		.uleb128 0x4
+ 1488 002c 24       		.uleb128 0x24
+ 1489 002d 00       		.byte	0
+ 1490 002e 0B       		.uleb128 0xb
+ 1491 002f 0B       		.uleb128 0xb
+ 1492 0030 3E       		.uleb128 0x3e
+ 1493 0031 0B       		.uleb128 0xb
+ 1494 0032 03       		.uleb128 0x3
+ 1495 0033 08       		.uleb128 0x8
+ 1496 0034 00       		.byte	0
+ 1497 0035 00       		.byte	0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 31
+
+
+ 1498 0036 05       		.uleb128 0x5
+ 1499 0037 16       		.uleb128 0x16
+ 1500 0038 00       		.byte	0
+ 1501 0039 03       		.uleb128 0x3
+ 1502 003a 0E       		.uleb128 0xe
+ 1503 003b 3A       		.uleb128 0x3a
+ 1504 003c 0B       		.uleb128 0xb
+ 1505 003d 3B       		.uleb128 0x3b
+ 1506 003e 05       		.uleb128 0x5
+ 1507 003f 49       		.uleb128 0x49
+ 1508 0040 13       		.uleb128 0x13
+ 1509 0041 00       		.byte	0
+ 1510 0042 00       		.byte	0
+ 1511 0043 06       		.uleb128 0x6
+ 1512 0044 2E       		.uleb128 0x2e
+ 1513 0045 01       		.byte	0x1
+ 1514 0046 3F       		.uleb128 0x3f
+ 1515 0047 19       		.uleb128 0x19
+ 1516 0048 03       		.uleb128 0x3
+ 1517 0049 0E       		.uleb128 0xe
+ 1518 004a 3A       		.uleb128 0x3a
+ 1519 004b 0B       		.uleb128 0xb
+ 1520 004c 3B       		.uleb128 0x3b
+ 1521 004d 0B       		.uleb128 0xb
+ 1522 004e 11       		.uleb128 0x11
+ 1523 004f 01       		.uleb128 0x1
+ 1524 0050 12       		.uleb128 0x12
+ 1525 0051 06       		.uleb128 0x6
+ 1526 0052 40       		.uleb128 0x40
+ 1527 0053 18       		.uleb128 0x18
+ 1528 0054 9742     		.uleb128 0x2117
+ 1529 0056 19       		.uleb128 0x19
+ 1530 0057 01       		.uleb128 0x1
+ 1531 0058 13       		.uleb128 0x13
+ 1532 0059 00       		.byte	0
+ 1533 005a 00       		.byte	0
+ 1534 005b 07       		.uleb128 0x7
+ 1535 005c 898201   		.uleb128 0x4109
+ 1536 005f 00       		.byte	0
+ 1537 0060 11       		.uleb128 0x11
+ 1538 0061 01       		.uleb128 0x1
+ 1539 0062 31       		.uleb128 0x31
+ 1540 0063 13       		.uleb128 0x13
+ 1541 0064 00       		.byte	0
+ 1542 0065 00       		.byte	0
+ 1543 0066 08       		.uleb128 0x8
+ 1544 0067 2E       		.uleb128 0x2e
+ 1545 0068 01       		.byte	0x1
+ 1546 0069 3F       		.uleb128 0x3f
+ 1547 006a 19       		.uleb128 0x19
+ 1548 006b 03       		.uleb128 0x3
+ 1549 006c 0E       		.uleb128 0xe
+ 1550 006d 3A       		.uleb128 0x3a
+ 1551 006e 0B       		.uleb128 0xb
+ 1552 006f 3B       		.uleb128 0x3b
+ 1553 0070 0B       		.uleb128 0xb
+ 1554 0071 27       		.uleb128 0x27
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 32
+
+
+ 1555 0072 19       		.uleb128 0x19
+ 1556 0073 11       		.uleb128 0x11
+ 1557 0074 01       		.uleb128 0x1
+ 1558 0075 12       		.uleb128 0x12
+ 1559 0076 06       		.uleb128 0x6
+ 1560 0077 40       		.uleb128 0x40
+ 1561 0078 18       		.uleb128 0x18
+ 1562 0079 9742     		.uleb128 0x2117
+ 1563 007b 19       		.uleb128 0x19
+ 1564 007c 01       		.uleb128 0x1
+ 1565 007d 13       		.uleb128 0x13
+ 1566 007e 00       		.byte	0
+ 1567 007f 00       		.byte	0
+ 1568 0080 09       		.uleb128 0x9
+ 1569 0081 05       		.uleb128 0x5
+ 1570 0082 00       		.byte	0
+ 1571 0083 03       		.uleb128 0x3
+ 1572 0084 0E       		.uleb128 0xe
+ 1573 0085 3A       		.uleb128 0x3a
+ 1574 0086 0B       		.uleb128 0xb
+ 1575 0087 3B       		.uleb128 0x3b
+ 1576 0088 0B       		.uleb128 0xb
+ 1577 0089 49       		.uleb128 0x49
+ 1578 008a 13       		.uleb128 0x13
+ 1579 008b 02       		.uleb128 0x2
+ 1580 008c 17       		.uleb128 0x17
+ 1581 008d 00       		.byte	0
+ 1582 008e 00       		.byte	0
+ 1583 008f 0A       		.uleb128 0xa
+ 1584 0090 34       		.uleb128 0x34
+ 1585 0091 00       		.byte	0
+ 1586 0092 03       		.uleb128 0x3
+ 1587 0093 08       		.uleb128 0x8
+ 1588 0094 3A       		.uleb128 0x3a
+ 1589 0095 0B       		.uleb128 0xb
+ 1590 0096 3B       		.uleb128 0x3b
+ 1591 0097 0B       		.uleb128 0xb
+ 1592 0098 49       		.uleb128 0x49
+ 1593 0099 13       		.uleb128 0x13
+ 1594 009a 02       		.uleb128 0x2
+ 1595 009b 17       		.uleb128 0x17
+ 1596 009c 00       		.byte	0
+ 1597 009d 00       		.byte	0
+ 1598 009e 0B       		.uleb128 0xb
+ 1599 009f 34       		.uleb128 0x34
+ 1600 00a0 00       		.byte	0
+ 1601 00a1 03       		.uleb128 0x3
+ 1602 00a2 0E       		.uleb128 0xe
+ 1603 00a3 3A       		.uleb128 0x3a
+ 1604 00a4 0B       		.uleb128 0xb
+ 1605 00a5 3B       		.uleb128 0x3b
+ 1606 00a6 0B       		.uleb128 0xb
+ 1607 00a7 49       		.uleb128 0x49
+ 1608 00a8 13       		.uleb128 0x13
+ 1609 00a9 02       		.uleb128 0x2
+ 1610 00aa 18       		.uleb128 0x18
+ 1611 00ab 00       		.byte	0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 33
+
+
+ 1612 00ac 00       		.byte	0
+ 1613 00ad 0C       		.uleb128 0xc
+ 1614 00ae 898201   		.uleb128 0x4109
+ 1615 00b1 01       		.byte	0x1
+ 1616 00b2 11       		.uleb128 0x11
+ 1617 00b3 01       		.uleb128 0x1
+ 1618 00b4 31       		.uleb128 0x31
+ 1619 00b5 13       		.uleb128 0x13
+ 1620 00b6 00       		.byte	0
+ 1621 00b7 00       		.byte	0
+ 1622 00b8 0D       		.uleb128 0xd
+ 1623 00b9 8A8201   		.uleb128 0x410a
+ 1624 00bc 00       		.byte	0
+ 1625 00bd 02       		.uleb128 0x2
+ 1626 00be 18       		.uleb128 0x18
+ 1627 00bf 9142     		.uleb128 0x2111
+ 1628 00c1 18       		.uleb128 0x18
+ 1629 00c2 00       		.byte	0
+ 1630 00c3 00       		.byte	0
+ 1631 00c4 0E       		.uleb128 0xe
+ 1632 00c5 0F       		.uleb128 0xf
+ 1633 00c6 00       		.byte	0
+ 1634 00c7 0B       		.uleb128 0xb
+ 1635 00c8 0B       		.uleb128 0xb
+ 1636 00c9 49       		.uleb128 0x49
+ 1637 00ca 13       		.uleb128 0x13
+ 1638 00cb 00       		.byte	0
+ 1639 00cc 00       		.byte	0
+ 1640 00cd 0F       		.uleb128 0xf
+ 1641 00ce 01       		.uleb128 0x1
+ 1642 00cf 01       		.byte	0x1
+ 1643 00d0 49       		.uleb128 0x49
+ 1644 00d1 13       		.uleb128 0x13
+ 1645 00d2 01       		.uleb128 0x1
+ 1646 00d3 13       		.uleb128 0x13
+ 1647 00d4 00       		.byte	0
+ 1648 00d5 00       		.byte	0
+ 1649 00d6 10       		.uleb128 0x10
+ 1650 00d7 21       		.uleb128 0x21
+ 1651 00d8 00       		.byte	0
+ 1652 00d9 49       		.uleb128 0x49
+ 1653 00da 13       		.uleb128 0x13
+ 1654 00db 2F       		.uleb128 0x2f
+ 1655 00dc 0B       		.uleb128 0xb
+ 1656 00dd 00       		.byte	0
+ 1657 00de 00       		.byte	0
+ 1658 00df 11       		.uleb128 0x11
+ 1659 00e0 05       		.uleb128 0x5
+ 1660 00e1 00       		.byte	0
+ 1661 00e2 03       		.uleb128 0x3
+ 1662 00e3 08       		.uleb128 0x8
+ 1663 00e4 3A       		.uleb128 0x3a
+ 1664 00e5 0B       		.uleb128 0xb
+ 1665 00e6 3B       		.uleb128 0x3b
+ 1666 00e7 0B       		.uleb128 0xb
+ 1667 00e8 49       		.uleb128 0x49
+ 1668 00e9 13       		.uleb128 0x13
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 34
+
+
+ 1669 00ea 02       		.uleb128 0x2
+ 1670 00eb 17       		.uleb128 0x17
+ 1671 00ec 00       		.byte	0
+ 1672 00ed 00       		.byte	0
+ 1673 00ee 12       		.uleb128 0x12
+ 1674 00ef 898201   		.uleb128 0x4109
+ 1675 00f2 01       		.byte	0x1
+ 1676 00f3 11       		.uleb128 0x11
+ 1677 00f4 01       		.uleb128 0x1
+ 1678 00f5 31       		.uleb128 0x31
+ 1679 00f6 13       		.uleb128 0x13
+ 1680 00f7 01       		.uleb128 0x1
+ 1681 00f8 13       		.uleb128 0x13
+ 1682 00f9 00       		.byte	0
+ 1683 00fa 00       		.byte	0
+ 1684 00fb 13       		.uleb128 0x13
+ 1685 00fc 34       		.uleb128 0x34
+ 1686 00fd 00       		.byte	0
+ 1687 00fe 03       		.uleb128 0x3
+ 1688 00ff 0E       		.uleb128 0xe
+ 1689 0100 3A       		.uleb128 0x3a
+ 1690 0101 0B       		.uleb128 0xb
+ 1691 0102 3B       		.uleb128 0x3b
+ 1692 0103 0B       		.uleb128 0xb
+ 1693 0104 49       		.uleb128 0x49
+ 1694 0105 13       		.uleb128 0x13
+ 1695 0106 00       		.byte	0
+ 1696 0107 00       		.byte	0
+ 1697 0108 14       		.uleb128 0x14
+ 1698 0109 0B       		.uleb128 0xb
+ 1699 010a 01       		.byte	0x1
+ 1700 010b 55       		.uleb128 0x55
+ 1701 010c 17       		.uleb128 0x17
+ 1702 010d 00       		.byte	0
+ 1703 010e 00       		.byte	0
+ 1704 010f 15       		.uleb128 0x15
+ 1705 0110 34       		.uleb128 0x34
+ 1706 0111 00       		.byte	0
+ 1707 0112 03       		.uleb128 0x3
+ 1708 0113 0E       		.uleb128 0xe
+ 1709 0114 3A       		.uleb128 0x3a
+ 1710 0115 0B       		.uleb128 0xb
+ 1711 0116 3B       		.uleb128 0x3b
+ 1712 0117 0B       		.uleb128 0xb
+ 1713 0118 49       		.uleb128 0x49
+ 1714 0119 13       		.uleb128 0x13
+ 1715 011a 02       		.uleb128 0x2
+ 1716 011b 17       		.uleb128 0x17
+ 1717 011c 00       		.byte	0
+ 1718 011d 00       		.byte	0
+ 1719 011e 16       		.uleb128 0x16
+ 1720 011f 0B       		.uleb128 0xb
+ 1721 0120 01       		.byte	0x1
+ 1722 0121 11       		.uleb128 0x11
+ 1723 0122 01       		.uleb128 0x1
+ 1724 0123 12       		.uleb128 0x12
+ 1725 0124 06       		.uleb128 0x6
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 35
+
+
+ 1726 0125 00       		.byte	0
+ 1727 0126 00       		.byte	0
+ 1728 0127 17       		.uleb128 0x17
+ 1729 0128 0B       		.uleb128 0xb
+ 1730 0129 01       		.byte	0x1
+ 1731 012a 11       		.uleb128 0x11
+ 1732 012b 01       		.uleb128 0x1
+ 1733 012c 12       		.uleb128 0x12
+ 1734 012d 06       		.uleb128 0x6
+ 1735 012e 01       		.uleb128 0x1
+ 1736 012f 13       		.uleb128 0x13
+ 1737 0130 00       		.byte	0
+ 1738 0131 00       		.byte	0
+ 1739 0132 18       		.uleb128 0x18
+ 1740 0133 2E       		.uleb128 0x2e
+ 1741 0134 01       		.byte	0x1
+ 1742 0135 3F       		.uleb128 0x3f
+ 1743 0136 19       		.uleb128 0x19
+ 1744 0137 03       		.uleb128 0x3
+ 1745 0138 0E       		.uleb128 0xe
+ 1746 0139 3A       		.uleb128 0x3a
+ 1747 013a 0B       		.uleb128 0xb
+ 1748 013b 3B       		.uleb128 0x3b
+ 1749 013c 0B       		.uleb128 0xb
+ 1750 013d 49       		.uleb128 0x49
+ 1751 013e 13       		.uleb128 0x13
+ 1752 013f 3C       		.uleb128 0x3c
+ 1753 0140 19       		.uleb128 0x19
+ 1754 0141 01       		.uleb128 0x1
+ 1755 0142 13       		.uleb128 0x13
+ 1756 0143 00       		.byte	0
+ 1757 0144 00       		.byte	0
+ 1758 0145 19       		.uleb128 0x19
+ 1759 0146 18       		.uleb128 0x18
+ 1760 0147 00       		.byte	0
+ 1761 0148 00       		.byte	0
+ 1762 0149 00       		.byte	0
+ 1763 014a 1A       		.uleb128 0x1a
+ 1764 014b 35       		.uleb128 0x35
+ 1765 014c 00       		.byte	0
+ 1766 014d 49       		.uleb128 0x49
+ 1767 014e 13       		.uleb128 0x13
+ 1768 014f 00       		.byte	0
+ 1769 0150 00       		.byte	0
+ 1770 0151 1B       		.uleb128 0x1b
+ 1771 0152 34       		.uleb128 0x34
+ 1772 0153 00       		.byte	0
+ 1773 0154 03       		.uleb128 0x3
+ 1774 0155 0E       		.uleb128 0xe
+ 1775 0156 3A       		.uleb128 0x3a
+ 1776 0157 0B       		.uleb128 0xb
+ 1777 0158 3B       		.uleb128 0x3b
+ 1778 0159 05       		.uleb128 0x5
+ 1779 015a 49       		.uleb128 0x49
+ 1780 015b 13       		.uleb128 0x13
+ 1781 015c 3F       		.uleb128 0x3f
+ 1782 015d 19       		.uleb128 0x19
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 36
+
+
+ 1783 015e 3C       		.uleb128 0x3c
+ 1784 015f 19       		.uleb128 0x19
+ 1785 0160 00       		.byte	0
+ 1786 0161 00       		.byte	0
+ 1787 0162 1C       		.uleb128 0x1c
+ 1788 0163 34       		.uleb128 0x34
+ 1789 0164 00       		.byte	0
+ 1790 0165 03       		.uleb128 0x3
+ 1791 0166 0E       		.uleb128 0xe
+ 1792 0167 3A       		.uleb128 0x3a
+ 1793 0168 0B       		.uleb128 0xb
+ 1794 0169 3B       		.uleb128 0x3b
+ 1795 016a 0B       		.uleb128 0xb
+ 1796 016b 49       		.uleb128 0x49
+ 1797 016c 13       		.uleb128 0x13
+ 1798 016d 3F       		.uleb128 0x3f
+ 1799 016e 19       		.uleb128 0x19
+ 1800 016f 02       		.uleb128 0x2
+ 1801 0170 18       		.uleb128 0x18
+ 1802 0171 00       		.byte	0
+ 1803 0172 00       		.byte	0
+ 1804 0173 1D       		.uleb128 0x1d
+ 1805 0174 34       		.uleb128 0x34
+ 1806 0175 00       		.byte	0
+ 1807 0176 03       		.uleb128 0x3
+ 1808 0177 08       		.uleb128 0x8
+ 1809 0178 3A       		.uleb128 0x3a
+ 1810 0179 0B       		.uleb128 0xb
+ 1811 017a 3B       		.uleb128 0x3b
+ 1812 017b 0B       		.uleb128 0xb
+ 1813 017c 49       		.uleb128 0x49
+ 1814 017d 13       		.uleb128 0x13
+ 1815 017e 3F       		.uleb128 0x3f
+ 1816 017f 19       		.uleb128 0x19
+ 1817 0180 02       		.uleb128 0x2
+ 1818 0181 18       		.uleb128 0x18
+ 1819 0182 00       		.byte	0
+ 1820 0183 00       		.byte	0
+ 1821 0184 1E       		.uleb128 0x1e
+ 1822 0185 2E       		.uleb128 0x2e
+ 1823 0186 00       		.byte	0
+ 1824 0187 3F       		.uleb128 0x3f
+ 1825 0188 19       		.uleb128 0x19
+ 1826 0189 3C       		.uleb128 0x3c
+ 1827 018a 19       		.uleb128 0x19
+ 1828 018b 6E       		.uleb128 0x6e
+ 1829 018c 0E       		.uleb128 0xe
+ 1830 018d 03       		.uleb128 0x3
+ 1831 018e 0E       		.uleb128 0xe
+ 1832 018f 3A       		.uleb128 0x3a
+ 1833 0190 0B       		.uleb128 0xb
+ 1834 0191 3B       		.uleb128 0x3b
+ 1835 0192 0B       		.uleb128 0xb
+ 1836 0193 00       		.byte	0
+ 1837 0194 00       		.byte	0
+ 1838 0195 1F       		.uleb128 0x1f
+ 1839 0196 2E       		.uleb128 0x2e
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 37
+
+
+ 1840 0197 00       		.byte	0
+ 1841 0198 3F       		.uleb128 0x3f
+ 1842 0199 19       		.uleb128 0x19
+ 1843 019a 3C       		.uleb128 0x3c
+ 1844 019b 19       		.uleb128 0x19
+ 1845 019c 6E       		.uleb128 0x6e
+ 1846 019d 0E       		.uleb128 0xe
+ 1847 019e 03       		.uleb128 0x3
+ 1848 019f 0E       		.uleb128 0xe
+ 1849 01a0 00       		.byte	0
+ 1850 01a1 00       		.byte	0
+ 1851 01a2 00       		.byte	0
+ 1852              		.section	.debug_loc,"",%progbits
+ 1853              	.Ldebug_loc0:
+ 1854              	.LLST0:
+ 1855 0000 00000000 		.4byte	.LVL1
+ 1856 0004 0E000000 		.4byte	.LVL3
+ 1857 0008 0100     		.2byte	0x1
+ 1858 000a 50       		.byte	0x50
+ 1859 000b 0E000000 		.4byte	.LVL3
+ 1860 000f 58000000 		.4byte	.LVL7
+ 1861 0013 0100     		.2byte	0x1
+ 1862 0015 56       		.byte	0x56
+ 1863 0016 58000000 		.4byte	.LVL7
+ 1864 001a 5C000000 		.4byte	.LFE66
+ 1865 001e 0400     		.2byte	0x4
+ 1866 0020 F3       		.byte	0xf3
+ 1867 0021 01       		.uleb128 0x1
+ 1868 0022 50       		.byte	0x50
+ 1869 0023 9F       		.byte	0x9f
+ 1870 0024 00000000 		.4byte	0
+ 1871 0028 00000000 		.4byte	0
+ 1872              	.LLST1:
+ 1873 002c 00000000 		.4byte	.LVL1
+ 1874 0030 0E000000 		.4byte	.LVL3
+ 1875 0034 0100     		.2byte	0x1
+ 1876 0036 51       		.byte	0x51
+ 1877 0037 0E000000 		.4byte	.LVL3
+ 1878 003b 5C000000 		.4byte	.LFE66
+ 1879 003f 0400     		.2byte	0x4
+ 1880 0041 F3       		.byte	0xf3
+ 1881 0042 01       		.uleb128 0x1
+ 1882 0043 51       		.byte	0x51
+ 1883 0044 9F       		.byte	0x9f
+ 1884 0045 00000000 		.4byte	0
+ 1885 0049 00000000 		.4byte	0
+ 1886              	.LLST2:
+ 1887 004d 00000000 		.4byte	.LVL1
+ 1888 0051 0E000000 		.4byte	.LVL3
+ 1889 0055 0100     		.2byte	0x1
+ 1890 0057 52       		.byte	0x52
+ 1891 0058 0E000000 		.4byte	.LVL3
+ 1892 005c 5C000000 		.4byte	.LFE66
+ 1893 0060 0400     		.2byte	0x4
+ 1894 0062 F3       		.byte	0xf3
+ 1895 0063 01       		.uleb128 0x1
+ 1896 0064 52       		.byte	0x52
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 38
+
+
+ 1897 0065 9F       		.byte	0x9f
+ 1898 0066 00000000 		.4byte	0
+ 1899 006a 00000000 		.4byte	0
+ 1900              	.LLST3:
+ 1901 006e 0A000000 		.4byte	.LVL2
+ 1902 0072 0E000000 		.4byte	.LVL3
+ 1903 0076 0200     		.2byte	0x2
+ 1904 0078 30       		.byte	0x30
+ 1905 0079 9F       		.byte	0x9f
+ 1906 007a 0E000000 		.4byte	.LVL3
+ 1907 007e 4E000000 		.4byte	.LVL5
+ 1908 0082 0100     		.2byte	0x1
+ 1909 0084 54       		.byte	0x54
+ 1910 0085 50000000 		.4byte	.LVL6
+ 1911 0089 58000000 		.4byte	.LVL7
+ 1912 008d 0100     		.2byte	0x1
+ 1913 008f 54       		.byte	0x54
+ 1914 0090 00000000 		.4byte	0
+ 1915 0094 00000000 		.4byte	0
+ 1916              	.LLST4:
+ 1917 0098 00000000 		.4byte	.LVL8
+ 1918 009c 0E000000 		.4byte	.LVL10
+ 1919 00a0 0100     		.2byte	0x1
+ 1920 00a2 50       		.byte	0x50
+ 1921 00a3 0E000000 		.4byte	.LVL10
+ 1922 00a7 66000000 		.4byte	.LVL14
+ 1923 00ab 0100     		.2byte	0x1
+ 1924 00ad 56       		.byte	0x56
+ 1925 00ae 66000000 		.4byte	.LVL14
+ 1926 00b2 6C000000 		.4byte	.LFE67
+ 1927 00b6 0400     		.2byte	0x4
+ 1928 00b8 F3       		.byte	0xf3
+ 1929 00b9 01       		.uleb128 0x1
+ 1930 00ba 50       		.byte	0x50
+ 1931 00bb 9F       		.byte	0x9f
+ 1932 00bc 00000000 		.4byte	0
+ 1933 00c0 00000000 		.4byte	0
+ 1934              	.LLST5:
+ 1935 00c4 00000000 		.4byte	.LVL8
+ 1936 00c8 0E000000 		.4byte	.LVL10
+ 1937 00cc 0100     		.2byte	0x1
+ 1938 00ce 51       		.byte	0x51
+ 1939 00cf 0E000000 		.4byte	.LVL10
+ 1940 00d3 6C000000 		.4byte	.LFE67
+ 1941 00d7 0400     		.2byte	0x4
+ 1942 00d9 F3       		.byte	0xf3
+ 1943 00da 01       		.uleb128 0x1
+ 1944 00db 51       		.byte	0x51
+ 1945 00dc 9F       		.byte	0x9f
+ 1946 00dd 00000000 		.4byte	0
+ 1947 00e1 00000000 		.4byte	0
+ 1948              	.LLST6:
+ 1949 00e5 00000000 		.4byte	.LVL8
+ 1950 00e9 0E000000 		.4byte	.LVL10
+ 1951 00ed 0100     		.2byte	0x1
+ 1952 00ef 52       		.byte	0x52
+ 1953 00f0 0E000000 		.4byte	.LVL10
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 39
+
+
+ 1954 00f4 6C000000 		.4byte	.LFE67
+ 1955 00f8 0400     		.2byte	0x4
+ 1956 00fa F3       		.byte	0xf3
+ 1957 00fb 01       		.uleb128 0x1
+ 1958 00fc 52       		.byte	0x52
+ 1959 00fd 9F       		.byte	0x9f
+ 1960 00fe 00000000 		.4byte	0
+ 1961 0102 00000000 		.4byte	0
+ 1962              	.LLST7:
+ 1963 0106 0A000000 		.4byte	.LVL9
+ 1964 010a 0E000000 		.4byte	.LVL10
+ 1965 010e 0200     		.2byte	0x2
+ 1966 0110 30       		.byte	0x30
+ 1967 0111 9F       		.byte	0x9f
+ 1968 0112 0E000000 		.4byte	.LVL10
+ 1969 0116 5C000000 		.4byte	.LVL12
+ 1970 011a 0100     		.2byte	0x1
+ 1971 011c 54       		.byte	0x54
+ 1972 011d 5E000000 		.4byte	.LVL13
+ 1973 0121 66000000 		.4byte	.LVL14
+ 1974 0125 0100     		.2byte	0x1
+ 1975 0127 54       		.byte	0x54
+ 1976 0128 00000000 		.4byte	0
+ 1977 012c 00000000 		.4byte	0
+ 1978              	.LLST8:
+ 1979 0130 00000000 		.4byte	.LVL15
+ 1980 0134 14000000 		.4byte	.LVL16
+ 1981 0138 0100     		.2byte	0x1
+ 1982 013a 50       		.byte	0x50
+ 1983 013b 14000000 		.4byte	.LVL16
+ 1984 013f 2E000000 		.4byte	.LVL20
+ 1985 0143 0400     		.2byte	0x4
+ 1986 0145 F3       		.byte	0xf3
+ 1987 0146 01       		.uleb128 0x1
+ 1988 0147 50       		.byte	0x50
+ 1989 0148 9F       		.byte	0x9f
+ 1990 0149 2E000000 		.4byte	.LVL20
+ 1991 014d 38000000 		.4byte	.LVL21
+ 1992 0151 0100     		.2byte	0x1
+ 1993 0153 50       		.byte	0x50
+ 1994 0154 38000000 		.4byte	.LVL21
+ 1995 0158 5C000000 		.4byte	.LFE64
+ 1996 015c 0400     		.2byte	0x4
+ 1997 015e F3       		.byte	0xf3
+ 1998 015f 01       		.uleb128 0x1
+ 1999 0160 50       		.byte	0x50
+ 2000 0161 9F       		.byte	0x9f
+ 2001 0162 00000000 		.4byte	0
+ 2002 0166 00000000 		.4byte	0
+ 2003              	.LLST9:
+ 2004 016a 0C000000 		.4byte	.LVL23
+ 2005 016e 1A000000 		.4byte	.LVL26
+ 2006 0172 0100     		.2byte	0x1
+ 2007 0174 56       		.byte	0x56
+ 2008 0175 1A000000 		.4byte	.LVL26
+ 2009 0179 3E000000 		.4byte	.LVL31
+ 2010 017d 0100     		.2byte	0x1
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 40
+
+
+ 2011 017f 57       		.byte	0x57
+ 2012 0180 3E000000 		.4byte	.LVL31
+ 2013 0184 42000000 		.4byte	.LVL33
+ 2014 0188 0100     		.2byte	0x1
+ 2015 018a 56       		.byte	0x56
+ 2016 018b 42000000 		.4byte	.LVL33
+ 2017 018f 46000000 		.4byte	.LVL34
+ 2018 0193 0100     		.2byte	0x1
+ 2019 0195 57       		.byte	0x57
+ 2020 0196 46000000 		.4byte	.LVL34
+ 2021 019a 52000000 		.4byte	.LVL36
+ 2022 019e 0100     		.2byte	0x1
+ 2023 01a0 56       		.byte	0x56
+ 2024 01a1 56000000 		.4byte	.LVL37
+ 2025 01a5 5A000000 		.4byte	.LVL38
+ 2026 01a9 0100     		.2byte	0x1
+ 2027 01ab 56       		.byte	0x56
+ 2028 01ac 00000000 		.4byte	0
+ 2029 01b0 00000000 		.4byte	0
+ 2030              	.LLST10:
+ 2031 01b4 0C000000 		.4byte	.LVL23
+ 2032 01b8 40000000 		.4byte	.LVL32
+ 2033 01bc 0100     		.2byte	0x1
+ 2034 01be 55       		.byte	0x55
+ 2035 01bf 42000000 		.4byte	.LVL33
+ 2036 01c3 52000000 		.4byte	.LVL36
+ 2037 01c7 0100     		.2byte	0x1
+ 2038 01c9 55       		.byte	0x55
+ 2039 01ca 56000000 		.4byte	.LVL37
+ 2040 01ce 5A000000 		.4byte	.LVL38
+ 2041 01d2 0100     		.2byte	0x1
+ 2042 01d4 55       		.byte	0x55
+ 2043 01d5 00000000 		.4byte	0
+ 2044 01d9 00000000 		.4byte	0
+ 2045              	.LLST11:
+ 2046 01dd 12000000 		.4byte	.LVL25
+ 2047 01e1 1D000000 		.4byte	.LVL27-1
+ 2048 01e5 0100     		.2byte	0x1
+ 2049 01e7 50       		.byte	0x50
+ 2050 01e8 3E000000 		.4byte	.LVL31
+ 2051 01ec 42000000 		.4byte	.LVL33
+ 2052 01f0 0100     		.2byte	0x1
+ 2053 01f2 50       		.byte	0x50
+ 2054 01f3 00000000 		.4byte	0
+ 2055 01f7 00000000 		.4byte	0
+ 2056              	.LLST12:
+ 2057 01fb 00000000 		.4byte	.LVL39
+ 2058 01ff 0E000000 		.4byte	.LVL41
+ 2059 0203 0100     		.2byte	0x1
+ 2060 0205 50       		.byte	0x50
+ 2061 0206 0E000000 		.4byte	.LVL41
+ 2062 020a C6000000 		.4byte	.LVL48
+ 2063 020e 0100     		.2byte	0x1
+ 2064 0210 55       		.byte	0x55
+ 2065 0211 C6000000 		.4byte	.LVL48
+ 2066 0215 CC000000 		.4byte	.LFE68
+ 2067 0219 0400     		.2byte	0x4
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 41
+
+
+ 2068 021b F3       		.byte	0xf3
+ 2069 021c 01       		.uleb128 0x1
+ 2070 021d 50       		.byte	0x50
+ 2071 021e 9F       		.byte	0x9f
+ 2072 021f 00000000 		.4byte	0
+ 2073 0223 00000000 		.4byte	0
+ 2074              	.LLST13:
+ 2075 0227 00000000 		.4byte	.LVL39
+ 2076 022b 0E000000 		.4byte	.LVL41
+ 2077 022f 0100     		.2byte	0x1
+ 2078 0231 51       		.byte	0x51
+ 2079 0232 0E000000 		.4byte	.LVL41
+ 2080 0236 CC000000 		.4byte	.LFE68
+ 2081 023a 0400     		.2byte	0x4
+ 2082 023c F3       		.byte	0xf3
+ 2083 023d 01       		.uleb128 0x1
+ 2084 023e 51       		.byte	0x51
+ 2085 023f 9F       		.byte	0x9f
+ 2086 0240 00000000 		.4byte	0
+ 2087 0244 00000000 		.4byte	0
+ 2088              	.LLST14:
+ 2089 0248 00000000 		.4byte	.LVL39
+ 2090 024c 0E000000 		.4byte	.LVL41
+ 2091 0250 0100     		.2byte	0x1
+ 2092 0252 52       		.byte	0x52
+ 2093 0253 0E000000 		.4byte	.LVL41
+ 2094 0257 CC000000 		.4byte	.LFE68
+ 2095 025b 0400     		.2byte	0x4
+ 2096 025d F3       		.byte	0xf3
+ 2097 025e 01       		.uleb128 0x1
+ 2098 025f 52       		.byte	0x52
+ 2099 0260 9F       		.byte	0x9f
+ 2100 0261 00000000 		.4byte	0
+ 2101 0265 00000000 		.4byte	0
+ 2102              	.LLST15:
+ 2103 0269 0A000000 		.4byte	.LVL40
+ 2104 026d 0E000000 		.4byte	.LVL41
+ 2105 0271 0200     		.2byte	0x2
+ 2106 0273 30       		.byte	0x30
+ 2107 0274 9F       		.byte	0x9f
+ 2108 0275 0E000000 		.4byte	.LVL41
+ 2109 0279 BC000000 		.4byte	.LVL46
+ 2110 027d 0100     		.2byte	0x1
+ 2111 027f 54       		.byte	0x54
+ 2112 0280 BE000000 		.4byte	.LVL47
+ 2113 0284 C6000000 		.4byte	.LVL48
+ 2114 0288 0100     		.2byte	0x1
+ 2115 028a 54       		.byte	0x54
+ 2116 028b 00000000 		.4byte	0
+ 2117 028f 00000000 		.4byte	0
+ 2118              	.LLST16:
+ 2119 0293 22000000 		.4byte	.LVL42
+ 2120 0297 4A000000 		.4byte	.LVL43
+ 2121 029b 0100     		.2byte	0x1
+ 2122 029d 53       		.byte	0x53
+ 2123 029e 00000000 		.4byte	0
+ 2124 02a2 00000000 		.4byte	0
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 42
+
+
+ 2125              		.section	.debug_aranges,"",%progbits
+ 2126 0000 44000000 		.4byte	0x44
+ 2127 0004 0200     		.2byte	0x2
+ 2128 0006 00000000 		.4byte	.Ldebug_info0
+ 2129 000a 04       		.byte	0x4
+ 2130 000b 00       		.byte	0
+ 2131 000c 0000     		.2byte	0
+ 2132 000e 0000     		.2byte	0
+ 2133 0010 00000000 		.4byte	.LFB63
+ 2134 0014 38000000 		.4byte	.LFE63-.LFB63
+ 2135 0018 00000000 		.4byte	.LFB66
+ 2136 001c 5C000000 		.4byte	.LFE66-.LFB66
+ 2137 0020 00000000 		.4byte	.LFB67
+ 2138 0024 6C000000 		.4byte	.LFE67-.LFB67
+ 2139 0028 00000000 		.4byte	.LFB64
+ 2140 002c 5C000000 		.4byte	.LFE64-.LFB64
+ 2141 0030 00000000 		.4byte	.LFB65
+ 2142 0034 64000000 		.4byte	.LFE65-.LFB65
+ 2143 0038 00000000 		.4byte	.LFB68
+ 2144 003c CC000000 		.4byte	.LFE68-.LFB68
+ 2145 0040 00000000 		.4byte	0
+ 2146 0044 00000000 		.4byte	0
+ 2147              		.section	.debug_ranges,"",%progbits
+ 2148              	.Ldebug_ranges0:
+ 2149 0000 0C000000 		.4byte	.LBB2
+ 2150 0004 52000000 		.4byte	.LBE2
+ 2151 0008 56000000 		.4byte	.LBB5
+ 2152 000c 64000000 		.4byte	.LBE5
+ 2153 0010 00000000 		.4byte	0
+ 2154 0014 00000000 		.4byte	0
+ 2155 0018 00000000 		.4byte	.LFB63
+ 2156 001c 38000000 		.4byte	.LFE63
+ 2157 0020 00000000 		.4byte	.LFB66
+ 2158 0024 5C000000 		.4byte	.LFE66
+ 2159 0028 00000000 		.4byte	.LFB67
+ 2160 002c 6C000000 		.4byte	.LFE67
+ 2161 0030 00000000 		.4byte	.LFB64
+ 2162 0034 5C000000 		.4byte	.LFE64
+ 2163 0038 00000000 		.4byte	.LFB65
+ 2164 003c 64000000 		.4byte	.LFE65
+ 2165 0040 00000000 		.4byte	.LFB68
+ 2166 0044 CC000000 		.4byte	.LFE68
+ 2167 0048 00000000 		.4byte	0
+ 2168 004c 00000000 		.4byte	0
+ 2169              		.section	.debug_line,"",%progbits
+ 2170              	.Ldebug_line0:
+ 2171 0000 6A020000 		.section	.debug_str,"MS",%progbits,1
+ 2171      02006F01 
+ 2171      00000201 
+ 2171      FB0E0D00 
+ 2171      01010101 
+ 2172              	.LASF16:
+ 2173 0000 646F7562 		.ascii	"double\000"
+ 2173      6C6500
+ 2174              	.LASF51:
+ 2175 0007 69326353 		.ascii	"i2cSda\000"
+ 2175      646100
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 43
+
+
+ 2176              	.LASF52:
+ 2177 000e 69326342 		.ascii	"i2cBuf\000"
+ 2177      756600
+ 2178              	.LASF48:
+ 2179 0015 7369676E 		.ascii	"signalMean\000"
+ 2179      616C4D65 
+ 2179      616E00
+ 2180              	.LASF2:
+ 2181 0020 73686F72 		.ascii	"short int\000"
+ 2181      7420696E 
+ 2181      7400
+ 2182              	.LASF55:
+ 2183 002a 69326344 		.ascii	"i2cData\000"
+ 2183      61746100 
+ 2184              	.LASF19:
+ 2185 0032 73697A65 		.ascii	"sizetype\000"
+ 2185      74797065 
+ 2185      00
+ 2186              	.LASF43:
+ 2187 003b 74657374 		.ascii	"test16\000"
+ 2187      313600
+ 2188              	.LASF62:
+ 2189 0042 55415254 		.ascii	"UART_ReadRxStatus\000"
+ 2189      5F526561 
+ 2189      64527853 
+ 2189      74617475 
+ 2189      7300
+ 2190              	.LASF41:
+ 2191 0054 73657269 		.ascii	"serialTest\000"
+ 2191      616C5465 
+ 2191      737400
+ 2192              	.LASF6:
+ 2193 005f 6C6F6E67 		.ascii	"long long int\000"
+ 2193      206C6F6E 
+ 2193      6720696E 
+ 2193      7400
+ 2194              	.LASF35:
+ 2195 006d 62756666 		.ascii	"bufferUart\000"
+ 2195      65725561 
+ 2195      727400
+ 2196              	.LASF44:
+ 2197 0078 62756666 		.ascii	"buffer_uart\000"
+ 2197      65725F75 
+ 2197      61727400 
+ 2198              	.LASF47:
+ 2199 0084 73656E64 		.ascii	"send15Cont\000"
+ 2199      3135436F 
+ 2199      6E7400
+ 2200              	.LASF12:
+ 2201 008f 75696E74 		.ascii	"uint16\000"
+ 2201      313600
+ 2202              	.LASF14:
+ 2203 0096 696E7431 		.ascii	"int16\000"
+ 2203      3600
+ 2204              	.LASF46:
+ 2205 009c 73746570 		.ascii	"stepSize\000"
+ 2205      53697A65 
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 44
+
+
+ 2205      00
+ 2206              	.LASF66:
+ 2207 00a5 433A5C55 		.ascii	"C:\\Users\\dr\\Documents\\GitHub\\SHW\\SHW_full\\SH"
+ 2207      73657273 
+ 2207      5C64725C 
+ 2207      446F6375 
+ 2207      6D656E74 
+ 2208 00d1 575F6675 		.ascii	"W_full.cydsn\000"
+ 2208      6C6C2E63 
+ 2208      7964736E 
+ 2208      00
+ 2209              	.LASF67:
+ 2210 00de 6572726F 		.ascii	"errorStatus\000"
+ 2210      72537461 
+ 2210      74757300 
+ 2211              	.LASF49:
+ 2212 00ea 69326353 		.ascii	"i2cStart\000"
+ 2212      74617274 
+ 2212      00
+ 2213              	.LASF21:
+ 2214 00f3 6C656E67 		.ascii	"length\000"
+ 2214      746800
+ 2215              	.LASF15:
+ 2216 00fa 666C6F61 		.ascii	"float\000"
+ 2216      7400
+ 2217              	.LASF38:
+ 2218 0100 6C657665 		.ascii	"levels_48\000"
+ 2218      6C735F34 
+ 2218      3800
+ 2219              	.LASF33:
+ 2220 010a 73657269 		.ascii	"serial_send_s16bit\000"
+ 2220      616C5F73 
+ 2220      656E645F 
+ 2220      73313662 
+ 2220      697400
+ 2221              	.LASF26:
+ 2222 011d 73657269 		.ascii	"serialResolve\000"
+ 2222      616C5265 
+ 2222      736F6C76 
+ 2222      6500
+ 2223              	.LASF68:
+ 2224 012b 6D656D73 		.ascii	"memset\000"
+ 2224      657400
+ 2225              	.LASF4:
+ 2226 0132 6C6F6E67 		.ascii	"long int\000"
+ 2226      20696E74 
+ 2226      00
+ 2227              	.LASF27:
+ 2228 013b 494E4954 		.ascii	"INIT_SERIAL\000"
+ 2228      5F534552 
+ 2228      49414C00 
+ 2229              	.LASF45:
+ 2230 0147 75617274 		.ascii	"uart_type\000"
+ 2230      5F747970 
+ 2230      6500
+ 2231              	.LASF1:
+ 2232 0151 756E7369 		.ascii	"unsigned char\000"
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 45
+
+
+ 2232      676E6564 
+ 2232      20636861 
+ 2232      7200
+ 2233              	.LASF18:
+ 2234 015f 6C6F6E67 		.ascii	"long double\000"
+ 2234      20646F75 
+ 2234      626C6500 
+ 2235              	.LASF56:
+ 2236 016b 69326352 		.ascii	"i2cRun\000"
+ 2236      756E00
+ 2237              	.LASF31:
+ 2238 0172 72785374 		.ascii	"rxStatus\000"
+ 2238      61747573 
+ 2238      00
+ 2239              	.LASF59:
+ 2240 017b 55415254 		.ascii	"UART_PutArray\000"
+ 2240      5F507574 
+ 2240      41727261 
+ 2240      7900
+ 2241              	.LASF63:
+ 2242 0189 55415254 		.ascii	"UART_ReadRxData\000"
+ 2242      5F526561 
+ 2242      64527844 
+ 2242      61746100 
+ 2243              	.LASF39:
+ 2244 0199 6C657665 		.ascii	"levels_15\000"
+ 2244      6C735F31 
+ 2244      3500
+ 2245              	.LASF0:
+ 2246 01a3 7369676E 		.ascii	"signed char\000"
+ 2246      65642063 
+ 2246      68617200 
+ 2247              	.LASF10:
+ 2248 01af 696E7433 		.ascii	"int32_t\000"
+ 2248      325F7400 
+ 2249              	.LASF7:
+ 2250 01b7 6C6F6E67 		.ascii	"long long unsigned int\000"
+ 2250      206C6F6E 
+ 2250      6720756E 
+ 2250      7369676E 
+ 2250      65642069 
+ 2251              	.LASF8:
+ 2252 01ce 756E7369 		.ascii	"unsigned int\000"
+ 2252      676E6564 
+ 2252      20696E74 
+ 2252      00
+ 2253              	.LASF3:
+ 2254 01db 73686F72 		.ascii	"short unsigned int\000"
+ 2254      7420756E 
+ 2254      7369676E 
+ 2254      65642069 
+ 2254      6E7400
+ 2255              	.LASF17:
+ 2256 01ee 63686172 		.ascii	"char\000"
+ 2256      00
+ 2257              	.LASF58:
+ 2258 01f3 55415254 		.ascii	"UART_Start\000"
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 46
+
+
+ 2258      5F537461 
+ 2258      727400
+ 2259              	.LASF25:
+ 2260 01fe 73657269 		.ascii	"serialSend16bit\000"
+ 2260      616C5365 
+ 2260      6E643136 
+ 2260      62697400 
+ 2261              	.LASF11:
+ 2262 020e 75696E74 		.ascii	"uint8\000"
+ 2262      3800
+ 2263              	.LASF32:
+ 2264 0214 5F426F6F 		.ascii	"_Bool\000"
+ 2264      6C00
+ 2265              	.LASF24:
+ 2266 021a 73657269 		.ascii	"serialSend8bit\000"
+ 2266      616C5365 
+ 2266      6E643862 
+ 2266      697400
+ 2267              	.LASF20:
+ 2268 0229 64617461 		.ascii	"data\000"
+ 2268      00
+ 2269              	.LASF30:
+ 2270 022e 72656164 		.ascii	"reading\000"
+ 2270      696E6700 
+ 2271              	.LASF13:
+ 2272 0236 75696E74 		.ascii	"uint32\000"
+ 2272      333200
+ 2273              	.LASF5:
+ 2274 023d 6C6F6E67 		.ascii	"long unsigned int\000"
+ 2274      20756E73 
+ 2274      69676E65 
+ 2274      6420696E 
+ 2274      7400
+ 2275              	.LASF23:
+ 2276 024f 62797465 		.ascii	"bytes\000"
+ 2276      7300
+ 2277              	.LASF28:
+ 2278 0255 73657269 		.ascii	"serialRead\000"
+ 2278      616C5265 
+ 2278      616400
+ 2279              	.LASF40:
+ 2280 0260 6C657665 		.ascii	"levels_82\000"
+ 2280      6C735F38 
+ 2280      3200
+ 2281              	.LASF53:
+ 2282 026a 69326341 		.ascii	"i2cAddr\000"
+ 2282      64647200 
+ 2283              	.LASF50:
+ 2284 0272 69326343 		.ascii	"i2cClk\000"
+ 2284      6C6B00
+ 2285              	.LASF37:
+ 2286 0279 464C4147 		.ascii	"FLAG_SER_TX_INIT\000"
+ 2286      5F534552 
+ 2286      5F54585F 
+ 2286      494E4954 
+ 2286      00
+ 2287              	.LASF9:
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 47
+
+
+ 2288 028a 5F5F696E 		.ascii	"__int32_t\000"
+ 2288      7433325F 
+ 2288      7400
+ 2289              	.LASF60:
+ 2290 0294 43524547 		.ascii	"CREG_LED_Write\000"
+ 2290      5F4C4544 
+ 2290      5F577269 
+ 2290      746500
+ 2291              	.LASF65:
+ 2292 02a3 73657269 		.ascii	"serial.c\000"
+ 2292      616C2E63 
+ 2292      00
+ 2293              	.LASF57:
+ 2294 02ac 69326357 		.ascii	"i2cWord\000"
+ 2294      6F726400 
+ 2295              	.LASF36:
+ 2296 02b4 464C4147 		.ascii	"FLAG_SER_EVENT\000"
+ 2296      5F534552 
+ 2296      5F455645 
+ 2296      4E5400
+ 2297              	.LASF22:
+ 2298 02c3 6D736749 		.ascii	"msgID\000"
+ 2298      4400
+ 2299              	.LASF42:
+ 2300 02c9 74657374 		.ascii	"test8\000"
+ 2300      3800
+ 2301              	.LASF34:
+ 2302 02cf 49544D5F 		.ascii	"ITM_RxBuffer\000"
+ 2302      52784275 
+ 2302      66666572 
+ 2302      00
+ 2303              	.LASF64:
+ 2304 02dc 474E5520 		.ascii	"GNU C11 5.4.1 20160609 (release) [ARM/embedded-5-br"
+ 2304      43313120 
+ 2304      352E342E 
+ 2304      31203230 
+ 2304      31363036 
+ 2305 030f 616E6368 		.ascii	"anch revision 237715] -mcpu=cortex-m3 -mthumb -g -O"
+ 2305      20726576 
+ 2305      6973696F 
+ 2305      6E203233 
+ 2305      37373135 
+ 2306 0342 67202D66 		.ascii	"g -ffunction-sections -ffat-lto-objects\000"
+ 2306      66756E63 
+ 2306      74696F6E 
+ 2306      2D736563 
+ 2306      74696F6E 
+ 2307              	.LASF54:
+ 2308 036a 69326349 		.ascii	"i2cInstr\000"
+ 2308      6E737472 
+ 2308      00
+ 2309              	.LASF61:
+ 2310 0373 43794465 		.ascii	"CyDelay\000"
+ 2310      6C617900 
+ 2311              	.LASF29:
+ 2312 037b 63436F75 		.ascii	"cCount\000"
+ 2312      6E7400
+ARM GAS  C:\Users\dr\AppData\Local\Temp\cc0HOc5L.s 			page 48
+
+
+ 2313              		.ident	"GCC: (GNU Tools for ARM Embedded Processors) 5.4.1 20160609 (release) [ARM/embedded-5-bran

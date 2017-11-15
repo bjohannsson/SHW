@@ -1,0 +1,50 @@
+--------------- Build Started: 11/05/2017 01:11:43 Project: SHW_OOK, Configuration: ARM GCC 5.4-2016-q2-update Debug ---------------
+cydsfit.exe -.appdatapath "C:\Users\dr\AppData\Local\Cypress Semiconductor\PSoC Creator\4.1" -.fdsnotice -.fdswarpdepfile=warp_dependencies.txt -.fdselabdepfile=elab_dependencies.txt -.fdsbldfile=generated_files.txt -.fdsreffile=referenced_files.txt -p C:\Users\dr\Documents\GitHub\SHW\SHW_OOK.cydsn\SHW_OOK.cyprj -d CY8C5888LTI-LP097 -s C:\Users\dr\Documents\GitHub\SHW\SHW_OOK.cydsn\Generated_Source\PSoC5 -- -yv2 -q10 -ygs -o2 -v3 -.fftcfgtype=LE
+Elaborating Design...
+HDL Generation...
+Synthesis...
+Tech Mapping...
+ADD: mpr.M0037: information: Unused pieces of the design have been optimized out. See the Tech mapping section of the report file for details.
+ * C:\Users\dr\Documents\GitHub\SHW\SHW_OOK.cydsn\codegentemp\SHW_OOK.rpt (Tech mapping)
+Analog Placement...
+Analog Routing...
+Analog Code Generation...
+Digital Placement...
+Digital Routing...
+Bitstream Generation...
+Bitstream Verification...
+Static timing analysis...
+API Generation...
+Dependency Generation...
+Cleanup...
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/main.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c main.c -o .\CortexM3\ARM_GCC_541\Debug\main.o
+main.c: In function 'main':
+main.c:39:5: warning: implicit declaration of function 'CREG_INIT_TX_Write' [-Wimplicit-function-declaration]
+     CREG_INIT_TX_Write(1);
+     ^
+arm-none-eabi-gcc.exe -mcpu=cortex-m3 -mthumb -I. -IGenerated_Source\PSoC5 -Wa,-alh=.\CortexM3\ARM_GCC_541\Debug/packetman.lst -g -D DEBUG -D CY_CORE_ID=0 -Wall -ffunction-sections -ffat-lto-objects -Og -c packetman.c -o .\CortexM3\ARM_GCC_541\Debug\packetman.o
+In file included from Generated_Source\PSoC5/cyfitter_cfg.h:20:0,
+                 from Generated_Source\PSoC5/project.h:17,
+                 from packetman.h:14,
+                 from packetman.c:11:
+packetman.c: In function 'setDMA':
+Generated_Source\PSoC5/CREG_PAY.h:62:45: error: 'CREG_PAY_Sync_ctrl_reg__CONTROL_REG' undeclared (first use in this function)
+ #define CREG_PAY_Control_PTR    (  (reg8 *) CREG_PAY_Sync_ctrl_reg__CONTROL_REG )
+                                             ^
+Generated_Source\PSoC5/cytypes.h:1294:45: note: in definition of macro 'LO16'
+ #define LO16(x)                 ((uint16) ((x) & 0xFFFFu))
+                                             ^
+packetman.c:35:70: note: in expansion of macro 'CREG_PAY_Control_PTR'
+  CyDmaTdSetAddress(DMA_PAY_TD[0], LO16((uint32)packet), LO16((uint32)CREG_PAY_Control_PTR));
+                                                                      ^
+Generated_Source\PSoC5/CREG_PAY.h:62:45: note: each undeclared identifier is reported only once for each function it appears in
+ #define CREG_PAY_Control_PTR    (  (reg8 *) CREG_PAY_Sync_ctrl_reg__CONTROL_REG )
+                                             ^
+Generated_Source\PSoC5/cytypes.h:1294:45: note: in definition of macro 'LO16'
+ #define LO16(x)                 ((uint16) ((x) & 0xFFFFu))
+                                             ^
+packetman.c:35:70: note: in expansion of macro 'CREG_PAY_Control_PTR'
+  CyDmaTdSetAddress(DMA_PAY_TD[0], LO16((uint32)packet), LO16((uint32)CREG_PAY_Control_PTR));
+                                                                      ^
+The command 'arm-none-eabi-gcc.exe' failed with exit code '1'.
+--------------- Build Failed: 11/05/2017 01:11:54 ---------------

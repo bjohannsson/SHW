@@ -1,0 +1,7 @@
+C:\Users\dr\Documents\GitHub\SHW\SHW_full.cydsn\SHW_full.cyprj|fdef27dc-4ddc-429b-8797-45b28dcfb1fa
+C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\psoc\content\default\CyAnnotationLibrary\CyAnnotationLibrary.cylib\CyAnnotationLibrary.cyprj|c779f6ef-ab24-4627-a0d3-435c2c158184
+C:\Users\dr\Documents\PSoC Creator\4.1\Downloads ( 4.1).cylib\Downloads ( 4.1).cyprj|901fb817-f92c-4018-86a0-ebfdbaf5cd0e
+C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\psoc\content\cycomponentlibraryupdates\CyComponentLibraryUpdates.cylib\CyComponentLibraryUpdates.cyprj|cfc8dee4-4a10-4bdd-8e99-19da3fa9886a
+C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\psoc\content\cycomponentlibrary\CyComponentLibrary.cylib\CyComponentLibrary.cyprj|8443dbf1-6aad-48f5-a849-dce4b9ef0b1d
+C:\Program Files (x86)\Cypress\PSoC Creator\4.1\PSoC Creator\psoc\content\cyprimitives\CyPrimitives.cylib\CyPrimitives.cyprj|004a33a1-9c8b-47e6-80c9-492635243682
+C:\Users\dr\Documents\GitHub\SHW\SHW_OOK.cydsn\SHW_OOK.cyprj|7b4fed71-00ac-46e1-bdd6-a672707179d1
